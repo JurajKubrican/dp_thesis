@@ -1,0 +1,110 @@
+
+
+\section{Analýza problému}
+
+\subsection{Úvod do petriho sietí} % not called Petriflow
+\noindent Petriho sieť je 
+% TODO - skopcit od milana ..
+
+
+\subsection{Procesný server}
+\noindent Majme procesný server tento server v sebe obsahuje informáciu o rôznych procesoch. Tieto procesy majú rôznu štruktúru a sú v rôznych stavoch. Štruktúru týchto procesov môzeme reprezentovať pomocou petriho stietí a ich stav pomocov rôznych značkovaní v týchto sieťach. 
+% TODO - naprv odstavec pred tým
+
+\subsection{Aplikačné rozhranie}
+\noindent Na to aby sme mohli k dátam pristupovať zvonka uzavretej domény procesného servra potrebujeme vytvoriť aplikačné rozhranie ktoré bude riešit autentifikáciu, autorizáciu a dokumentáciu. 
+% TODO
+
+
+
+
+\section{Špecifikácia}
+\noindent V tejto kapitole najprv stručne opíšeme hlavnú funkcionalitu navrhovanej aplikácie, potom zadefinujeme funkcionálne a nefunkcionálne požiadavky na aplikáciu.
+
+Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie medzi procesným servrom a internetom. Bude umožňovať klientovi získavať infromácie o dátach v prechodoch petriho siete a bude mu umožňovať modifikovť stav siete (procesu) spúšťaním prechodov. 
+
+\subsection{Funkcionálne požiadavky}
+\begin{enumerate}
+	\item Rozhranie bude umožňovať registrovať používateľov a priraďovať im roly
+	\item Umožní prihlásenie používateľa pomocou štandartného autentifikačného protokolu.
+	\item Autentifikovaným používateľom umožní prístup k dátam z tých prechodov ktoré majú právo čitať podľa ich roly.
+	\item Autentifikovaným použivateľom umožní spúšťať prechody ktoré majú právo spúšťať podla ich roly.
+	\item Pri spúšťaní prechodu prebehne validácia vstupných dát. V prípade nevalidných alebo nekompletných dát nepovolí supustenie prechodu.
+	\item Rozhranie poskytne online dokumentáciu prechodov v sieti, táto dokumentácia bude zahŕňať URL prechodu, potrebné dátove polia na spustenie rechodu a roly, ktoré sú oprávnené prechody spúšťať.
+	\item Rozhranie poskytne aplikačné rozhranie viacerým sieťam s rôznou štruktúrou.
+\end{enumerate}	
+
+
+
+\subsection{Nefunkcionálne požiadavky}
+\begin{enumerate}
+	\item Rozhranie bude škálovateľné
+	\item Rozhranie bude napísané vo frameworku Spring Boot
+\end{enumerate}
+
+\section{Návrh}
+\noindent V tejto kapitole najprv prejdeme atrchitekúru nášho softvé
+% TODO - what have we done in this chapter?
+
+\subsection{Architektúra}
+\noindent Aby sme splinili požiadavku na jednoduché škálovanie aplikácie a pre zprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí, každá z týchto častí má svoju jasne definovanu funkciu. Takéto mikroservisy sú jednoducho testovaťeľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architekúre býva zpravidla robustný a vysoko škáľovateľný. 
+
+Táto architektúra však nieje vhodná na menšie projekty, lebo réžia vnikuntého softvéru býva zpravidla vysoká, lebo si vyžaduje viacero spustených inštancií servisov. Tiež nieje vhodná v prípadoch, kde sa čakávajú väčsie zmeny biznis logiky aplikácie. Pri väčšej smene biznis logiky je často nutné prerábať viacero servisov a zmena protokolu, ktorým medzi sebou komunikujú.
+
+
+\section{Implementácia}
+% TODO
+
+\subsection{Použité technológie}
+
+\subsubsection{Kotlin}
+\noindent Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krát zverejnený v roku 2011 spoločnosťou JetBrains(Andrey Breslav). Bol vyvynutý ako modený staticky typovaný jazyk, ktorý podporuje rýchlu kompiláciu do javy. V roku 2017 vyhlásil Google podporu pre Kotlin v operačnom systéme Android. 
+
+Medzi jeho hlavné vyhody patrí menší bilerplate (menej zbytočného kódu), 
+
+vylepšený systém typovania premenných (defaultne imutabilné listy, premenné môžu byť null a kompilátor vie odvodiť v kytorých prípadoch premenná null obsahovať môže a v ktorých nie, 
+
+Jednoduchosť prechodu z Javy na kotlin štruktúra kódu je podobná jave, Jetbrains dokonca poskytujhe traspiler, ktorý dokáže kód z Javy vo väčšine prípadov trasnpolovať do Kotlinu
+% TODO
+
+\subsubsection{Gradle}
+Gradle je voľne šíriteľny nástroj na automatizovanú stavbu softvéru. Je stavaný na to aby bol schopný postaviť takmer ľubovoľný program. Podporuje jazyky ako java, C++ Python, a monoho ďaľsích. Kotlin beží na JVM, takže sa dá používať na všetkých bežných platformách. V našom projekte sa gradle stará o stiahnutie závislostí našho projektu, kompiláciu kódu a spustenie samotného skomilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súuboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použisia ukízali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu stavby softvéru takže jeho výkon je pri opakovanej kompilácií vyšší. Atlerantívny nástroj na ktorý sme zvažovali je Maven, no vybrali sme si Gradle, hlavne kvoli jeho lepšiemu výkonu a prehľadnejšej konfigurácií.
+
+%TODO - JVM to glossary
+
+
+\subsubsection{Spring boot}
+\noindent Spring Boot je voľne šíriteľný framework založený na Jave. Je vyvýjaný a udržiavaný tímom Pivotal. Je určený na vytváranie nezávislých, produkčných aplikácií a mikro-služieb. 
+% TODO - spring boot 
+Pri práci so Spring boot budeme využívať návrhové vzory:
+
+Dependency injection / Inversion of control (Tým že v jednoduchých triedach pridáme anotáciu, vieme z frameworku zdedit nielen funkcie, ale aj control flow) 
+
+Singleton (aplikácia vie zaručiť že z daného objektu sa v rámci jednej inštancie aplikácie vytvorí len jedna inštancia, ku ktorej sa dá pristupovať z celej aplikácie)
+
+Factory (aplikácia používa na vytváranie objektov tzv Beanov návrhový vzor factory)
+
+
+
+\subsubsection{Spring cloud}
+\noindent Spring Cloud je framework, ktorý obsahuje bohatú sadu náastojov na vytváranie mikroslužieb a cloudových riešení. Medzi nástroje Spring Clopudu patí: 
+\begin{itemize}
+\item Cloud config - nástroj na distribúciu konfiguračných súborov medzi kontainermi mikrosluzieb
+\item Service discovery - nástroj na registráciu a monitorovanie mikroservisov
+\item Gateway - Nástroj na routovanie a load balancing v rámci mikroservisov
+\item Cloud Authentication - Nástroj na reišenie komplexnej autentikácie a autorízácie v rámci
+\end{itemize}
+ mikroservisov
+
+
+
+
+
+\section{Testovanie}
+% TODO
+
+
+
+
+\section{}
+
