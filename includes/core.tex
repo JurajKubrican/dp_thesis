@@ -68,7 +68,7 @@ Jednoduchosť prechodu z Javy na kotlin štruktúra kódu je podobná jave, Jetb
 % TODO
 
 \subsubsection{Gradle}
-Gradle je voľne šíriteľny nástroj na automatizovanú stavbu softvéru. Je stavaný na to aby bol schopný postaviť takmer ľubovoľný program. Podporuje jazyky ako java, C++ Python, a monoho ďaľsích. Kotlin beží na JVM, takže sa dá používať na všetkých bežných platformách. V našom projekte sa gradle stará o stiahnutie závislostí našho projektu, kompiláciu kódu a spustenie samotného skomilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súuboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použisia ukízali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu stavby softvéru takže jeho výkon je pri opakovanej kompilácií vyšší. Atlerantívny nástroj na ktorý sme zvažovali je Maven, no vybrali sme si Gradle, hlavne kvoli jeho lepšiemu výkonu a prehľadnejšej konfigurácií.
+Gradle je voľne šíriteľny nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný postaviť takmer ľubovoľný program. Podporuje jazyky ako java, C++ Python, a monoho ďaľsích. Kotlin beží na JVM, takže sa dá používať na všetkých bežných platformách. V našom projekte sa gradle stará o stiahnutie závislostí našho projektu, kompiláciu kódu a spustenie samotného skompilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súuboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použisia ukízali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu stavby softvéru takže jeho výkon je pri opakovanej kompilácií vyšší. Atlerantívny nástroj na ktorý sme zvažovali je Maven, no vybrali sme si Gradle, hlavne kvoli jeho lepšiemu výkonu a prehľadnejšej konfigurácií.
 
 %TODO - JVM to glossary
 
@@ -94,8 +94,14 @@ Factory (aplikácia používa na vytváranie objektov tzv Beanov návrhový vzor
 \item Gateway - Nástroj na routovanie a load balancing v rámci mikroservisov
 \item Cloud Authentication - Nástroj na reišenie komplexnej autentikácie a autorízácie v rámci
 \end{itemize}
- mikroservisov
 
+ 
+ 
+\subsection{Inštalácia a konfigurácia kontainerov}
+\noindent Všetky Spring Boot kointainery sme inštalovali pomocou spring initializr
+% https://start.spring.io/ - link 
+tento nástroj vygeneruje zip súbor so založeným projektom vo frameworku Spring Boot. Pri vytváraní projektu je možné si vybrať Jazyk v ktorom bude projekt založený a nástroj ktorý bude projekt zostavovať % -- 
+\subsubsection{Inštalácia a konfigurácia kontainerov}
 
 
 
