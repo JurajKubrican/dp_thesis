@@ -8,7 +8,7 @@
 
 \subsection{Úvod do petriho sietí} % not called Petriflow 
 
-\noindent Petriho sieť je  
+ Petriho siete sú modelovací nástroj určený na modelovanie udalostných systémov. 
 
 % TODO - skopcit od milana .. 
 
@@ -18,7 +18,7 @@
 
 \subsection{Procesný server} 
 
-\noindent Majme procesný server tento server v sebe obsahuje informáciu o rôznych procesoch. Tieto procesy majú rôznu štruktúru a sú v rôznych stavoch. Štruktúru týchto procesov môžeme reprezentovať pomocou Petriho sietí a ich stav pomocou rôznych značkovaní v týchto sieťach.  
+ Majme procesný server tento server v sebe obsahuje informáciu o rôznych procesoch. Tieto procesy majú rôznu štruktúru a sú v rôznych stavoch. Štruktúru týchto procesov môžeme reprezentovať pomocou Petriho sietí a ich stav pomocou rôznych značkovaní v týchto sieťach.  
 
 % TODO - najprv odstavec pred tým 
 
@@ -26,7 +26,7 @@
 
 \subsection{Aplikačné rozhranie} 
 
-\noindent Na to aby sme mohli k dátam pristupovať zvonka uzavretej domény procesného servera potrebujeme vytvoriť aplikačné rozhranie ktoré bude riešiť autentifikáciu, autorizáciu a dokumentáciu.  
+ Na to aby sme mohli k dátam pristupovať zvonka uzavretej domény procesného servera potrebujeme vytvoriť aplikačné rozhranie ktoré bude riešiť autentifikáciu, autorizáciu a dokumentáciu.  
 
 % TODO 
 
@@ -40,7 +40,7 @@
 
 \section{Špecifikácia} 
 
-\noindent V tejto kapitole najprv stručne opíšeme hlavnú funkcionalitu navrhovanej aplikácie, potom zadefinujeme funkcionálne a nefunkcionálne požiadavky na aplikáciu. 
+ V tejto kapitole najprv stručne opíšeme hlavnú funkcionalitu navrhovanej aplikácie, potom zadefinujeme funkcionálne a nefunkcionálne požiadavky na aplikáciu. 
 
   
 
@@ -88,7 +88,7 @@ Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie med
 
 \section{Návrh} 
 
-\noindent V tejto kapitole najprv prejdeme architektúru nášho softvér 
+ V tejto kapitole najprv prejdeme architektúru nášho softvér 
 
 % TODO - what have we done in this chapter? 
 
@@ -96,7 +96,7 @@ Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie med
 
 \subsection{Architektúra} 
 
-\noindent Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí, každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.  
+ Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí, každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.  
 
   
 
@@ -118,15 +118,11 @@ Táto architektúra však nie je vhodná na menšie projekty, lebo réžia vznik
 
 \subsubsection{Kotlin} 
 
-\noindent Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krát zverejnený v roku 2011 spoločnosťou JetBrains(Andrey Breslav). Bol vyvinutý ako moderný staticky typovaný jazyk, ktorý podporuje rýchlu kompiláciu do javy. V roku 2017 vyhlásil Google podporu pre Kotlin v operačnom systéme Android.  
-
-  
+ Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krát zverejnený v roku 2011 spoločnosťou JetBrains(Andrey Breslav). Bol vyvinutý ako moderný staticky typovaný jazyk, ktorý podporuje rýchlu kompiláciu do javy. V roku 2017 vyhlásil Google podporu pre Kotlin v operačnom systéme Android.  
 
 Medzi jeho hlavné výhody patrí menší boilerplate (menej zbytočného kódu),  
 
-  
-
-vylepšený systém typovania premenných (defaultne imutabilné listy, premenné môžu byť null a kompilátor vie odvodiť v ktorých prípadoch premenná null obsahovať môže a v ktorých nie,  
+Vylepšený systém typovania premenných. premenné môžu byť null a kompilátor vie odvodiť v ktorých prípadoch premenná null obsahovať môže a v ktorých nie,  
 
   
 
@@ -150,7 +146,7 @@ Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru
 
 \subsubsection{Spring boot} 
 
-\noindent Spring Boot je voľne šíriteľný framework založený na Jave. Je vyvíjaný a udržiavaný tímom Pivotal. Je určený na vytváranie nezávislých, produkčných aplikácií a mikro-služieb.  
+ Spring Boot je voľne šíriteľný framework založený na Jave. Je vyvíjaný a udržiavaný tímom Pivotal. Je určený na vytváranie nezávislých, produkčných aplikácií a mikro-služieb.  
 
 % TODO - spring boot  
 
@@ -176,7 +172,7 @@ Factory (aplikácia používa na vytváranie objektov tzv Beanov návrhový vzor
 
 \subsubsection{Spring cloud} 
 
-\noindent Spring Cloud je framework, ktorý obsahuje bohatú sadu nástrojov na vytváranie mikroslužieb a cloudových riešení. Medzi nástroje Spring Clopudu patí:  
+ Spring Cloud je framework, ktorý obsahuje bohatú sadu nástrojov na vytváranie mikroslužieb a cloudových riešení. Medzi nástroje Spring Clopudu patí:  
 
 \begin{itemize} 
 
@@ -198,7 +194,7 @@ Factory (aplikácia používa na vytváranie objektov tzv Beanov návrhový vzor
 
 \subsection{Inštalácia a konfigurácia kontajnerov} 
 
-\noindent Všetky Spring Boot kontajnery sme inštalovali pomocou spring initializr 
+ Všetky Spring Boot kontajnery sme inštalovali pomocou spring initializr 
 
 % https://start.spring.io/ - link  
 
@@ -219,15 +215,3 @@ tento nástroj vygeneruje zip súbor so založeným projektom vo frameworku Spri
 % TODO 
 
   
-
-  
-
-  
-
-  
-
-\section{} 
-
- 
-
- 
