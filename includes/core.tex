@@ -7,43 +7,53 @@
 
   
 
-\subsection{Úvod do petriho sietí} % not called Petriflow 
+\subsection{Petriho siete} % not called Petriflow 
 
- Petriho siete sú modelovací nástroj určený na modelovanie udalostných systémov. 
-
-% TODO - skopcit od milana .. 
-
+ Carl Adam Petri založil koncept Petriho sietí v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi - na Technickej Univerzite v Darmstadte. Ďalším výskumom sa z pôvodného konceptu ktorý bol určený na modelovanie analýzu komunikačných systémov vyvynul nástroj, ktorý sa používa naprieč monými oblastiami najmä na modelovanie papalelných a distribuovaných systémov. 
+ 
+ Základné Petriho siete pozostávajú z prechodov, miest a hrán. 
+ %TODO rozumna definica PN
   
+\subsection{Petriflow} % not called Petriflow 
+\cite{petriflow_clanok}
+Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznisových procesov. Bol vyvinutý Spoločnosťou Netgrif na základe dlhodobých skúseností s klientami, ktorý pomocou tohto formalizmu modelujú svoje biznis procesy, ktoré sú následne zavedené do používania. 
+%TODO bleh
+%TODO komu dat credit?
+%TODO cite diplomka
+Formalizmus Petriflow rozširuje Petriho siete o daľsie kompnenty. Ako základ berie Petriho siete obohatené reset, inihibitor a read hrany. Aby sa dali modelovať moderné biznis procesy pridáva Petriflow do tohto modelu roly, dátové polia a akcie. 
+Roly definujú kto je oprávnený spúšťať rôzne prechody. 
+Dátové polia definujú štruktúru dát ktoré každá inštanica procesu obsahuje počas svojho behu.
+Akcie definujú vsťahy a interakcie medzi jednotlivými dátovými poliami a prechodmi.
 
-  
+V klacických petriho sieťach je spustenie prechodu vždy atomická operáci. Petriflow obsahuje 2 typy prechodov udalostné precohdy, ktoré sú rovnako ako v klasických PN sieťach atomické, avšak vždy ich spúšťa nejaká osoba(používaťeľ) v systéme. Druhý typ prechodu je úloha. Úlohu môžeme vnímať ako podsieť na obrázku \ref{task}. Na začiatku je úloha nepridelená, ako prvý krok je potrebné ju niekomu (aj sebe) prideliť. Následne môže toto pridelenie zrušiť, prideliť inej osobe, alebo úlohu dokončiť
+%todo - permission to assign/cancel/delegate/finish
 
-\subsection{Procesný server} 
 
- Majme procesný server tento server v sebe obsahuje informáciu o rôznych procesoch. Tieto procesy majú rôznu štruktúru a sú v rôznych stavoch. Štruktúru týchto procesov môžeme reprezentovať pomocou Petriho sietí a ich stav pomocou rôznych značkovaní v týchto sieťach.  
+\begin{figure}[!htbp]
+ 	\centering
+ 	\includegraphics[width=6cm]{img/task_transition.png}
+ 	\caption{Úloha}
+ 	\label{task}
+\end{figure} 
 
-% TODO - najprv odstavec pred tým 
 
   
 
 \subsection{Aplikačné rozhranie} 
 
- Na to aby sme mohli k dátam pristupovať zvonka uzavretej domény procesného servera potrebujeme vytvoriť aplikačné rozhranie ktoré bude riešiť autentifikáciu, autorizáciu a dokumentáciu.  
+Majme procesne orientovaný ststém ktorý implementuje procesy, ktoré sú popísane v Petriflow. S takýmto systémom používateľia interagujú iba presne popísaným spôsobom a to spúšťaním prechodov ktoré majú podľa svojich rolí oprávnenie spúúšťať (delegovať, dokončiť,... ). Pri dokončení úlohy (prechodu) musí používateľ poskytnúť dáta popísané v dátových poliach. 
+Keďže formalizmus Petriflow je schopný takýmto spôsobom popísať všetky interakcie používateľa so systémom je možné na jeho základe vygenerovať aj aplikačné rozhranie. Toto rozhranie sprístupní systém mimo jeho domény, zaručí autorizáciu podľa rolí, poskytne dokumentáciu o svojej štruktúre(a tým pádom aj štruktúre procesu) a zabezpečí validáciu dát, ktoré do systému používateľ odošle.
 
-% TODO 
-
-  
-
-  
+Aktuálna verzia Petriflow síce poskytuje relatívne granulárnu autorizáciu na vykonávanie akcií pomocou rolí, neobsahuje introfmáciu o tom, ktorý používateľ má pridelené aké roly. Na implemetnáciu funkčného aplikačného rozhrania teda bude nutné dorobiť systém ktorý túto informáciu bude obsahovať.
 
   
 
   
-
 \section{Špecifikácia} 
 V tejto kapitole najprv stručne opíšeme hlavnú funkcionalitu navrhovanej aplikácie, potom zadefinujeme funkcionálne a nefunkcionálne požiadavky na aplikáciu. 
 
 Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie medzi procesným serverom a internetom. Bude umožňovať klientovi pripojiť sa na procesný server cez internet, získať informácie o dátach v prechodoch petriho siete a bude umožňovať modifikovať stav siete (procesu) spúšťaním prechodov.  
-\cite{t01} sdkjjsad
+
   
 
 \subsection{Funkcionálne požiadavky} 
@@ -221,9 +231,7 @@ Factory (aplikácia používa na vytváranie objektov tzv Beanov návrhový vzor
 
 \subsection{Inštalácia a konfigurácia kontajnerov} 
 
- Všetky Spring Boot kontajnery sme inštalovali pomocou spring initializr 
-
-% https://start.spring.io/ - link  
+ Všetky Spring Boot kontajnery sme inštalovali pomocou spring initializr \cite{initializr}
 
 tento nástroj vygeneruje zip súbor so založeným projektom vo frameworku Spring Boot. Pri vytváraní projektu je možné si vybrať Jazyk v ktorom bude projekt založený a nástroj ktorý bude projekt zostavovať % --  
 
