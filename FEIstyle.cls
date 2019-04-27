@@ -79,7 +79,7 @@
 \usepackage{ifmtarg}
 \usepackage{xstring}
 \usepackage[compact]{titlesec}
-\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{listings}
 \usepackage{lmodern}
 \usepackage{changepage}
