@@ -97,8 +97,8 @@ Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie med
 \subsection{Prípady použitia}
 Zo špecifikácie vyplývajú nasledovné interakcie používateľa s naším systémom.
 
-\subsubsection{Registrácia koncového bodu}
-Prvý prípad použitia \ref{usecase1} je registrácia koncového bodu. Aktér ktorý môže registrovať koncové body je len administrátor. Pri tejto akcií administrátor poskytne nášmu systému informácie o štruktúre procesu vo formáte petriflow, zoznam používateľov im prislúchajúcich rolí v XML a unikátny identifikátor siete. 
+\subsubsection{Registrácia modelu}
+Prvý prípad použitia \ref{usecase1} je registrácia modelu. Aktér ktorý môže registrovať modely je len administrátor. Pri tejto akcií administrátor poskytne nášmu systému informácie o štruktúre procesu vo formáte petriflow, zoznam používateľov im prislúchajúcich rolí v \acrshort{xml} a unikátny identifikátor siete. 
 
 Pokial chce administrátor upraviť nadadený proces spustí proces registrácie nanovo s upravenými údajmi o sieti, používateľoch a rolách.
 
@@ -106,7 +106,7 @@ Administrátor taktiež môže sieť vymazať. \ref{usecase1}
 \begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=6cm]{img/dp_usecase_1_register.png}
-	\caption{Prípad použitia - Registrácia koncového bodu}
+	\caption{Prípad použitia - Registrácia modelu}
 	\label{usecase1}
 \end{figure} 
 
@@ -132,10 +132,10 @@ Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy 
 
 Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí, každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.  
 
-Softvér sa bude skladať z troch hlavných služieb: generátor, koncový bod a autentifikačná služba.
+Softvér sa bude skladať z troch hlavných služieb: generátor, relay bod a autentifikačná služba.
 \begin{itemize}
-	\item Generator je služba, ktorá bude registrovať a zostavovať koncové body. Je to služba, na ktoú sa pripojí adiministátor, zadá štruktúru siete a zoznam používateľov a rolí. Táto služba následne zaregistuje používateľov a ich roly, vygeneruje kód pre službu koncového bodu a túto služnu spustí.
-	\item Endpoint je služba, ktorá obsahuje vygenerovaný kód koncových bodov. Táto služba bude poskytovať dokumentáciu dostupných konových bodov. bude poskytovať samotné koncové body aprizavolaní koncového bodu sa bude starať o validáciu prijatých dát.
+	\item Generator je služba, ktorá bude registrovať a zostavovať koncové body. Je to služba, na ktoú sa pripojí adiministátor, zadá štruktúru siete a zoznam používateľov a rolí. Táto služba následne zaregistuje používateľov a ich roly, vygeneruje kód pre službu relay a túto služnu spustí.
+	\item Relay je služba, ktorá obsahuje vygenerovaný kód koncových bodov. Táto služba bude poskytovať dokumentáciu dostupných konových bodov. bude poskytovať samotné koncové body a pri zavolaní koncového bodu sa bude starať o validáciu prijatých dát.
 	\item Autentifikačná služba sa stará o autentifikáciu používateľov a pridelovanie rolí použivateľom
 	\item Gateway služba poskytuje rozhranie medzi internetom a našou doménou. Vonkajšiemu svetu prezenuje len služby kroé majú byť dostupné z internetu. Zároveň poskytuje funkcionalitu load balancera.
 \end{itemize}
@@ -240,12 +240,10 @@ tento nástroj vygeneruje zip súbor so založeným projektom vo frameworku Spri
 Vygenerovať túto službu je cieľom našej prace. Po vygenerovaní koncových bodov pre dané procesné modely bude táto služba prijmať požiadavky od klientov, autorizované požiadavky od klientov validovať a následne preposielať na procesný server. Okrem toho bude poskytovať dokumentáciu k daným koncovým bodom.
 
 Pred tým ako vygenerujme konceové body špecifické pre daný procesný model, je relay service iba prázby Spring Boot kontainer so základnou konfiguráciou. Pre poskytnutie základnej funkcionality webového koncového bodu obsahuje kontainer balíček Spring Web Starter \cite{webstarter}, tento balíček poskytuje funkcionalitu, ktorá umožnuje pomocou anotácií mapovať funkcie tried na rôzne \acrshort{url}, špecifikovať, HTTP metódu, dátové polia vstupu a formát výstupu. Tieto mapovania následne oživí pomocou priloženeého webového servera Apache Tomcat \cite{tomcat}
-%todo ref URL
 
 
-Na poskytnutie dokumentácie vo formáte OPEN api 3.0 využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne vyprezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktoymi sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Tieto anotácie si bližšie priblížíme v kapitole 
+Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi3} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne vyprezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktoymi sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Tieto anotácie si bližšie priblížíme v kapitole 
 %todo v akej kapitole?
-%todo ref open API3.0 
 
 Na poskytnutie základnej validácie vstupov použijeme regulérne výrazy a formáty vstupov
 
@@ -262,10 +260,8 @@ generovanie kódu
 a spustenie inštancií relay service.
 
 \subsubsection{Prijatie požiadavky}
-Pre funkciu pridania požiadavky je v našom systéme vyhradená základná URL "/[POST]", na tejto URL je funkcia, ktorá berie ako parametre súbor s procesným modelom, súbor s používateľmi a unikátny identifikátor siete. Súbor s modelom je v štandatrnom formáte Petriflow. Súbor s používateľmi je vo fmáte XML so štruktúrou popísanou XSD súborom v prílohe. Na príklade tohto súboru je v ukážke kódu \ref{alg:example_users} môžeme vidieť že súbor obsahuje zoznam používateľov s menom, heslom a zoznamom ich rolí.  
-%todo XSD users to attachments 
+Pre funkciu pridania požiadavky je v našom systéme vyhradená základná URL "/[POST]", na tejto URL je funkcia, ktorá berie ako parametre súbor s procesným modelom, súbor s používateľmi a unikátny identifikátor siete. Súbor s modelom je v štandatrnom formáte Petriflow. Súbor s používateľmi je vo fmáte \acrshort{xml} so štruktúrou popísanou \acrshort{xsd} súborom v prílohe \ref{att:xsd}. Na príklade tohto súboru je v ukážke kódu \ref{alg:example_users} môžeme vidieť že súbor obsahuje zoznam používateľov s menom, heslom a zoznamom ich rolí.  
 %TODO cite petriflow
-%TODO not working ferefence
 
 
 
@@ -304,22 +300,19 @@ Okrem požiadavky na pridanie siete môže administrátor spustit aj požiadavku
 
 
 \subsubsection{Čítanie súborov Petriflow a súborov s používateľmi}
-Na čítanie XML súborov používame štandartnú knižnicu JAXB \cite{jaxb} %TODO cite jaxb
-Táto knižnica podľa XSD súborov vygeneruje triedy, so rovnakou štruktúrou ako majú entity v XML.
+Na čítanie \acrshort{xml} súborov používame štandartnú knižnicu JAXB \cite{jaxb}. Táto knižnica podľa \acrshort{xsd} súborov vygeneruje triedy, so rovnakou štruktúrou ako majú entity v \acrshort{xml}.
 Vygenerovali sme teda dva balíky, jeden balík s triedamy v jazyku java z definície Petrfilow a jeden s triedami z definície nášho súboru s používateľmi. 
-%TODO GLossary XSD, XML
-Následne pri čítaní súborov použijeme triedu Unmarshaller balíka JAXB, ktorý prečíta textový súbor XML a vráti java objekty s dátami zo súborov. Keďže jazyk kotlin, v kotom pracujeme je plne kompatibilný s jazykom java, s týmito objektami môžeme ďalej pracovať ako so štandartnými kotlin dátovymi objekatmi.
+Následne pri čítaní súborov použijeme triedu Unmarshaller balíka JAXB, ktorý prečíta textový súbor \acrshort{xml} a vráti java objekty s dátami zo súborov. Keďže jazyk kotlin, v kotom pracujeme je plne kompatibilný s jazykom java, s týmito objektami môžeme ďalej pracovať ako so štandartnými kotlin dátovymi objekatmi.
 
 \subsubsection{Registrácia používateľov}
 Keď už máme dáta s používateľmi a modelom, zaregistujeme používateľov do našej autentifikačnej služby.
 Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Servsu poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore.
 
 \subsubsection{Generovanie kódu}
-Následne vygenerujeme kód koncových bodov.  
+Následne vygenerujeme kód koncových bodov. 
 
 
 \subsubsection{Git}
-%todo .gitignore
 \subsubsection{Gradle}
 \subsubsection{Kotlin poet}
 

@@ -1,10 +1,35 @@
-\file{/CHANGELOG.md}{file describing changes made to FEIstyle}
-\file{/example.tex}{main example $.tex$ file for diploma thesis}
-\file{/example\_paper.tex}{example $.tex$ file for seminar paper}
-\file{/Makefile}{simply Makefile -- build system}
-\file{/fei.sublime-project}{is project file with build in Build System for Sublime Text 3}
-\dir{/img}{folder with images}{}
-\dir{/includes}{files with content}{
-	\file{/bibliography.bib}{bibliography file}
-	\file{/attachmentA.tex}{this very file}
-}
+\begin{lstlisting}[language=XML]
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified"
+	elementFormDefault="qualified"
+	version="1.1.0">
+	<!-- ===== DOCUMENT ELEMENTS ===== -->
+	<xs:element name="user">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="role" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute type="xs:string" name="name" use="required"/>
+			<xs:attribute type="xs:string" name="password" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="role">
+		<xs:complexType>
+			<xs:attribute type="xs:string" name="id" use="required"/>
+			</xs:complexType>
+		</xs:element>
+	<!--    ===== DOCUMENT ======-->
+	<xs:element name="document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="user" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
+\end{lstlisting}
+
+
