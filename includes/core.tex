@@ -15,7 +15,7 @@
   
 \subsection{Petriflow} % not called Petriflow 
 \cite{petriflow_clanok}
-Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznisových procesov. Bol vyvinutý Spoločnosťou Netgrif na základe dlhodobých skúseností s klientami, ktorý pomocou tohto formalizmu modelujú svoje biznis procesy, ktoré sú následne zavedené do používania. 
+Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznisových procesov. Je vvyíjaný spoločnosťou Netgrif na základe dlhodobých skúseností s klientami, ktorý pomocou tohto formalizmu modelujú svoje biznis procesy, ktoré sú následne zavedené do používania. 
 %TODO bleh
 %TODO komu dat credit?
 %TODO cite diplomka
@@ -24,7 +24,7 @@ Roly definujú kto je oprávnený spúšťať rôzne prechody.
 Dátové polia definujú štruktúru dát ktoré každá inštanica procesu obsahuje počas svojho behu.
 Akcie definujú vsťahy a interakcie medzi jednotlivými dátovými poliami a prechodmi.
 
-V klacických petriho sieťach je spustenie prechodu vždy atomická operáci. Petriflow obsahuje 2 typy prechodov udalostné precohdy, ktoré sú rovnako ako v klasických PN sieťach atomické, avšak vždy ich spúšťa nejaká osoba(používaťeľ) v systéme. Druhý typ prechodu je úloha. Úlohu môžeme vnímať ako podsieť na obrázku \ref{task}. Na začiatku je úloha nepridelená, ako prvý krok je potrebné ju niekomu (aj sebe) prideliť. Následne môže toto pridelenie zrušiť, prideliť inej osobe, alebo úlohu dokončiť
+V klacických petriho sieťach je spustenie prechodu vždy atomická operáci. Petriflow obsahuje 2 typy prechodov udalostné precohdy, ktoré sú rovnako  ako v klasických PN sieťach atomické, avšak vždy ich spúšťa nejaká osoba(používaťeľ) v systéme. Druhý typ prechodu je úloha. Úlohu môžeme vnímať ako podsieť na obrázku \ref{task}. Na začiatku je úloha nepridelená, ako prvý krok je potrebné ju niekomu (aj sebe) prideliť. Následne môže toto pridelenie zrušiť, prideliť inej osobe, alebo úlohu dokončiť
 %todo - permission to assign/cancel/delegate/finish
 
 
@@ -124,8 +124,7 @@ Keď už sú sieť aj používateľia úspešne zaregistrovaný, si môžu použ
 Používateľia s príslušnými rolami môžu taktie spúšťať \ref{usecase2} prechody. Pri spustení prechodu poskytne používateľ dátové polia potrebné na spustenie prechodu. 
 
 \subsubsection{Autentifikácia}
-Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy sa neautentifikovaný používateľ autentifikuje, aby nadobudol identitu rozpoznanú našim systémom. 
-
+Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy sa používateľ autentifikuje, aby nadobudol identitu rozpoznanú našim systémom a boli mu pridelené roly. 
 
 
 \subsection{Architektúra} 
@@ -137,7 +136,7 @@ Softvér sa bude skladať z troch hlavných služieb: generátor, relay bod a au
 	\item Generator je služba, ktorá bude registrovať a zostavovať koncové body. Je to služba, na ktoú sa pripojí adiministátor, zadá štruktúru siete a zoznam používateľov a rolí. Táto služba následne zaregistuje používateľov a ich roly, vygeneruje kód pre službu relay a túto služnu spustí.
 	\item Relay je služba, ktorá obsahuje vygenerovaný kód koncových bodov. Táto služba bude poskytovať dokumentáciu dostupných konových bodov. bude poskytovať samotné koncové body a pri zavolaní koncového bodu sa bude starať o validáciu prijatých dát.
 	\item Autentifikačná služba sa stará o autentifikáciu používateľov a pridelovanie rolí použivateľom
-	\item Gateway služba poskytuje rozhranie medzi internetom a našou doménou. Vonkajšiemu svetu prezenuje len služby kroé majú byť dostupné z internetu. Zároveň poskytuje funkcionalitu load balancera.
+	\item Gateway služba poskytuje rozhranie medzi internetom a našou doménou. Vonkajšiemu svetu prezenuje len služby ktoré majú byť dostupné z internetu. Zároveň poskytuje funkcionalitu load balancera. 
 \end{itemize}
 
 
@@ -150,8 +149,9 @@ Softvér sa bude skladať z troch hlavných služieb: generátor, relay bod a au
 
 
 \subsection{Bezpečnosť}
-Jednou z hlavných poržiadaviek na každé aplikačné rozhranie je bezpečnosť 
-%Autentifika, DOS, 
+Autentifikáciu v našej aplikácií budeme rieiť pomocou štandartnej knižnice, ktorá poskytuje \acrshort{oauth}. Táto služba bude bežať v samostatnom kontainery a prístup do nej bude len pomocou protokolu oAuth na overovanie klientov a prostredníctvom interného volania na registráciu používateľov.
+Ochrana pred neoprávneným prístupom bude dalej relaizovaná pomocou služby gateway. Táto služba bude jediný bod ako sa dá pristúpiť do našej domény z internetu. Služba bude povoľovať len dotazy ktoré špecfikujeme. Ochrana proti neopávnenému prístupu bude taktie realizovaná na vrstve operačného systému pomocou firewallu.
+Ochrana proti \acrshort{dos} útokom bude taktiež realizovaná pomocou gateway služby. Táto služba bude slúžiť ako load balancer, a rovnomerne rozdeľovať dotazy medzi inštancie relay servisu tak, aby boli rovnomerne vyťažené. Služba Gateway bude taktie poskytovať ochranu proti priveľkému počtu dotazov od jedného klienta(rate limiting).
 
 
 \section{Implementácia} 
@@ -171,7 +171,7 @@ Medzi jeho hlavné výhody patrí menší boilerplate (menej zbytočného kódu)
 
 
 
-\begin{lstlisting}[caption={Ukážka funkcie typov v jazyku Kotlin},label={alg:preview},language=Kotlin]
+\begin{lstlisting}[float, caption={Ukážka funkcie typov v jazyku Kotlin},label={alg:preview},language=Kotlin]
 
 fun maybeGetString():String? // returns null or String
 
@@ -256,17 +256,15 @@ Tento servis je základný satavený kameň nášho rozhrania, jeho úlohou je n
 prijatie požiadavky, 
 čítanie súborov Petriflow a súborov s používateľmi, 
 registácia používateľov,
+príprava repozitára,
 generovanie kódu 
-a spustenie inštancií relay service.
+a kompilácia a spustenie relay.
 
 \subsubsection{Prijatie požiadavky}
-Pre funkciu pridania požiadavky je v našom systéme vyhradená základná URL "/[POST]", na tejto URL je funkcia, ktorá berie ako parametre súbor s procesným modelom, súbor s používateľmi a unikátny identifikátor siete. Súbor s modelom je v štandatrnom formáte Petriflow. Súbor s používateľmi je vo fmáte \acrshort{xml} so štruktúrou popísanou \acrshort{xsd} súborom v prílohe \ref{att:xsd}. Na príklade tohto súboru je v ukážke kódu \ref{alg:example_users} môžeme vidieť že súbor obsahuje zoznam používateľov s menom, heslom a zoznamom ich rolí.  
+Pre funkciu pridania požiadavky je v našom systéme vyhradená základná URL "/[POST]", na tejto URL je funkcia, ktorá berie ako parametre súbor s procesným modelom, súbor s používateľmi a unikátny identifikátor siete. Súbor s modelom je v štandatrnom formáte Petriflow. Súbor s používateľmi je vo fmáte \acrshort{xml} so štruktúrou popísanou \acrshort{xsd} súborom v prílohe \ref{att:xsd}. Tento XSD súbor je poskytnutý aj v rámci dokumentácie v \acrshort{openapi3}. Na príklade súboru v ukážke kódu \ref{alg:example_users} môžeme vidieť že súbor obsahuje zoznam používateľov s menom, heslom a zoznamom ich rolí.
 %TODO cite petriflow
 
-
-
-
-\begin{lstlisting}[caption={Príklad súboru s používateľmi},label={alg:example_users},language=XML]
+\begin{lstlisting}[float, caption={Príklad súboru s používateľmi},label={alg:example_users},language=XML]
 
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./users_schema.xsd">
@@ -308,25 +306,124 @@ Následne pri čítaní súborov použijeme triedu Unmarshaller balíka JAXB, kt
 Keď už máme dáta s používateľmi a modelom, zaregistujeme používateľov do našej autentifikačnej služby.
 Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Servsu poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore.
 
+\subsubsection{Príprava repozitára}
+Na spustenie Spring boot kontainera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kodu sitahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripavený Spring Boot projekt s podporou pre Kotlin do kotrého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame kližnicu JGit \cite{jgit} čo je implentácia git klienta v jazyku java.
+
+Funkcia na ppípravu repozitára najprv skontroluje či v dočasnom priečinku už repozitár neexistuje, ak existuje zavolá jgit ekvivalent funkcie "git reset origin/master" čím resetne lokálne súbory na aktuálnu verziu z repozitára. Súbory obiagnuté v .gitignore sa ponechajú bez zmeny, a tým pádom akékoľvek cache súbory z predošlej kompilácie ostatnú nedotknuté čo urýchli kompiláciu kódu. Ak git reset z nejakého dôvodu zlyhá, funkcia vymže akékoľvek pozostatky súborov v dočasnom priečinku a repozitár znovu naklonuje.
+
 \subsubsection{Generovanie kódu}
-Následne vygenerujeme kód koncových bodov. 
+Keď už je porjetk stiahnuyý a pripravený môžemezačať s generovaním kódu koncových bodov. Na generovanie kódu  využívame knižnicu kotlipoet \cite{kotlipoet}. Táto knižnica nám poskytuje nástroje na generovanie kódu v jazyku Kotlin. Tieto nástroje pozostávajú z builder funkcií, pomocou ktorých vieme vyskladať komplexný, syntakticky správny kód.
+
+Najprv pre každy procesný model vygenerujeme vlastnú triedu. Túto triedu vygenerujeme s nasledovnými anotáciami:
+\begin{itemize}
+	\item @Controller Zabezpečuje spustenie funkcionality HTTP controllera 
+	\item @EnableResourceServer Zabezpečuje funkclionalitu autentifikácie pre danú triedu
+	\item @RequestMapping Pridá pred predponu s ID siete pred URL koncových bodov danej triedy
+\end{itemize}
+Následne vygenerujeme samotné funkcie triedy. Pre každý prechod v procesnom modeli vygenerujeme šesť funkcií. každá z nich reprezentuje jednu operáciu, ktorú môžeme s prehodom(úlohou) podľa Petriflow robiť. 
+Jednoduché funkcie sú assign, cancel a finish tieto funkcie sú na svojích URL podľa návrhu, nemajú žiadne parametre a pokiaľ nenastane chyba vracajú prázdnu odpoveď. Do tela funkcie pridáme príslušné volanie volanie na procesný server. Na ukážke kódu \ref{alg:generated_assign} vidíme vygenerovaný kód pre fukciu assign. Kód funkcií cancel a finish je analogický 
+
+\begin{lstlisting}[float, caption={Príklad vygenerovanej funkcie},label={alg:generated_assign},language=Kotlin]
+	@PostMapping("1/{instanceId}/assign")
+	@RolesAllowed("ROLE_EXAMPLE_CLIENT")
+	@ApiOperation(
+			value = "Transition1",
+			notes = "Allowed roles: [ROLE_EXAMPLE_CLIENT]"
+	)
+	fun assign1(@PathVariable("instanceId") instanceId: String): ResponseEntity<String> {
+		processServerRequest.assign("Example","1",instanceId)
+		return ResponseEntity("", OK)
+	}
+\end{lstlisting}
 
 
-\subsubsection{Git}
-\subsubsection{Gradle}
-\subsubsection{Kotlin poet}
+Funkcia View, navyše vracia objekt s dátami ktoré sa na danom prechodev danej inštancií nachádazjú. na ukážke kódu \ref{alg:generated_view} vidíme ukážku vygenerovaného koncového bodu pre View
 
 
-\subsection{Autentifikácia}
+\begin{lstlisting}[float, caption={Príklad vygenerovanej funkcie},label={alg:generated_view},language=Kotlin]
+	@GetMapping("1/{instanceId}/view")
+	@RolesAllowed("ROLE_EXAMPLE_CLIENT")
+	@ApiOperation(
+			value = "Transition1",
+			notes = "Allowed roles: [ROLE_EXAMPLE_CLIENT]"
+	)
+	fun view1(@PathVariable("instanceId") instanceId: String): get1Result {
+		return processServerRequest.get("Example","1",instanceId)
+	}
+	
+	}
+\end{lstlisting}
+
+
+
+
+%TODO ref api structure
+Zložitejšia funkcia je data. Táto funkcia používateľovi umožnuje poslať dáta pre dátové polia prechodov. 
+Tejto funkcii vygenerujeme toľko vstupných argumentov koľko dátových polí sa v prechode nachádza. Argumenty, okrem vstupných súborov, vygenerujeme typu String a následne do tela funkcie vygenerujeme validačný kód, ktorý pomocou regulárnych výrazov validuje tieto reťazce. Pre dátový typy enum a multichoice generujeme regulárny výraz podľa možností z definície poľa v Petriflow. Pre polia s typom date používame regulárny výraz pre dátum podľa štandartu ISO 8601. v prípade, že jedno alebo viac polí nemá správny formát alebo sa nebolo poskytnuté a je povinné vrátime používateľovi HTTP chybu 400 s výpisom v ktorých poliach je chyba.
+
+Pri vstupných súboroch a poliach s typom string sa kontroluje iba ich prítomnosť, ak sú povinné.
+
+Na ukážke kódu \ref{alg:generated_endpoint} vidíme príklad vygenerovanej funkcie.
+
+Po vygenerovaní kódu uložíme súbory tried do priečinka v našom dočasnom priečinku v ktorom je inicializovaná Spring Boot aplikácia.  
+
+\begin{lstlisting}[float, caption={Príklad vygenerovanej funkcie},label={alg:generated_endpoint},language=Kotlin]
+
+    @PostMapping("35/{instanceId}/data")
+    @RolesAllowed("ROLE_EXAMPLE_CLIENT")
+    @ApiOperation(
+            value = "Transition35",
+            notes = "Allowed roles: [ROLE_EXAMPLE_CLIENT]"
+    )
+    fun data35(
+            @PathVariable("instanceId") instanceId: String,
+            @RequestParam(value = "floor") @ApiParam(required = true) floor: String,
+            @RequestParam(value = "type") @ApiParam(required = true, allowableValues = """[House, Flat,
+                Bungalow, Cabin]""") type: String,
+            @RequestParam(value = "years", defaultValue = "") @ApiParam(required = false) years: String,
+            @RequestParam(value = "photo", defaultValue = "") @ApiParam(required = false)
+            photo: MultipartFile
+    ): ResponseEntity<String> {
+        val errors = mutableListOf<String>()
+        if (!Regex("\\d+").matches(floor)) {
+            errors.add("""floor should match \d+""")
+        }
+        if (!Regex("House|Flat|Bungalow|Cabin").matches(type)) {
+            errors.add("""type should match House|Flat|Bungalow|Cabin""")
+        }
+        if (years != "" && !Regex("\\d+").matches(years)) {
+            errors.add("""years should match \d+""")
+        }
+        if (errors.isNotEmpty()) {
+            return ResponseEntity(errors.toString(), BAD_REQUEST)
+        }
+        processServerRequest.data("Example",
+                "35",
+                instanceId,
+                mapOf("floor" to floor, "type" to type, "years" to years, "photo" to photo
+                ))
+        return ResponseEntity("", OK)
+    }
+\end{lstlisting}
+
+\subsubsection{Kompilácia a spustenie relay}
+Po uložení vygenerovaných tried do správneho priečinka môžeme spustit príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód skompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy relay servisu a spúšťame príkaz "gradle bootRun" ktorý spustí skompilovaný relay servis. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií relay servisu. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby. 
+
+
+\subsection{Auth Service}
+V našom systéme sme sa rozhodli implementovať Autorizačný protokol \acrshort{oauth}, to znamená, že musíme niekde držať profily používateľov a pristupové tokeny. Práve na toto slúži náš auth service.
+
+Na implementáciu autorizačného servera, ktorý dokáže spolupracovať so zvyškom nášho systému sme použili balíček Spring Cloud Security \cite{cloud_security}. Tento balíček podobne ako Spring Boot Security poskytuje základnú funkcionalitu umožnujúcu sa prihlásiť pomocou mena,hesla, alebo aj \acrshort{oauth} a uskladnenie rofilov oužívateľov, navyše však poskytuje funkcionalitu ktorá umožnuje jednému kontajneru byť autorizačný server a ostatným byt tzv resource servre. 
+Autentifikáciu má na starosti len autorizačný server. Ak sa chce používateľ autentifikovať jeho dopyt je presmerovaný na autorizačný server a tento mu v prípade poskytnutia správnych prihlasovacích údajov udelí autorizáciu(v prípade \acrshort{oauth} je to autorizačný token). 
+Resource server, nedrží informácie o používateľoch, ak však prijde dopyt na funkciu, ktorá si vyžaduje autorizáciu, vie tento dopyt autorizovať s pomocou autorizačného servra.
+
+Na spustenie autorizačného servra stačí importovať balíky  Spring Cloud Security a Spring Cloud OAuth, napísať základnú konfiguráciu a autorizačný server sa dá spustiť. 
+
+Na integráciu so zvyškom nášho systému sme importovali tieto balíky aj do ostatných servisov a v prípade, kedy si funkcionalita vyžiadala autorizáciu  pridali sme potrebné anotácie. Aby sme dosiahli granuláŕnu kontrolu nad prístupom k funkcionalite, pku každej funkcií sme špecifikovali aké roly k nim majú prístup pomocou príslušnej anotácie.
+
+Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tokenov využili in memory store. To znamená, že sa pri každom reštarte auth servisu tieto informácie zmažú. Keďže však používame architektúru microservisov, a servisy sú od seba do veľkej miery nezávislé, nieje potrebné reštaartovať všetky servisy pri zmene jedného. Pri vývoji teda fakt, že používatelia boli uložený vo volatilnej pamäti nebol priveľkou prekážkou. Pre nasadenie systému do produkcie však bude nutné pridať do auth servisu perzistentné úložisko používateľov. 
  
-\subsection{Gateway} 
-
-
-
-
-  
-
- 
+\subsection{Gateway Service} 
 
   
 
