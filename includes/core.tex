@@ -98,7 +98,6 @@ Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie med
 Zo špecifikácie vyplývajú nasledovné interakcie používateľa s naším systémom. 
 
 
-
 \subsubsection{Registrácia modelu} 
 Prvý prípad použitia je registrácia modelu. Aktér ktorý môže registrovať modely je len administrátor. Pri tejto akcií administrátor poskytne nášmu systému informácie o štruktúre procesu vo formáte petriflow, zoznam používateľov im prislúchajúcich rolí v \acrshort{xml} a unikátny identifikátor siete.  
 
@@ -110,9 +109,8 @@ Administrátor taktiež môže sieť vymazať.
 \subsubsection{Získanie informácie o prechode} 
 Keď už sú sieť aj používatelia úspešne zaregistrovaný, si môžu používatelia, vyžiadať \ref{usecase2} informácie o prechode. Tieto informácie budú poskytnuté len používateľovi s rolou oprávnenou na čítanie dát z daného prechodu. 
 
-\subsubsection{Spustenie prechodu} 
-Používatelia s príslušnými rolami môžu taktiež spúšťať \ref{usecase2} prechody. Pri spustení prechodu poskytne používateľ dátové polia potrebné na spustenie prechodu.  
-
+\subsubsection{Vykonanie akcie na prechode} 
+Používatelia s príslušnými rolami môžu taktiež vykonávať akcie na prechodoch. Tieto akcie vyplývajú z definície petriflow a patrí medzi ne assign, delegate, cancel, a finish. Na každú z týchto akcií potrebuje používateľ mať opávnenie (rolu, ktorá je oprávnená vykonávať túto akciu), a každá z nich vyžaduje iné vstupné dáta. 
 
 \subsubsection{Autentifikácia} 
 Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy sa používateľ autentifikuje, aby nadobudol identitu rozpoznanú našim systémom a boli mu pridelené roly.  
@@ -132,6 +130,8 @@ Softvér sa bude skladať z troch hlavných služieb: generátor, relay bod a au
 	
 	\item Gateway služba poskytuje rozhranie medzi internetom a našou doménou. Vonkajšiemu svetu prezentuje len služby ktoré majú byť dostupné z internetu. Zároveň poskytuje funkcionalitu load balancera.  
 	
+	\item Service discovery je služba ktorá monitoruje stav všetkých ostatných kontainerov a vie poskytnúť informácie o stave systému, toto je potrebné na správnu operáciu load balancera.
+	
 \end{itemize} 
 
 \begin{figure}[!htbp] 
@@ -149,7 +149,33 @@ Ochrana pred neoprávneným prístupom bude ďalej realizovaná pomocou služby 
 
 Ochrana proti \acrshort{dos} útokom bude taktiež realizovaná pomocou gateway služby. Táto služba bude slúžiť ako load balancer, a rovnomerne rozdeľovať dotazy medzi inštancie relay servisu tak, aby boli rovnomerne vyťažené. Služba Gateway bude taktiež poskytovať ochranu proti priveľkému počtu dotazov od jedného klienta(rate limiting). 
 
+\subsection{Operácia systému} 
+Na diagrame \ref{api_operation} vidíme v horjen časti proces prihásenia používateľa a v dolnej časti vykonanie dopytu na procesný server. 
+
+Počas procesu prihlísenia používateľ najpv odošle dopyt na prihlásenie, gateway ho presmeruje na autorizačný servis a ten mu následne vráti autorizačný token.
+
+Proces dopytu na procesný server je zložitejší. Najprv klient pošle dopyt na náš systém, gateway ho nasmeruje na relay servis, ktorý si podľa autorizačného tokenu vypýta od auth servisu profil používateľa, pokial má rolu potrebnú na spustenie prechodu a dotaz je validný, odošle relay dopyt ďalej na procesný server. Odpoveď z procesného servra sa následne propaguje spať ku klientovi.
+ 
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=10cm]{img/api_operation.png} 
+	\caption{Operácia rozhrania} 
+	\label{api_operation} 
+\end{figure}
+
+
+Proces zmeny rozhrania ako môžeme vidieť na diagrame \ref{change_operation}.
+Po tom, čo snáš sytém prijme požiadavku na zmenu rozhrania, najprv vyčistí prostredie, a stiahne najnovšiu verziu relay servisu. Následne vygeneruje kód koncových bodov, a zostavovanie tohto kódu. Ak prebehlo zostavovanie kódu v proriadku, a teda vygenerovaný ód je validný, odošleme pokyn na zastavenie starého rozhrania a paralelne spustíme proces registrácie nových používateľov a spusenie nového rozhrania. Naše rozzhranie teda bude mať výpadok, len v období medzi vypnutím starej a zapnutím novej inštancie relay servisu.
+
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=10cm]{img/change_operation.png} 
+	\caption{Proces zmeny rozhrania} 
+	\label{change_operation} 
+\end{figure}
+
 \section{Implementácia}  
+V tejto kapitole najprv predstavíme technológiek ktoré sme použili pri implemenácií našeho systému,následne predstavíme jednotlivé časti nášho systému.
 
 \subsection{Použité technológie}  
 
@@ -158,29 +184,29 @@ Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krá
 
 Medzi jeho hlavné výhody patrí menší boilerplate (menej zbytočného kódu), a vylepšený systém typovania premenných. V Kotline  môžu byť premenné nulovateľné, to znamená, že kompilátor počíta s prípadom, že nulovateľná premenná ešte nie je inicializovaná. Kompilátor Kotlinu využíva pokročilú logiku na to, aby zistil v ktorých vetvách kódu premenné môžu obsahovať null a v ktorých nie. V prípade že podmienkou ošetríme nulový prípad kompilátor v druhej vetve programu zmení typ premennej tak, že už nie je nulovateľná \ref{alg:preview}. Teda v kóde(pokiaľ aktívne neobídeme typovú ochranu) nemôže nastať null pointer exception. 
 
+
 \begin{lstlisting}[ caption={Ukážka funkcie typov v jazyku Kotlin},label={alg:preview},language=Kotlin] 
-// returns null or String 
+// vráti null alebo String 
 fun maybeGetString():String? 
 
-// type: String? 
-val variable:String? = maybeGetString() 
+// typ String? - môže obsahovať null, nieje nutné typ explicitne definovať je inferovaný z výstupného typu finkcie
+val variable = maybeGetString() 
 
-// compile time error 
-variable.length 
+// nastane chyba pri kompilácií, lebo nieje ošetrený prípad, kedy je valiable null 
+print(variable.length) 
 
 if(variable == null){ 
 	variable = "" 
 } 
 
-// type: String
-// no compile time error
-variable.length  
+// nenastane chyba pri kompilácií, lebo bol ošetrný nulový priípad
+// typ String - už nemôže byť null, iba string
+print(variable.length)  
 \end{lstlisting} 
 
 
-Kotlin je jazyk ktorý sa dá buď transpilovať do jazyka java, alebo JavaScript, alebo sa dá kompilovať priamo do spustiteľného  binárneho súboru 
-
-pre všetky bežné Operačné systémy (Linux, Windows, ANdroid, iOS). My budeme používať Korlin kompilovaný do jazyka Java lebo nám to dovoľuje využívať výhody jazyka a zároveň využívať všetky knižnice, ktoré sú dostupné pre jazyk Java. 
+Kotlin sa dá buď transpilovať do jazyka java, alebo JavaScript, alebo sa dá kompilovať priamo do spustiteľného  binárneho súboru pe všetky bežné Operačné systémy (Linux, Windows, ANdroid, iOS). 
+My sme piužili Kotlin kompilovaný do jazyka Java lebo nám to dovoľuje využívať výhody jazyka a zároveň využívať všetky knižnice, ktoré sú dostupné pre jazyk Java. 
 
 \subsubsection{Gradle}  
 Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný zostaviť takmer ľubovoľný program. Podporuje jazyky ako java, C++ Python, a mnoho ďalších. V našom projekte sa gradle použijeme na manažment závislostí, kompiláciu kódu a spustenie samotného skompilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použitia ukázali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu zostavovania softvéru takže jeho výkon je pri opakovanej kompilácií vyšší. 
@@ -313,7 +339,6 @@ Keď už máme dáta s používateľmi a modelom, zaregistrujeme používateľov
 Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Servisu poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore. 
 
 
-
 \subsubsection{Príprava repozitára} 
 Na spustenie Spring boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit} čo je implementácia git klienta v jazyku java. 
 
@@ -321,22 +346,15 @@ Na spustenie Spring boot kontajnera treba okrem kódu so samotnými koncovými b
 Funkcia na prípravu repozitára najprv skontroluje či v dočasnom priečinku už repozitár neexistuje, ak existuje zavolá jgit ekvivalent funkcie "git reset origin/master" čím zmení lokálne súbory na aktuálnu verziu z repozitára. Súbory obsiahnuté v .gitignore sa ponechajú bez zmeny, a tým pádom akékoľvek cache súbory z predošlej kompilácie ostatnú nedotknuté čo urýchli kompiláciu kódu. Ak git reset z nejakého dôvodu zlyhá, funkcia vymaže akékoľvek pozostatky súborov v dočasnom priečinku a repozitár znovu naklonuje. 
 
 
-
 \subsubsection{Generovanie kódu} 
 Keď už je projekt stiahnutý a pripravený môžeme začať s generovaním kódu koncových bodov. Na generovanie kódu  využívame knižnicu kotlipoet \cite{kotlipoet}. Táto knižnica nám poskytuje nástroje na generovanie kódu v jazyku Kotlin. Tieto nástroje pozostávajú z builder funkcií, pomocou ktorých vieme vyskladať komplexný, syntakticky správny kód. 
-
-
 
 Najprv pre každý procesný model vygenerujeme vlastnú triedu. Túto triedu vygenerujeme s nasledovnými anotáciami: 
 
 \begin{itemize} 
-	
 	\item @Controller Zabezpečuje spustenie funkcionality HTTP controllera  
-	
 	\item @EnableResourceServer Zabezpečuje funkclionalitu autentifikácie pre danú triedu 
-	
 	\item @RequestMapping Pridá pred predponu s ID siete pred URL koncových bodov danej triedy 
-	
 \end{itemize} 
 
 Následne vygenerujeme samotné funkcie triedy. Pre každý prechod v procesnom modeli vygenerujeme šesť funkcií. každá z nich reprezentuje jednu operáciu, ktorú môžeme s prechodom(úlohou) podľa Petriflow robiť.  
@@ -384,15 +402,9 @@ Tejto funkcii vygenerujeme toľko vstupných argumentov koľko dátových polí 
 
 Pri vstupných súboroch a poliach s typom string sa kontroluje iba ich prítomnosť, ak sú povinné. 
 
-
-
 Na ukážke kódu \ref{alg:generated_endpoint} vidíme príklad vygenerovanej funkcie. 
 
-
-
 Po vygenerovaní kódu uložíme súbory tried do priečinka v našom dočasnom priečinku v ktorom je inicializovaná Spring Boot aplikácia.   
-
-
 
 \begin{lstlisting}[float, caption={Príklad vygenerovanej funkcie},label={alg:generated_endpoint},language=Kotlin] 
 @PostMapping("35/{instanceId}/data") 
@@ -426,14 +438,9 @@ fun data35(
 } 
 \end{lstlisting} 
 
-
-
 \subsubsection{Kompilácia a spustenie relay} 
 
 Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód skompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy relay servisu a spúšťame príkaz "gradle bootRun" ktorý spustí skompilovaný relay servis. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií relay servisu. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.  
-
-
-
 
 
 \subsection{Auth Service} 
