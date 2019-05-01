@@ -147,7 +147,7 @@ Autentifikáciu v našej aplikácií budeme riešiť pomocou štandardnej knižn
 
 Ochrana pred neoprávneným prístupom bude ďalej realizovaná pomocou služby gateway. Táto služba bude jediný bod ako sa dá pristúpiť do našej domény z internetu. Služba bude povoľovať len dotazy ktoré špecifikujeme. Ochrana proti neopevnenému prístupu bude taktiež realizovaná na vrstve operačného systému pomocou firewallu. 
 
-Ochrana proti \acrshort{dos} útokom bude taktiež realizovaná pomocou gateway služby. Táto služba bude slúžiť ako load balancer, a rovnomerne rozdeľovať dotazy medzi inštancie relay servisu tak, aby boli rovnomerne vyťažené. Služba Gateway bude taktiež poskytovať ochranu proti priveľkému počtu dotazov od jedného klienta(rate limiting). 
+Ochrana proti \acrshort{dos} útokom bude taktiež realizovaná pomocou gateway služby. Táto služba bude slúžiť ako load balancer, a rovnomerne rozdeľovať dotazy medzi inštancie relay servisu tak, aby boli rovnomerne vyťažené.
 
 \subsection{Operácia systému} 
 Na diagrame \ref{api_operation} vidíme v horjen časti proces prihásenia používateľa a v dolnej časti vykonanie dopytu na procesný server. 
@@ -458,6 +458,8 @@ Na integráciu so zvyškom nášho systému sme importovali tieto balíky aj do 
 
 Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tokenov využili in memory store. To znamená, že sa pri každom reštarte auth servisu tieto informácie zmažú. Keďže však používame architektúru mikroservisov, a servisy sú od seba do veľkej miery nezávislé, nie je potrebné reštartovať všetky servisy pri zmene jedného. Pri vývoji teda fakt, že používatelia boli uložený vo volatilnej pamäti nebol priveľkou prekážkou. Pre nasadenie systému do produkcie však bude nutné pridať do auth servisu perzistentné úložisko používateľov.  
 
+%todo expand auth service
+
 \begin{figure}[!htbp] 
 	\centering 
 	\includegraphics[width=10cm]{img/auth_operation.png} 
@@ -465,8 +467,87 @@ Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tok
 	\label{auth_operation} 
 \end{figure}  
 
+\subsection{Service Discovery}
+Service discovery je služba ktorá sleduje stav ostatných zlužieb a vie zabezpečiť koordináciu komunikácie medzi jednotlivými kontajnermi v cloudovom riešení. V našom systéme implementujeme service discovery ako spring boot kontajner s baličkom Netflix Eureka \cite{eureka}. Nastavenie tohto balička si vyžaduje len importovať závislosť, použiť anot @EnableEurekaServer a nastaviť port servera, v našom prípade je to štandartný port 7777 a hostname eurka servra.
+
+Na to aby sa ostatné kontajnery zahlásili do service discovery sme importovali v nich balíček Netflix Eureka Client, použili anotáciu @EnableDiscoveryClient a nastavili port, na ktorom sa nachádza discovery servis. Na to aby sme vedeli rizlíšiť typ servisu, ktorý sa pripája na service discovery je ešte potrebné zadať do konfigurácie meno servisu. 
+Na ukážke kódu \ref{alg:eureka_config} vidíme príklad konfigurácie eureka servra a klienta.
+
+
+\begin{lstlisting}[float, caption={Konfigurácia Eureka servra a klienta},label={alg:eureka_config},language=yaml]
+# Eureka server
+server:
+  port: 7777
+  eureka:
+	instance:
+	  hostname: localhost
+			
+# Discovery client	
+spring:
+  application:
+	name: generator-service
+eureka:
+  client:
+	serviceUrl:
+	  defaultZone: "http://localhost:7777/eureka"
+\end{lstlisting} 
+
+
+Po správnej inicializácií servera a klientov je na porte 7777 dostupná stránka s grafickým rozhraním. Na obrázku \ref{eureka_gui} vidíme screenshoot tejto obrazovky v našom testovacom prostredí. na obrázku vidíme základné infomrácie o servri a tabuľku so zaregistrovanými kontajnermi nášho rozhrania. Vidíme, že na porte 8088 beží auth servis, na porte 8080 beží gateway, na porte 8081 beží generátor a na portoch 8082-8085 bežia štyri inštancie relay servisu.
+
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=16cm]{img/eureka_gui.png} 
+	\caption{Užívateľské rozhranie Spring Eureka} 
+	\label{eureka_gui} 
+\end{figure}
+
 
 \subsection{Gateway Service}  
+Gateway service je rovnako ako ostatné servisy implementovaný ako Spring boot aplikácia s pridaným balíkom Spring Cloud Gateway \cite{cloud_gateway}, ktorý zabezpečuje funkcionalitu routingu a load balancera. 
+Na spustenie základnej funkcionality routingu v tomto príade netreba použiť žiadnu anotáciu, ztačí len zadefinovať trasy a knim prilúchajúce filtre. Na ukážke kódu \ref{alg:gateway_config} vidíme konfiguráciu nášho gateway servisu. Na začiatku je definovaný port na ktorom počúva server, tento port je jediný port, ktorý bude prístupný vonkajsiemu svetu.
+
+
+\begin{lstlisting}[float, caption={Konfigurácia Gateway servisu},label={alg:gateway_config},language=yaml]
+server:
+  port: 8080
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7777/eureka/
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: register_route
+          uri: "http://localhost:8081/"
+          predicates:
+            - "Path=/"
+        - id: auth_route
+          uri: "http://localhost:8088/oauth/"
+          predicates:
+            - "Path=/oauth/**"
+        - id: get_user_route
+          uri: "http://localhost:8088/user"
+          predicates:
+            - "Path=/user"
+        - id: endoint_route
+          uri: "lb://RELAY-SERVICE/"
+          predicates:
+            - "Path=/**"
+\end{lstlisting} 
+
+Prvá \acrshort{url} ktorú máme v konfigurácií zadefinovnú je "/". Táto \acrshort{url} obsahuje funkcie obsluhu nášho rozhrania táto URL je smerovaná na generator service na porte 8081.
+Nasledujúce dve trasy smerujú na Auth servis na porte 8088. Prvá obluhuje dopyty na autentifikáciu cez \acrshort{oauth}, druhá smeruje dopyt na získanie inforácií o aktuálnom používateľovi.
+
+Posledná trasa smeruje všetky ostatné dopyty na relay servis. Ako môžeme vidieť URI cieľovej služby nieje s protokolom HTTP a portom na ktorom je lsužba a ale s protokolom lb a menom služby. Takáto notácia nám umožňuje využiť load balancer balíka Spring Cloud Gateway. Na to aby sme mohli využivať tento protokol musíme ešte nakonfigurovať spojenie so službou service discovery. Ak povolíme možnosť discovery locator, náš gateway servis si vypýta od service discovery informácie o lokácií služieb v našom cloudovom riešení a následne sme schopní adresovať ich pomocoum mena, namiesto URI, a môžeme využívať možnosti load balancera. Load balancer sa dá nastaviť aj aby so statickým zoznamom URI jednotlivých inštancí služieb, riešenie cez service discovery locator sa však ukázalo ako praktickejšie, keďže vie dynamicky reagovať na počet spustených inštancií.  
+
 
 
 \section{Testovanie}  
