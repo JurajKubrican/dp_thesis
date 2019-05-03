@@ -77,7 +77,7 @@ Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie med
 	
 	\item Rozhranie bude zabezpečené štandardnými bezpečnostnými prvkami 
 
-	\item Rozhranie bude bežať na serveri s operačným systémom Ubuntu 18.04.2 LTS Bionic Beaver poskytnutom Fakultou Elektrotechniky a Informatiky na Slovenskej Technickej Univerzite.   
+	\item Rozhranie bude bežať na serveri poskytnutom Fakultou Elektrotechniky a Informatiky na Slovenskej Technickej Univerzite v Bratislave.   
 	
 \end{enumerate}  
 
@@ -473,9 +473,34 @@ Na vizualizáciu tejto dokumentácie sme použili balík Swagger UI, ktorý na a
 	\label{swagger_ui} 
 \end{figure}
 
+V Swagger UI dokumentácií sa djú otvoriť jednotlivé konvocé body a prezrieť ich detajly. Na obrázku \ref{swagger_ui_endpoint} vidíme priklad detajlov koncvobého bodu finish pre prechod t1. V detajloch vidíme roly, ktoré daný koncový bod môžu použiť, dátové polia, ich typ a či sú povinné. Vidíme tam a aj pole instanceID, ktoré nieje pole z tela dopytu, ale parameter URL.
+ 
 
-Na poskytnutie základnej validácie vstupov použijeme regulárne výrazy a formáty vstupov 
-%TODO VALIDATION
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=16cm]{img/swagger_ui_endpoint.png} 
+	\caption{Ukážka vizualizácie dokumentácie kokrétneho koncového bodu} 
+	\label{swagger_ui_endpoint} 
+\end{figure}
+
+
+
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=16cm]{img/insomnia_400.png} 
+	\caption{Ukážka vizualizácie dokumentácie kokrétneho koncového bodu} 
+	\label{insomnia_400} 
+\end{figure}
+
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=16cm]{img/insomnia_200.png} 
+	\caption{Ukážka vizualizácie dokumentácie kokrétneho koncového bodu} 
+	\label{insomnia_200} 
+\end{figure}
+
+
+
 
 %TODO PN -> API
 %TODO Swagger screenshoot
@@ -590,6 +615,15 @@ Nasledujúce dve trasy smerujú na Auth servis na porte 8088. Prvá obsluhuje do
 
 Posledná trasa smeruje všetky ostatné dopyty na relay servis. Ako môžeme vidieť URI cieľovej služby nie je s protokolom HTTP a portom na ktorom je služba a ale s protokolom lb a menom služby. Takáto notácia nám umožňuje využiť load balancer balíka Spring Cloud Gateway. Na to aby sme mohli využívať tento protokol musíme ešte nakonfigurovať spojenie so službou service discovery. Ak povolíme možnosť discovery locator, náš gateway servis si vypýta od service discovery informácie o lokácií služieb v našom cloudovom riešení a následne sme schopní adresovať ich pomocou mena, namiesto URI, a môžeme využívať možnosti load balancera. Load balancer sa dá nastaviť aj aby so statickým zoznamom URI jednotlivých inštancii služieb, riešenie cez service discovery locator sa však ukázalo ako praktickejšie, keďže vie dynamicky reagovať na počet spustených inštancií.   
 
+\subsection{Platforma}
+Platforma na ktorú sme nasadzovali náš systém je server poskytnutý Fakultou Elektrotechniky a Informatiky na Slovenskej Technickej Univerzite v Bratislave s operačným systémom Ubuntu 18.04.2 LTS Bionic Beaver. Na nasadenie potreujeme na server doinštalovať balíček git a oracle-java8-installer. 
+
+Pomocou gitu stiahneme repozitár \cite{dp_repo} s aktuálnou verziou nášho systému. Na zkompilovanie a spustenie programu je potrebné spustit skript "run.sh" ktorý sa nachádza v priečinku repozitára. Tento skript stiahne Gradle 5.4.1, A postupne nainštaluje a spustí všetky kontajnery nášho systému. Na zaručenie behu všetkých kotnajnerov je potrebných minimálne 8GB voľnej operačnej pamäte. Proces kompilácie a spúšťania kontajnerov je výpočtovo náročný a na serveroch so štyrmi a menej jadrami môže trvať viac ako 3 minúty. Pri prvom spustení si bude inštalačný skript sťahovať závislosti, preto tento proces môže trvať ešte dlhšie. 
+
+Prednastavený port na ktorom počúva gateway servis je 8080. Pre správnu operáciu rozhrania treba tento port povoliť cez firewall servera. Tento port sa dá nastaviť v subore /gateway/src/resources/application.yml.
+
+Na porte 7777 je vyprezentovane grafické rozhranie service discovery, tento port z bezpečnostných dôvodov neodporúčame povoliť cez friewall, namiesto toho na monitorovanie stavu systému odporúčame použiť ssh tunel pre tento port.
+ 
 
 \section{Testovanie} 
  
