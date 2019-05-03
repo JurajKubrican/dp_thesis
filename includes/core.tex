@@ -242,7 +242,7 @@ Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru
 
 
 \subsubsection{Spring boot}  
-Spring Boot je voľne šíriteľný framework založený na jazyku Java. Je vyvíjaný a udržiavaný tímom Pivotal. Je určený na vytváranie nezávislých, produkčných aplikácií a mikroservisov. Spring boot je robustná platforma so širokou podporou pre všetky štandardné operácie ktoré budeme potrebovať pri vývoji webového rozhrania. Poskytuje podporu pre vytváranie štandardných RESTful koncových bodov, ďalej poskytuje podporu pre štandardnú autentifikáciu pomocou \acrshort{oauth} a integráciu s  OpenAPI 3.0 \cite{openapi3} pomocou balíčka Swagger \cite{swagger} 
+Spring Boot je voľne šíriteľný framework založený na jazyku Java. Je vyvíjaný a udržiavaný tímom Pivotal. Je určený na vytváranie nezávislých, produkčných aplikácií a mikroservisov. Spring boot je robustná platforma so širokou podporou pre všetky štandardné operácie ktoré budeme potrebovať pri vývoji webového rozhrania. Poskytuje podporu pre vytváranie štandardných RESTful koncových bodov, ďalej poskytuje podporu pre štandardnú autentifikáciu pomocou \acrshort{oauth} a integráciu s  OpenAPI 3.0 \cite{openapi} pomocou balíčka Swagger \cite{swagger} 
 
 
 %Pri práci so Spring boot budeme využívať návrhové vzory:  
@@ -462,7 +462,7 @@ Vygenerovať túto službu je cieľom našej prace. Po vygenerovaní koncových 
 
 Pred tým ako vygenerujme koncové body špecifické pre daný procesný model, je relay service iba prázdny Spring Boot kontajner so základnou konfiguráciou. Pre poskytnutie základnej funkcionality webového koncového bodu obsahuje kontajner balíček Spring Web Starter \cite{webstarter}, tento balíček poskytuje funkcionalitu, ktorá umožňuje pomocou anotácií mapovať funkcie tried na rôzne \acrshort{url}, špecifikovať, HTTP metódu, dátové polia vstupu a formát výstupu. Tieto mapovania následne oživí pomocou priloženého webového servera Apache Tomcat \cite{tomcat} 
 
-Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi3} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne vyprezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotási patrí @ApiOperation, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a @ApiParam ktorú sme použili na pridanie informácií o parametroch týchto funkcií. 
+Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne vyprezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotási patrí @ApiOperation, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a @ApiParam ktorú sme použili na pridanie informácií o parametroch týchto funkcií. 
 
 Na vizualizáciu tejto dokumentácie sme použili balík Swagger UI, ktorý na adrese "/swagger-ui.html" poskytuje užívateľké rozhranie v ktorom možno vidiet jernotlivé triedy a koncové body vygenerované naším systémom. Na obrázku \ref{swagger_ui} vidíme vizualizovanú dokumentáciu pre jednu tieť s názvom Example, ktorá obsahuje jeden prechod T1 ku ktorému je vygenerovaných päť koncových bodov. Zároveň vidíme predvolené koncové body na registráciu procesov do systému.  
 
@@ -472,7 +472,6 @@ Na vizualizáciu tejto dokumentácie sme použili balík Swagger UI, ktorý na a
 	\caption{Ukážka vizualizácie dokumentácie Swagger UI} 
 	\label{swagger_ui} 
 \end{figure}
-
 
 
 Na poskytnutie základnej validácie vstupov použijeme regulárne výrazy a formáty vstupov 
