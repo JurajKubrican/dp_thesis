@@ -2,24 +2,12 @@
 
 \section{Analýza problému}  
 
-\subsection{Petriho siete} % not called Petriflow  
-Carl Adam Petri založil koncept Petriho sietí v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi - na Technickej Univerzite v Darmstadte. Ďalším výskumom sa z pôvodného konceptu ktorý bol určený na modelovanie analýzu komunikačných systémov vyvinul nástroj, ktorý sa používa naprieč mnohými oblasťami najmä na modelovanie paralelných a distribuovaných systémov.  
 
-Základné Petriho siete pozostávajú z prechodov, miest a hrán.  
+\subsection{Petriflow}
 
-%TODO rozumna definica PN 
-
-\subsection{Petriflow} % not called Petriflow  
-
-\cite{petriflow_clanok} 
+Carl Adam Petri založil koncept Petriho sietí v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi - na Technickej Univerzite v Darmstadte. Ďalším výskumom sa z pôvodného konceptu ktorý bol určený na modelovanie analýzu komunikačných systémov vyvinul nástroj, ktorý sa používa naprieč mnohými oblasťami najmä na modelovanie paralelných a distribuovaných systémov.
 
 Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznis procesov. Je vyvíjaný spoločnosťou Netgrif na základe dlhodobých skúseností s klientami, ktorý pomocou tohto formalizmu modelujú svoje biznis procesy, ktoré sú následne zavedené do používania.  
-
-%TODO bleh 
-
-%TODO komu dat credit? 
-
-%TODO cite diplomka 
 
 Formalizmus Petriflow rozširuje Petriho siete o ďalšie komponenty. Ako základ berie Petriho siete obohatené reset, inihibitor a read hrany. Aby sa dali modelovať moderné biznis procesy pridáva Petriflow do tohto modelu roly, dátové polia a akcie.  
 
@@ -29,9 +17,10 @@ Dátové polia definujú štruktúru dát ktoré každá inštancia procesu obsa
 
 Akcie definujú vzťahy a interakcie medzi jednotlivými dátovými poľami a prechodmi. 
 
-V klasických Petriho sieťach je spustenie prechodu vždy atomická operácia. Petriflow obsahuje 2 typy prechodov udalostné prechody, ktoré sú rovnako  ako v klasických PN sieťach atomické, avšak vždy ich spúšťa nejaká osoba(používateľ) v systéme. Druhý typ prechodu je úloha. Úlohu môžeme vnímať ako podsieť na obrázku \ref{task}. Na začiatku je úloha nepridelená, ako prvý krok je potrebné ju niekomu (aj sebe) prideliť. Následne môže toto pridelenie zrušiť, prideliť inej osobe, alebo úlohu dokončiť 
+V klasických Petriho sieťach je spustenie prechodu vždy atomická operácia. Petriflow obsahuje dva typy prechodov. Udalostné prechody, ktoré sú rovnako  ako v klasických PN sieťach atomické, avšak vždy ich spúšťa nejaká osoba(používateľ) v systéme. Druhý typ prechodu je úloha. Úlohu môžeme vnímať ako podsieť na obrázku \ref{task}. Na začiatku je úloha nepridelená, ako prvý krok je potrebné ju niekomu (aj sebe) prideliť. Následne môže toto pridelenie zrušiť, prideliť inej osobe, alebo úlohu dokončiť. My sa ďalej budeme zaoberať ľen úlohami. 
 
-%todo - permission to assign/cancel/delegate/finish 
+Keďže každá úloha je samostatná sieť so štyrmi prechodmi, musíme pre každú úlohu zadafinovať roly pre všetky štyri operácie úlohy.
+
 
 \begin{figure}[!htbp] 
 	\centering 
@@ -48,6 +37,11 @@ Keďže formalizmus Petriflow je schopný takýmto spôsobom popísať všetky i
 Ak by rozhranie držalo informáciu o značkovaní, a teda spustiteľnosti prechodov, mohol by nasať stav kedy aplikačné rozhranie je v stave, ktorý naznačuje, že prechod sa nedá spustiť no procesný server už je v stave, kedy je prechod spustiteľný. Kvôli udržaniu konzistencie dát a predídeniu race conditions nemôže aplikačné rozhranie držať informáciu o značkovaní a teda ani spustiteľnosti prechodu. 
 
 Aktuálna verzia Petriflow poskytuje relatívne granulárne informácie o autorizácií na vykonávanie akcií pomocou rolí, neobsahuje však introfmáciu o používateľoch ani o tom ktorý používateľ má pridelené aké roly. Na implementáciu funkčného aplikačného rozhrania teda bude nutné dorobiť systém ktorý túto informáciu bude obsahovať.  
+
+
+%TODO url structure
+
+
 
 \section{Špecifikácia}  
 
@@ -91,7 +85,7 @@ Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie med
 
 \section{Návrh}  
 
-% TODO - what have we done in this chapter?  
+
 
 
 \subsection{Prípady použitia} 
@@ -107,13 +101,43 @@ Administrátor taktiež môže sieť vymazať.
 
 
 \subsubsection{Získanie informácie o prechode} 
-Keď už sú sieť aj používatelia úspešne zaregistrovaný, si môžu používatelia, vyžiadať \ref{usecase2} informácie o prechode. Tieto informácie budú poskytnuté len používateľovi s rolou oprávnenou na čítanie dát z daného prechodu. 
+Keď už sú sieť aj používatelia úspešne zaregistrovaný, si môžu používatelia, vyžiadať informácie o prechode. Tieto informácie budú poskytnuté len používateľovi s rolou oprávnenou na čítanie dát z daného prechodu. 
 
 \subsubsection{Vykonanie akcie na prechode} 
 Používatelia s príslušnými rolami môžu taktiež vykonávať akcie na prechodoch. Tieto akcie vyplývajú z definície petriflow a patrí medzi ne assign, delegate, cancel, a finish. Na každú z týchto akcií potrebuje používateľ mať opávnenie (rolu, ktorá je oprávnená vykonávať túto akciu), a každá z nich vyžaduje iné vstupné dáta. 
+%TODO EXPAND ON operations
 
 \subsubsection{Autentifikácia} 
-Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy sa používateľ autentifikuje, aby nadobudol identitu rozpoznanú našim systémom a boli mu pridelené roly.  
+Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy sa používateľ autentifikuje, aby nadobudol identitu rozpoznanú našim systémom a boli mu pridelené roly. 
+
+
+\subsection{Štruktúra aplikačného rozhrania}
+Náš systém musí prihláseným používateľom poskytnúuť možnosť získavať informácie o stave prechodov a na prechodoch vykonávať rôzne akcie. Muši pracovať s rôznymi štruktúrami a viacerými inštanciami týchto procesov. Preto navrhujeme štruktúru aplikažného rozhrania nasledovne.
+
+URL ktoré bude klient volať sa budú skladať zo štyroch častí. 
+\begin{enumerate}
+	\item identifikátor siete
+	\item čislo inštancie procesu
+	\item identifikátor prechodu 
+	\item vykonávanú operáciu
+\end{enumerate}
+Príklad URL ciest pre jednu úlohu môžeme vidieť na ukážke \ref{alg:urls_example}
+
+\begin{lstlisting}[ caption={Ukážka URL ciest k úlohe},label={alg:urls_example}] 
+GET:
+/ExampleNet/0/t1
+
+POST:
+/ExampleNet/0/t1/assign
+/ExampleNet/0/t1/delegate
+/ExampleNet/0/t1/cancel
+/ExampleNet/0/t1/finish
+\end{lstlisting} 
+
+Prvá cesta má HTTP metódu GET a predstavuje opreáciu čítania aktuálnych dát v úlohe na danej ištancií procesu. Ostatné operácie majú metóddu POST a reprezentujú dané operácie na inštancí úlohy.
+
+Okrem generovaných ciest pre procesy potrebujeme vyhradiť ešte cesty pre administrátora na obsluhu rozhrania. bude to cesta "/" s metódami POST a DELETE, určné prídávanie a vymazávanie procesov.
+
 
 
 \subsection{Architektúra}  
@@ -149,8 +173,10 @@ Ochrana pred neoprávneným prístupom bude ďalej realizovaná pomocou služby 
 
 Ochrana proti \acrshort{dos} útokom bude taktiež realizovaná pomocou gateway služby. Táto služba bude slúžiť ako load balancer, a rovnomerne rozdeľovať dotazy medzi inštancie relay servisu tak, aby boli rovnomerne vyťažené.
 
+
+
 \subsection{Operácia systému} 
-Na diagrame \ref{api_operation} vidíme v horjen časti proces prihásenia používateľa a v dolnej časti vykonanie dopytu na procesný server. 
+Na diagrame \ref{api_operation} vidíme vo vrchnej časti proces prihásenia používateľa a v dolnej časti vykonanie dopytu na procesný server. 
 
 Počas procesu prihlísenia používateľ najpv odošle dopyt na prihlásenie, gateway ho presmeruje na autorizačný servis a ten mu následne vráti autorizačný token.
 
@@ -175,9 +201,12 @@ Po tom, čo snáš sytém prijme požiadavku na zmenu rozhrania, najprv vyčist�
 \end{figure}
 
 \section{Implementácia}  
-V tejto kapitole najprv predstavíme technológiek ktoré sme použili pri implemenácií našeho systému,následne predstavíme jednotlivé časti nášho systému.
+V tejto kapitole najprv predstavíme technológie ktoré sme použili pri implemenácií našeho systému,následne predstavíme jednotlivé časti nášho systému.
 
-\subsection{Použité technológie}  
+
+
+\subsection{Použité technológie} 
+V tejto časti si priblížime technológie, ktoré sme využili pri implementácií nášho rozhrania.
 
 \subsubsection{Kotlin}  
 Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krát zverejnený v roku 2011 spoločnosťou JetBrains(Andrey Breslav). Bol vyvinutý ako moderný staticky typovaný jazyk, ktorý podporuje rýchlu kompiláciu do javy. V roku 2017 vyhlásil Google podporu pre Kotlin v operačnom systéme Android.   
@@ -224,7 +253,8 @@ Spring Boot je voľne šíriteľný framework založený na jazyku Java. Je vyv�
 
 %Factory  
 
-%TODO initliaizr 
+%TODO initliaizr
+%TODO Spring Boot tech
 
 Všetky Spring Boot kontajnery sme inštalovali pomocou spring initializr \cite{initializr} 
 
@@ -241,41 +271,25 @@ Spring Cloud je framework, ktorý obsahuje bohatú sadu nástrojov na vytvárani
 	\item Gateway - Nástroj na routovanie a load balancing v rámci mikroservisov  	
 	\item Cloud Authentication - Nástroj na riešenie komplexnej autentizácie a autorizácie v rámci  
 
-\end{itemize}  
+\end{itemize}
+%TODO Spring Cloud Tech
+
+\subsubsection{Git}
+%TODO Git
+
+\subsubsection{Insomnia}
+Na testovanie sme použili softvér Insomnia REST Client\cite{insomnia}. Tento program je určený na testovanie REST a GraphQL služieb. Je to voľne šíriteľná alternatíva známeho programu Postman, postavená na platforme Electron s použitím knižnice React. Insomnia nám dovolí vytvoriť a uložiť viacero testovacích dopytov, ktoré môžeme neskôr spustiť a overiť ich správne fungovanie. Insomnia taktiež podporuje autentifikačný protokol OAuth2, takže nám stačí iba zadať prístupové údaje a autorizačný token si stiahne sama. Taktiež v prípade vypršania autorizačného tokenu ho automaticky obnoví.  
 
 
-\subsection{Relay Service} 
-
-Vygenerovať túto službu je cieľom našej prace. Po vygenerovaní koncových bodov pre dané procesné modely bude táto služba prijímať požiadavky od klientov, autorizované požiadavky od klientov validovať a následne preposielať na procesný server. Okrem toho bude poskytovať dokumentáciu k daným koncovým bodom. 
-
-Pred tým ako vygenerujme koncové body špecifické pre daný procesný model, je relay service iba prázdny Spring Boot kontajner so základnou konfiguráciou. Pre poskytnutie základnej funkcionality webového koncového bodu obsahuje kontajner balíček Spring Web Starter \cite{webstarter}, tento balíček poskytuje funkcionalitu, ktorá umožňuje pomocou anotácií mapovať funkcie tried na rôzne \acrshort{url}, špecifikovať, HTTP metódu, dátové polia vstupu a formát výstupu. Tieto mapovania následne oživí pomocou priloženého webového servera Apache Tomcat \cite{tomcat} 
-
-
-Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi3} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne vyprezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Tieto anotácie si bližšie priblížime v kapitole  
-
-%todo v akej kapitole? 
-
-
-Na poskytnutie základnej validácie vstupov použijeme regulárne výrazy a formáty vstupov 
-
-
-
-%todo URL structure 
 
 
 \subsection{Generator service}  
 Tento servis je základný satavebný kameň nášho rozhrania, jeho úlohou je na základe vstupu v podobe procesného modelu vo formáte Petriflow vygenerovať a spustiť inštancie relay service, ktorý bude prijímať samotné požiadavky od klienta. Základná operácia vygenerovania koncového dobu má nasledovné kroky:  
-
 prijatie požiadavky,  
-
 čítanie súborov Petriflow a súborov s používateľmi,  
-
 registrácia používateľov, 
-
 príprava repozitára, 
-
 generovanie kódu  
-
 a kompilácia a spustenie relay. 
 
 
@@ -283,7 +297,6 @@ a kompilácia a spustenie relay.
 \subsubsection{Prijatie požiadavky} 
 Pre funkciu pridania požiadavky je v našom systéme vyhradená základná URL "/[POST]", na tejto URL je funkcia, ktorá berie ako parametre súbor s procesným modelom, súbor s používateľmi a unikátny identifikátor siete. Súbor s modelom je v štandardnom formáte Petriflow. Súbor s používateľmi je vo formáte \acrshort{xml} so štruktúrou popísanou \acrshort{xsd} súborom v prílohe \ref{att:xsd}. Tento XSD súbor je poskytnutý aj v rámci dokumentácie v \acrshort{openapi}. Na príklade súboru v ukážke kódu \ref{alg:example_users} môžeme vidieť že súbor obsahuje zoznam používateľov s menom, heslom a zoznamom ich rolí. 
 
-%TODO cite petriflow 
 
 
 \begin{lstlisting}[float, caption={Príklad súboru s používateľmi},label={alg:example_users},language=XML] 
@@ -310,7 +323,7 @@ Pre funkciu pridania požiadavky je v našom systéme vyhradená základná URL 
 </document> 
 \end{lstlisting} 
 
-Funkciu registrácie môže spustiť iba administrátor systému(Viac v kapitole Authentication %todo Authentication).  
+Funkciu registrácie môže spustiť iba administrátor systému(Viac v kapitole Authentication %TODO Authentication).  
 
 Tieto súbory sa uložia do priečinka na servery s názvom Net[ID siete] a Users[ID siete]. V prípade, že už existujú súbory s rovnakým ID tieto súbory sa prepíšu a tým zaručujeme funkcionalitu zmeny siete.  
 
@@ -442,7 +455,36 @@ fun data35(
 Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód skompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy relay servisu a spúšťame príkaz "gradle bootRun" ktorý spustí skompilovaný relay servis. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií relay servisu. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.  
 
 
-\subsection{Auth Service} 
+
+\subsection{Relay Service} 
+
+Vygenerovať túto službu je cieľom našej prace. Po vygenerovaní koncových bodov pre dané procesné modely bude táto služba prijímať požiadavky od klientov, autorizované požiadavky od klientov validovať a následne preposielať na procesný server. Okrem toho bude poskytovať dokumentáciu k daným koncovým bodom. 
+
+Pred tým ako vygenerujme koncové body špecifické pre daný procesný model, je relay service iba prázdny Spring Boot kontajner so základnou konfiguráciou. Pre poskytnutie základnej funkcionality webového koncového bodu obsahuje kontajner balíček Spring Web Starter \cite{webstarter}, tento balíček poskytuje funkcionalitu, ktorá umožňuje pomocou anotácií mapovať funkcie tried na rôzne \acrshort{url}, špecifikovať, HTTP metódu, dátové polia vstupu a formát výstupu. Tieto mapovania následne oživí pomocou priloženého webového servera Apache Tomcat \cite{tomcat} 
+
+Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi3} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne vyprezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotási patrí @ApiOperation, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a @ApiParam ktorú sme použili na pridanie informácií o parametroch týchto funkcií. 
+
+Na vizualizáciu tejto dokumentácie sme použili balík Swagger UI, ktorý na adrese "/swagger-ui.html" poskytuje užívateľké rozhranie v ktorom možno vidiet jernotlivé triedy a koncové body vygenerované naším systémom. Na obrázku \ref{swagger_ui} vidíme vizualizovanú dokumentáciu pre jednu tieť s názvom Example, ktorá obsahuje jeden prechod T1 ku ktorému je vygenerovaných päť koncových bodov. Zároveň vidíme predvolené koncové body na registráciu procesov do systému.  
+
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=16cm]{img/swagger_ui.png} 
+	\caption{Ukážka vizualizácie dokumentácie Swagger UI} 
+	\label{swagger_ui} 
+\end{figure}
+
+
+
+Na poskytnutie základnej validácie vstupov použijeme regulárne výrazy a formáty vstupov 
+%TODO VALIDATION
+
+%TODO PN -> API
+%TODO Swagger screenshoot
+
+
+
+
+\subsection{Auth Service}  \label{section_auth}
 
 Na implementáciu autorizačného servera, ktorý dokáže spolupracovať so zvyškom nášho systému sme použili balíček Spring Cloud Security \cite{cloud_security}. Tento balíček podobne ako Spring Boot Security poskytuje základnú funkcionalitu umožňujúcu sa prihlásiť pomocou mena, hesla, alebo aj \acrshort{oauth} a uskladnenie profilov používateľov.  
 
@@ -458,7 +500,7 @@ Na integráciu so zvyškom nášho systému sme importovali tieto balíky aj do 
 
 Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tokenov využili in memory store. To znamená, že sa pri každom reštarte auth servisu tieto informácie zmažú. Keďže však používame architektúru mikroservisov, a servisy sú od seba do veľkej miery nezávislé, nie je potrebné reštartovať všetky servisy pri zmene jedného. Pri vývoji teda fakt, že používatelia boli uložený vo volatilnej pamäti nebol priveľkou prekážkou. Pre nasadenie systému do produkcie však bude nutné pridať do auth servisu perzistentné úložisko používateľov.   
 
-%todo expand auth service
+%TODO expand auth service
 
 \begin{figure}[!htbp] 
 	\centering 
@@ -550,12 +592,10 @@ Nasledujúce dve trasy smerujú na Auth servis na porte 8088. Prvá obsluhuje do
 Posledná trasa smeruje všetky ostatné dopyty na relay servis. Ako môžeme vidieť URI cieľovej služby nie je s protokolom HTTP a portom na ktorom je služba a ale s protokolom lb a menom služby. Takáto notácia nám umožňuje využiť load balancer balíka Spring Cloud Gateway. Na to aby sme mohli využívať tento protokol musíme ešte nakonfigurovať spojenie so službou service discovery. Ak povolíme možnosť discovery locator, náš gateway servis si vypýta od service discovery informácie o lokácií služieb v našom cloudovom riešení a následne sme schopní adresovať ich pomocou mena, namiesto URI, a môžeme využívať možnosti load balancera. Load balancer sa dá nastaviť aj aby so statickým zoznamom URI jednotlivých inštancii služieb, riešenie cez service discovery locator sa však ukázalo ako praktickejšie, keďže vie dynamicky reagovať na počet spustených inštancií.   
 
 
-\section{Testovanie}  
-Na testovanie sme použili softvér Insomnia REST Client\cite{insomnia}. Tento program je určený na testovanie REST a GraphQL služieb. Je to voľne šíriteľná alternatíva známeho programu Postman, postavená na platforme Electron s použitím knižnice React. Insomnia nám dovolí vytvoriť a uložiť viacero testovacích dopytov, ktoré môžeme neskôr spustiť a overiť ich správne fungovanie. Insomnia taktiež podporuje autentifikačný protokol OAuth2, takže nám stačí iba zadať prístupové údaje a autorizačný token si stiahne sama. Taktiež v prípade vypršania autorizačného tokenu ho automaticky obnoví.  
+\section{Testovanie} 
+ 
+%TODO add insomnia pic
 
-Pomocou tohto softvéru sme testovali funkcionalitu všetkých servisov. 
-
-%TODO - Ako sme testovali 
 
 
 
