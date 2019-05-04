@@ -21,7 +21,6 @@ V klasických Petriho sieťach je spustenie prechodu vždy atomická operácia. 
 
 Keďže každá úloha je samostatná sieť so štyrmi prechodmi, musíme pre každú úlohu zadafinovať roly pre všetky štyri operácie úlohy.
 
-
 \begin{figure}[!htbp] 
 	\centering 
 	\includegraphics[width=6cm]{img/task_transition.png} 
@@ -37,10 +36,6 @@ Keďže formalizmus Petriflow je schopný takýmto spôsobom popísať všetky i
 Ak by rozhranie držalo informáciu o značkovaní, a teda spustiteľnosti prechodov, mohol by nasať stav kedy aplikačné rozhranie je v stave, ktorý naznačuje, že prechod sa nedá spustiť no procesný server už je v stave, kedy je prechod spustiteľný. Kvôli udržaniu konzistencie dát a predídeniu race conditions nemôže aplikačné rozhranie držať informáciu o značkovaní a teda ani spustiteľnosti prechodu. 
 
 Aktuálna verzia Petriflow poskytuje relatívne granulárne informácie o autorizácií na vykonávanie akcií pomocou rolí, neobsahuje však introfmáciu o používateľoch ani o tom ktorý používateľ má pridelené aké roly. Na implementáciu funkčného aplikačného rozhrania teda bude nutné dorobiť systém ktorý túto informáciu bude obsahovať.  
-
-
-%TODO url structure
-
 
 
 \section{Špecifikácia}  
@@ -201,15 +196,14 @@ Po tom, čo snáš sytém prijme požiadavku na zmenu rozhrania, najprv vyčist�
 \end{figure}
 
 \section{Implementácia}  
-V tejto kapitole najprv predstavíme technológie ktoré sme použili pri implemenácií našeho systému,následne predstavíme jednotlivé časti nášho systému.
-
+V tejto kapitole najprv predstavíme technológie ktoré sme použili pri implemenácií našeho systému, následne predstavíme jednotlivé kontajnery nášho distribuovaného.
 
 
 \subsection{Použité technológie} 
-V tejto časti si priblížime technológie, ktoré sme využili pri implementácií nášho rozhrania.
+
 
 \subsubsection{Kotlin}  
-Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krát zverejnený v roku 2011 spoločnosťou JetBrains(Andrey Breslav). Bol vyvinutý ako moderný staticky typovaný jazyk, ktorý podporuje rýchlu kompiláciu do javy. V roku 2017 vyhlásil Google podporu pre Kotlin v operačnom systéme Android.   
+Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krát zverejnený v roku 2011 spoločnosťou JetBrains(Andrey Breslav). Bol vyvinutý ako moderný staticky typovaný jazyk, ktorý podporuje rýchlu kompiláciu do javy. V roku 2017 ohlásil Google podporu pre Kotlin v operačnom systéme Android. V rovnakom roku ohlásil Pivotal Software oficiálnu podporu pre Kotlin vo verzii 5.0 ich frameworku Spring.
 
 Medzi jeho hlavné výhody patrí menší boilerplate (menej zbytočného kódu), a vylepšený systém typovania premenných. V Kotline  môžu byť premenné nulovateľné, to znamená, že kompilátor počíta s prípadom, že nulovateľná premenná ešte nie je inicializovaná. Kompilátor Kotlinu využíva pokročilú logiku na to, aby zistil v ktorých vetvách kódu premenné môžu obsahovať null a v ktorých nie. V prípade že podmienkou ošetríme nulový prípad kompilátor v druhej vetve programu zmení typ premennej tak, že už nie je nulovateľná \ref{alg:preview}. Teda v kóde(pokiaľ aktívne neobídeme typovú ochranu) nemôže nastať null pointer exception. 
 
@@ -241,22 +235,11 @@ My sme piužili Kotlin kompilovaný do jazyka Java lebo nám to dovoľuje využ�
 Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný zostaviť takmer ľubovoľný program. Podporuje jazyky ako java, C++ Python, a mnoho ďalších. V našom projekte sa gradle použijeme na manažment závislostí, kompiláciu kódu a spustenie samotného skompilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použitia ukázali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu zostavovania softvéru takže jeho výkon je pri opakovanej kompilácií vyšší. 
 
 
-\subsubsection{Spring boot}  
-Spring Boot je voľne šíriteľný framework založený na jazyku Java. Je vyvíjaný a udržiavaný tímom Pivotal. Je určený na vytváranie nezávislých, produkčných aplikácií a mikroservisov. Spring boot je robustná platforma so širokou podporou pre všetky štandardné operácie ktoré budeme potrebovať pri vývoji webového rozhrania. Poskytuje podporu pre vytváranie štandardných RESTful koncových bodov, ďalej poskytuje podporu pre štandardnú autentifikáciu pomocou \acrshort{oauth} a integráciu s  OpenAPI 3.0 \cite{openapi} pomocou balíčka Swagger \cite{swagger} 
+\subsubsection{Spring}  
+Spring je jeden z najpoužívanejších frameworkov využívaných java developermi. Framework je voľne šíriteľný a udržiavaný spoločnosťou Pivotal Software, Inc.
+Spring je 
 
-
-%Pri práci so Spring boot budeme využívať návrhové vzory:  
-
-%Dependency injection / Inversion of control (Tým že v jednoduchých triedach pridáme anotáciu, vieme z frameworku zdediť nielen funkcie, ale aj control flow)   
-
-%Singleton (aplikácia vie zaručiť že z daného objektu sa v rámci jednej inštancie aplikácie vytvorí len jedna inštancia, ku ktorej sa dá pristupovať z celej aplikácie)  
-
-%Factory  
-
-%TODO initliaizr
-%TODO Spring Boot tech
-
-Všetky Spring Boot kontajnery sme inštalovali pomocou spring initializr \cite{initializr} 
+Všetky Spring Boot kontajnery sme inštalovali pomocou Spring initializr \cite{initializr} 
 
 tento nástroj vygeneruje zip súbor so založeným projektom vo frameworku Spring Boot. Pri vytváraní projektu je možné si vybrať Jazyk v ktorom bude projekt založený a nástroj ktorý bude projekt zostavovať % -- 
 
@@ -275,12 +258,10 @@ Spring Cloud je framework, ktorý obsahuje bohatú sadu nástrojov na vytvárani
 %TODO Spring Cloud Tech
 
 \subsubsection{Git}
-%TODO Git
+Git je najpoužívanejší nástroj na kontrolu revízií na svete. Bol vytvorený Linusom Torvaldsom v roku 2005 na kontrolu revízií pri vývoji jadra Linuxu. A rovnako ako Linux bol zverejnený na voľné používanie. V našom projekte sme použili git na kontrolu revízií samotného kódu našej aplikácie. Zároveň sme využili java knižnicu JGit \cite{jgit}, čo je implementácia gitu v jave. Bola vyvynuá a je dalej udržiavaná spoločnosťou Eclipse Foundation, Inc.
 
 \subsubsection{Insomnia}
-Na testovanie sme použili softvér Insomnia REST Client\cite{insomnia}. Tento program je určený na testovanie REST a GraphQL služieb. Je to voľne šíriteľná alternatíva známeho programu Postman, postavená na platforme Electron s použitím knižnice React. Insomnia nám dovolí vytvoriť a uložiť viacero testovacích dopytov, ktoré môžeme neskôr spustiť a overiť ich správne fungovanie. Insomnia taktiež podporuje autentifikačný protokol OAuth2, takže nám stačí iba zadať prístupové údaje a autorizačný token si stiahne sama. Taktiež v prípade vypršania autorizačného tokenu ho automaticky obnoví.  
-
-
+Insomnia \cite{insomnia} je voľne šíriteĺný softvér vyvýjaný spoločnosťou Floating Keyboard Software Inc. Je určený na testovanie REST a GraphQL služieb. Je to alternatíva ku známemu programu Postman. Je postavený na platforme Electron s použitím knižnice React. Insomnia nám dovolí vytvoriť a uložiť viacero testovacích dopytov, ktoré môžeme neskôr spustiť a overiť ich správne fungovanie. Insomnia taktiež podporuje autentifikačný protokol OAuth2. Okrem štandartných HTTP volaní podporuje aj čoraz viac populárny protokol GrapQL
 
 
 \subsection{Generator service}  
@@ -353,7 +334,7 @@ Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication
 
 
 \subsubsection{Príprava repozitára} 
-Na spustenie Spring boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit} čo je implementácia git klienta v jazyku java. 
+Na spustenie Spring Boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit} čo je implementácia git klienta v jazyku java. 
 
 
 Funkcia na prípravu repozitára najprv skontroluje či v dočasnom priečinku už repozitár neexistuje, ak existuje zavolá jgit ekvivalent funkcie "git reset origin/master" čím zmení lokálne súbory na aktuálnu verziu z repozitára. Súbory obsiahnuté v .gitignore sa ponechajú bez zmeny, a tým pádom akékoľvek cache súbory z predošlej kompilácie ostatnú nedotknuté čo urýchli kompiláciu kódu. Ak git reset z nejakého dôvodu zlyhá, funkcia vymaže akékoľvek pozostatky súborov v dočasnom priečinku a repozitár znovu naklonuje. 
@@ -388,7 +369,7 @@ fun assign1(@PathVariable("instanceId") instanceId: String): ResponseEntity<Stri
 } 
 \end{lstlisting} 
 
-Funkcia View, navyše vracia objekt s dátami ktoré sa na danom prechode v danej inštancií nachádzajú. na ukážke kódu \ref{alg:generated_view} vidíme ukážku vygenerovaného koncového bodu pre View 
+Funkcia view, navyše vracia objekt s dátami ktoré sa na danom prechode v danej inštancií nachádzajú. na ukážke kódu \ref{alg:generated_view} vidíme ukážku vygenerovaného koncového bodu pre View 
 
 
 \begin{lstlisting}[float, caption={Príklad vygenerovanej funkcie},label={alg:generated_view},language=Kotlin] 
@@ -407,7 +388,7 @@ fun view1(@PathVariable("instanceId") instanceId: String): get1Result {
 
 %TODO ref api structure 
 
-Zložitejšia funkcia je dáta. Táto funkcia používateľovi umožňuje poslať dáta pre dátové polia prechodov.  
+Zložitejšia funkcia je finish. Táto funkcia používateľovi umožňuje poslať dáta pre dátové polia prechodov a úlohu dokončiť.  
 
 Tejto funkcii vygenerujeme toľko vstupných argumentov koľko dátových polí sa v prechode nachádza. Argumenty, okrem vstupných súborov, vygenerujeme typu String a následne do tela funkcie vygenerujeme validačný kód, ktorý pomocou regulárnych výrazov validuje tieto reťazce. Pre dátový typy enum a multichoice generujeme regulárny výraz podľa možností z definície poľa v Petriflow. Pre polia s typom date používame regulárny výraz pre dátum podľa štandardu ISO 8601. v prípade, že jedno alebo viac polí nemá správny formát alebo sa nebolo poskytnuté a je povinné vrátime používateľovi HTTP chybu 400 s výpisom v ktorých poliach je chyba. 
 
@@ -452,7 +433,7 @@ fun data35(
 
 \subsubsection{Kompilácia a spustenie relay} 
 
-Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód skompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy relay servisu a spúšťame príkaz "gradle bootRun" ktorý spustí skompilovaný relay servis. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií relay servisu. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.  
+Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód skompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy relay servisu a spúšťame príkaz "gradle bootrun" ktorý spustí skompilovaný relay servis. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií relay servisu. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.  
 
 
 
@@ -483,38 +464,14 @@ V Swagger UI dokumentácií sa djú otvoriť jednotlivé konvocé body a prezrie
 	\label{swagger_ui_endpoint} 
 \end{figure}
 
-
-
-\begin{figure}[!htbp] 
-	\centering 
-	\includegraphics[width=16cm]{img/insomnia_400.png} 
-	\caption{Ukážka vizualizácie dokumentácie kokrétneho koncového bodu} 
-	\label{insomnia_400} 
-\end{figure}
-
-\begin{figure}[!htbp] 
-	\centering 
-	\includegraphics[width=16cm]{img/insomnia_200.png} 
-	\caption{Ukážka vizualizácie dokumentácie kokrétneho koncového bodu} 
-	\label{insomnia_200} 
-\end{figure}
-
-
-
-
 %TODO PN -> API
-%TODO Swagger screenshoot
-
-
 
 
 \subsection{Auth Service}  \label{section_auth}
 
 Na implementáciu autorizačného servera, ktorý dokáže spolupracovať so zvyškom nášho systému sme použili balíček Spring Cloud Security \cite{cloud_security}. Tento balíček podobne ako Spring Boot Security poskytuje základnú funkcionalitu umožňujúcu sa prihlásiť pomocou mena, hesla, alebo aj \acrshort{oauth} a uskladnenie profilov používateľov.  
 
-Na rozdiel od základného balíčka Spring Boot Security poskytuje funkcionalitu ktorá umožňuje v centralizovať autentifikáciu do jedného kontajnera.  
-
-Autentifikáciu má na starosti len autorizačný server. Ak sa chce používateľ autentifikovať jeho dopyt je presmerovaný na autorizačný server a tento mu v prípade poskytnutia správnych prihlasovacích údajov udelí autorizáciu(v prípade \acrshort{oauth} je to autorizačný token).   
+Na rozdiel od základného balíčka Spring Boot Security poskytuje Spring Cloud Security funkcionalitu ktorá umožňuje v centralizovať autentifikáciu do jedného kontajnera. Ostatné kontajnery, ktré obsahujú konvocé body, ktoré chceme zabezpečiť sa označujú ako resource servre.
 
 Resource server, nedrží informácie o používateľoch, ak však príde dopyt na funkciu, ktorá si vyžaduje autorizáciu, vie tento server získať profil používateľa od autorizačného servera. Ak nie je tento používateľ autorizovaný na vykonanie dopytu vracia resource server chybu 403. 
 
@@ -534,7 +491,7 @@ Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tok
 \end{figure}  
 
 \subsection{Service Discovery}
-Service discovery je služba ktorá sleduje stav ostatných služieb a vie zabezpečiť koordináciu komunikácie medzi jednotlivými kontajnermi v cloudovom riešení. V našom systéme implementujeme service discovery ako spring boot kontajner s balíčkom Netflix Eureka \cite{eureka}. Nastavenie tohto balička si vyžaduje len importovať závislosť, použiť anot @EnableEurekaServer a nastaviť port servera, v našom prípade je to štandardný port 7777 a hostname eurka servra. 
+Service discovery je služba ktorá sleduje stav ostatných služieb a vie zabezpečiť koordináciu komunikácie medzi jednotlivými kontajnermi v cloudovom riešení. V našom systéme implementujeme service discovery ako Spring Boot kontajner s balíčkom Netflix Eureka \cite{eureka}. Nastavenie tohto balička si vyžaduje len importovať závislosť, použiť anot @EnableEurekaServer a nastaviť port servera, v našom prípade je to štandardný port 7777 a hostname Eurka servra. 
 
 Na to aby sa ostatné kontajnery zahlásili do service discovery sme importovali v nich balíček Netflix Eureka Client, použili anotáciu @EnableDiscoveryClient a nastavili port, na ktorom sa nachádza discovery servis. Na to aby sme vedeli rozlíšiť typ servisu, ktorý sa pripája na service discovery je ešte potrebné zadať do konfigurácie meno servisu.  
 
@@ -571,7 +528,7 @@ Po správnej inicializácií servera a klientov je na porte 7777 dostupná strá
 
 
 \subsection{Gateway Service}  
-Gateway service je rovnako ako ostatné servisy implementovaný ako Spring boot aplikácia s pridaným balíkom Spring Cloud Gateway \cite{cloud_gateway}, ktorý zabezpečuje funkcionalitu routingu a load balancera.  
+Gateway service je rovnako ako ostatné servisy implementovaný ako Spring Boot aplikácia s pridaným balíkom Spring Cloud Gateway \cite{cloud_gateway}, ktorý zabezpečuje funkcionalitu routingu a load balancera.  
 Na spustenie základnej funkcionality routingu v tomto prípade netreba použiť žiadnu anotáciu, stačí len zadefinovať trasy a k nim prislúchajúce filtre. Na ukážke kódu \ref{alg:gateway_config} vidíme konfiguráciu nášho gateway servisu. Na začiatku je definovaný port na ktorom počúva server, tento port je jediný port, ktorý bude prístupný vonkajšiemu svetu. 
 
 
@@ -615,20 +572,80 @@ Nasledujúce dve trasy smerujú na Auth servis na porte 8088. Prvá obsluhuje do
 
 Posledná trasa smeruje všetky ostatné dopyty na relay servis. Ako môžeme vidieť URI cieľovej služby nie je s protokolom HTTP a portom na ktorom je služba a ale s protokolom lb a menom služby. Takáto notácia nám umožňuje využiť load balancer balíka Spring Cloud Gateway. Na to aby sme mohli využívať tento protokol musíme ešte nakonfigurovať spojenie so službou service discovery. Ak povolíme možnosť discovery locator, náš gateway servis si vypýta od service discovery informácie o lokácií služieb v našom cloudovom riešení a následne sme schopní adresovať ich pomocou mena, namiesto URI, a môžeme využívať možnosti load balancera. Load balancer sa dá nastaviť aj aby so statickým zoznamom URI jednotlivých inštancii služieb, riešenie cez service discovery locator sa však ukázalo ako praktickejšie, keďže vie dynamicky reagovať na počet spustených inštancií.   
 
+Na operáciu gateway servisu nepotrebujeme žiadnu ďalšiu konfiguráciu. Všetky dopyty sú správne smerované servisom, pre ktoré sú určené.
+
+
 \subsection{Platforma}
-Platforma na ktorú sme nasadzovali náš systém je server poskytnutý Fakultou Elektrotechniky a Informatiky na Slovenskej Technickej Univerzite v Bratislave s operačným systémom Ubuntu 18.04.2 LTS Bionic Beaver. Na nasadenie potreujeme na server doinštalovať balíček git a oracle-java8-installer. 
+V nalsedujúcej časti si priblížime aké prostredie sme využívali na vývoj a testovanie systému, dalej si popíšeme kroky, ktoré sú potrebné na spustenie našj aplikácie 
 
-Pomocou gitu stiahneme repozitár \cite{dp_repo} s aktuálnou verziou nášho systému. Na zkompilovanie a spustenie programu je potrebné spustit skript "run.sh" ktorý sa nachádza v priečinku repozitára. Tento skript stiahne Gradle 5.4.1, A postupne nainštaluje a spustí všetky kontajnery nášho systému. Na zaručenie behu všetkých kotnajnerov je potrebných minimálne 8GB voľnej operačnej pamäte. Proces kompilácie a spúšťania kontajnerov je výpočtovo náročný a na serveroch so štyrmi a menej jadrami môže trvať viac ako 3 minúty. Pri prvom spustení si bude inštalačný skript sťahovať závislosti, preto tento proces môže trvať ešte dlhšie. 
+Platforma na ktorú sme nasadzovali náš systém je virtuálny server poskytnutý Fakultou Elektrotechniky a Informatiky na Slovenskej Technickej Univerzite v Bratislave s operačným systémom Ubuntu 18.04.2 LTS Bionic Beaver. Server má k dispozícií 10GB operačnej pamäte, 4GB swap, a 8 jadier procesora.
 
-Prednastavený port na ktorom počúva gateway servis je 8080. Pre správnu operáciu rozhrania treba tento port povoliť cez firewall servera. Tento port sa dá nastaviť v subore /gateway/src/resources/application.yml.
+Pred tým ako sa pokúsime spustit systém treba sa uistiť, že server, na ktroý plánujeme systém nasadiť bude mať aspon 8GB voľnej operačnej pamäte a aspon 2 procesorové jadrá.
+Na nasadenie našej aplikácie potrebujeme vykonať nalsedovné kroky:
 
-Na porte 7777 je vyprezentovane grafické rozhranie service discovery, tento port z bezpečnostných dôvodov neodporúčame povoliť cez friewall, namiesto toho na monitorovanie stavu systému odporúčame použiť ssh tunel pre tento port.
- 
+\begin{enumerate}
+	\item Uistíme sa, že na servri je nainštalovaný nástroj Git a java 8. 
+	\item Pomocou gitu stiahneme repozitár \cite{dp_repo} s aktuálnou verziou nášho systému.
+	\item Zkompilujeme a spustíme programu pomocou skriptu "run.sh" ktorý sa nachádza v priečinku repozitára. Tento skript stiahne Gradle 5.4.1, A postupne nainštaluje a spustí všetky kontajnery nášho systému.
+	Proces kompilácie a spúšťania kontajnerov je výpočtovo náročný a na serveroch so štyrmi a menej jadrami môže trvať viac ako 3 minúty. Pri prvom spustení si bude inštalačný skript sťahovať závislosti, preto tento proces môže trvať ešte dlhšie.  
+	\item Povolíme pristup na port 8080 z internetu. 8080 je prednastavený port, na ktorom počúva naša aplikácia. Ak port 8080 nieje vyhovujúci dá sa nastaviť v súbore /gateway/src/resources/application.yml zmenením hodnoty server.port 
+	\item Na porte 7777 je prezentovane grafické rozhranie service discovery, tento port z bezpečnostných dôvodov neodporúčame povoliť cez friewall, namiesto toho na monitorovanie stavu systému odporúčame použiť ssh tunel pre tento port. 
+\end{enumerate}
+
+
+
 
 \section{Testovanie} 
+ V tejto kapitole si priblížime proces testovania ktorý sme využívali pri vývoji sysstému a systém automatizovaného testovania, ktorý sme implementovali na systéme.
+
+
+\subsection{Manuálne testy}
  
-%TODO add insomnia pic
+Na manuálne testovanie počas vývoja sme používali softvér Insomnia REST Client\cite{insomnia}. V tomto programe sme vytvorili rôzne volania na náš systém a kontrolovali sme ich výstup.
+
+\subsubsection{Auth service}
+Pri autorizačnom serveri sme testovali, či základným systémovým používatelom bude spávne pridelený autorizačný token a či tento token je platný. Na obrázku \ref{insomnia_oauth} vidíme príklad takéhoto dopytu. Na príklade vidíme, že po vyplnení srávnych údajov do karty OAuth 2 v programe Insomnia môžeme odoslať dopyt na zabezpečený koncový bod v našej aplikácií a dopyt vráti správnu odpoveď.
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=16cm]{img/insomnia_oauth.png} 
+	\caption{Ukážka testu auth servisu} 
+	\label{insomnia_oauth} 
+\end{figure}
+
+\subsubsection{Gateway service}
+Pri gateway service sme testovali správne nastavenie smerovania, a či server naozaj smeruje dotazy na správny server. Dalej sme testovali funkcionalitu load balancera. Tú sme testovali tak, že sme spustili viaceré inštancie relay servisu, s miernymi zmenami v kóde a load balancer naše dopyty smeroval striedavo na rôzne inšancie relay servisu.
 
 
+\subsubsection{Generator service}
+Pri generator service sme testovali či sa vygeneroval spustiteľný kód. V prípade, že kód ktorý sa vygeneroval nebol sytnakticky správny vrátil koncový bod generátora chybovú odpoveď. Jedna z chýb ktoré sme pri takomto testovaní objavili je chyba knižnice kotlinpoet, kedy sa pri generovaní zalomí dlhší text bez ošetrenia úvodzoviek a teda sa vygeneruje nevalidný kód.
+
+Ak sa korektne vygeneroval kód a spustila sa nová inštanica relay servisu testovali sme, či vygenerovaný kód validácie funguje korektne.
+
+Dalej sme pri tejto službe tesovali, či sa pri regenerácií relay servisu prejavila zmena v dokumentácií korektne, a či sa správne zaregistrovali používateľia v auth servise.
+
+
+\subsubsection{Relay service}
+Pri tomto servise sme testovali funkčnosť validačných funkcií. Testovali sme, či neprítomnosť povinného dátového poľa vráti správnu chybovú hlášku, a či pri poliach s predpísaným formátom vstupu vráti servis chybu ak formát vstupu nieje korektný a či ak je formát správny prebehne funkcia korektne a vráti pozitívny výsledok. Na obrázku \ref{insomnia_200} vidíme príklad korektnného dotazu a na obázku \ref{insomnia_400} vidíme príklad dopytu, ktorý nemá správny formát dát v poli s enumeráciou. 
+
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=16cm]{img/insomnia_200.png} 
+	\caption{Ukážka vizualizácie dokumentácie kokrétneho koncového bodu} 
+	\label{insomnia_200} 
+\end{figure}
+
+\begin{figure}[!htbp] 
+	\centering 
+	\includegraphics[width=16cm]{img/insomnia_400.png} 
+	\caption{Ukážka vizualizácie dokumentácie kokrétneho koncového bodu} 
+	\label{insomnia_400} 
+\end{figure}
+
+
+
+
+\subsection{Automatizované testy}
+
+TBD
 
 
