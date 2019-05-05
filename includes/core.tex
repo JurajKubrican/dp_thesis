@@ -157,6 +157,8 @@ Softvér sa bude skladať z troch hlavných služieb: generator service, relay s
 \end{figure}
 
 \subsection{Bezpečnosť}
+Pri návrhu Aplikačného rozhrania je dôležité myslieť na
+% todo threat analysis
 
 Autentifikáciu v našej aplikácií budeme riešiť pomocou štandardnej knižnice, ktorá poskytuje \acrshort{oauth}. Táto služba bude bežať v samostatnom kontajnery a prístup do nej bude len pomocou protokolu \acrshort{oauth} na overovanie klientov a prostredníctvom interného volania na registráciu používateľov.
 
@@ -432,7 +434,7 @@ fun data35(
 
 \subsubsection{Kompilácia a spustenie relay}
 
-Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód skompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy relay servisu a spúšťame príkaz "gradle bootrun" ktorý spustí skompilovaný relay servis. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií relay servisu. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.
+Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód zkompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy relay servisu a spúšťame príkaz "gradle bootrun" ktorý spustí skompilovaný relay servis. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií relay servisu. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.
 
 \subsection{Relay Service}
 
@@ -440,7 +442,7 @@ Vygenerovať túto službu je cieľom našej prace. Po vygenerovaní koncových 
 
 Pred tým ako vygenerujme koncové body špecifické pre daný procesný model, je relay service iba prázdny Spring Boot kontajner so základnou konfiguráciou. Pre poskytnutie základnej funkcionality webového koncového bodu obsahuje kontajner balíček Spring Web Starter \cite{webstarter}, tento balíček poskytuje funkcionalitu, ktorá umožňuje pomocou anotácií mapovať funkcie tried na rôzne \acrshort{url}, špecifikovať, HTTP metódu, dátové polia vstupu a formát výstupu. Tieto mapovania následne oživí pomocou priloženého webového servera Apache Tomcat \cite{tomcat}
 
-Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne vyprezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotási patrí @ApiOperation, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a @ApiParam ktorú sme použili na pridanie informácií o parametroch týchto funkcií.
+Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne prezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotácie patrí @ApiOperation, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a @ApiParam ktorú sme použili na pridanie informácií o parametroch týchto funkcií.
 
 Na vizualizáciu tejto dokumentácie sme použili balík Swagger UI, ktorý na adrese "/swagger-ui.html" poskytuje používateľské rozhranie v ktorom možno vidieť jednotlivé triedy a koncové body vygenerované naším systémom. Na obrázku \ref{swagger_ui} vidíme vizualizovanú dokumentáciu pre jednu sieť s názvom Example, ktorá obsahuje jeden prechod T1 ku ktorému je vygenerovaných päť koncových bodov. Zároveň vidíme predvolené koncové body na registráciu procesov do systému.
 
@@ -466,7 +468,7 @@ V Swagger UI dokumentácií sa dajú otvoriť jednotlivé koncové body a prezri
 
 Na implementáciu autorizačného servera, ktorý dokáže spolupracovať so zvyškom nášho systému sme použili balíček Spring Cloud Security \cite{cloud_security}. Tento balíček podobne ako Spring Boot Security poskytuje základnú funkcionalitu umožňujúcu sa prihlásiť pomocou mena, hesla, alebo aj \acrshort{oauth} a uskladnenie profilov používateľov.
 
-Na rozdiel od základného balíčka Spring Boot Security poskytuje Spring Cloud Security funkcionalitu ktorá umožňuje v centralizovať autentifikáciu do jedného kontajnera. Ostatné kontajnery, ktoré obsahujú koncové body, ktoré chceme zabezpečiť sa označujú ako resource servre.
+Na rozdiel od základného balíčka Spring Boot Security poskytuje Spring Cloud Security funkcionalitu ktorá umožňuje v centralizovať autentifikáciu do jedného kontajnera. Ostatné kontajnery, ktoré obsahujú koncové body, ktoré chceme zabezpečiť sa označujú ako resource servery.
 
 Resource server, nedrží informácie o používateľoch, ak však príde dopyt na funkciu, ktorá si vyžaduje autorizáciu, vie tento server získať profil používateľa od autorizačného servera. Ak nie je tento používateľ autorizovaný na vykonanie dopytu vracia resource server chybu 403.
 
@@ -478,13 +480,6 @@ Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tok
 
 %TODO expand auth service
 %TODO auth by classes, by functions
-
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=10cm]{img/auth_operation.png}
-	\caption{Autorizácia}
-	\label{auth_operation}
-\end{figure}
 
 \subsection{Service Discovery}
 Service discovery je služba ktorá sleduje stav ostatných služieb a vie zabezpečiť koordináciu komunikácie medzi jednotlivými kontajnermi v cloudovom riešení. V našom systéme implementujeme service discovery ako Spring Boot kontajner s balíčkom Netflix Eureka \cite{eureka}. Nastavenie tohto balička si vyžaduje len importovať závislosť, použiť anot @EnableEurekaServer a nastaviť port servera, v našom prípade je to štandardný port 7777 a hostname Eurka servra.
