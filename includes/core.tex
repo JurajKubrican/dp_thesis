@@ -6,7 +6,7 @@
 \subsection{Petriflow}
 Carl Adam Petri založil koncept Petriho sietí v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi - na Technickej Univerzite v Darmstadte. Ďalším výskumom sa z pôvodného konceptu ktorý bol určený na modelovanie analýzu komunikačných systémov vyvinul nástroj, ktorý sa používa naprieč mnohými oblasťami najmä na modelovanie paralelných a distribuovaných systémov.
 
-Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznis procesov. Je vyvíjaný spoločnosťou Netgrif na základe dlhodobých skúseností s klientami, ktorý pomocou tohto formalizmu modelujú svoje biznis procesy, ktoré sú následne zavedené do používania.
+Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznis procesov. Je vyvíjaný spoločnosťou Netgrif na základe dlhodobých skúseností s klientmi, ktorý pomocou tohto formalizmu modelujú svoje biznis procesy, ktoré sú následne zavedené do používania.
 
 Formalizmus Petriflow rozširuje Petriho siete o ďalšie komponenty. Ako základ berie Petriho siete obohatené reset, inihibitor a read hrany. Aby sa dali modelovať moderné biznis procesy pridáva Petriflow do tohto modelu roly, dátové polia a akcie.
 
@@ -16,9 +16,9 @@ Dátové polia definujú štruktúru dát ktoré každá inštancia procesu obsa
 
 Akcie definujú vzťahy a interakcie medzi jednotlivými dátovými poľami a prechodmi.
 
-V klasických Petriho sieťach je spustenie prechodu vždy atomická operácia. Petriflow obsahuje dva typy prechodov. Udalostné prechody, ktoré sú rovnako  ako v klasických PN sieťach atomické, avšak vždy ich spúšťa nejaká osoba(používateľ) v systéme. Druhý typ prechodu je úloha. Úlohu môžeme vnímať ako podsieť na obrázku \ref{task}. Na začiatku je úloha nepridelená, ako prvý krok je potrebné ju niekomu (aj sebe) prideliť. Následne môže toto pridelenie zrušiť, prideliť inej osobe, alebo úlohu dokončiť. My sa ďalej budeme zaoberať ľen úlohami.
+V klasických Petriho sieťach je spustenie prechodu vždy atomická operácia. Petriflow obsahuje dva typy prechodov. Udalostné prechody, ktoré sú rovnako  ako v klasických PN sieťach atomické, avšak vždy ich spúšťa nejaká osoba(používateľ) v systéme. Druhý typ prechodu je úloha. Úlohu môžeme vnímať ako podsieť na obrázku \ref{task}. Na začiatku je úloha nepridelená, ako prvý krok je potrebné ju niekomu (aj sebe) prideliť. Následne môže toto pridelenie zrušiť, prideliť inej osobe, alebo úlohu dokončiť. My sa ďalej budeme zaoberať len úlohami.
 
-Keďže každá úloha je samostatná sieť so štyrmi prechodmi, musíme pre každú úlohu zadafinovať roly pre všetky štyri operácie úlohy.
+Keďže každá úloha je samostatná sieť so štyrmi prechodmi, musíme pre každú úlohu zadefinovať roly pre všetky štyri operácie úlohy.
 
 \begin{figure}[!htbp]
 	\centering
@@ -32,9 +32,10 @@ Majme procesne orientovaný systém ktorý implementuje procesy, popísane v Pet
 
 Keďže formalizmus Petriflow je schopný takýmto spôsobom popísať všetky interakcie používateľa so systémom je možné na jeho základe vygenerovať aj aplikačné rozhranie. Toto rozhranie sprístupní systém mimo jeho domény, zaručí autorizáciu podľa rolí, poskytne dokumentáciu o svojej štruktúre(a tým pádom aj štruktúre procesu) a zabezpečí validáciu dát, ktoré do systému používateľ odošle.
 
-Ak by rozhranie držalo informáciu o značkovaní, a teda spustiteľnosti prechodov, mohol by nasať stav kedy aplikačné rozhranie je v stave, ktorý naznačuje, že prechod sa nedá spustiť no procesný server už je v stave, kedy je prechod spustiteľný. Kvôli udržaniu konzistencie dát a predídeniu race conditions nemôže aplikačné rozhranie držať informáciu o značkovaní a teda ani spustiteľnosti prechodu.
+Ak by rozhranie držalo informáciu o značkovaní, a teda spustiteľnosti prechodov, mohol by nasať stav kedy aplikačné rozhranie je v stave, ktorý naznačuje, že prechod sa nedá spustiť no procesný server už je v stave, kedy je prechod spustiteľný. Keďže proces môže mať viacero spustených inštancií musia v našom systéme tieto inštancie byť adresovateľné, keďže je však predpoklad, že inštancia môže v reálnom stave vzniknúť alebo zaniknúť nemôže náš systém z rovnakých dôvodov ako pri značkovaní držať informáciu o tom, či konkrétna inštancia procesu existuje. 
+Kvôli udržaniu konzistencie dát a vyhnutiu sa problémom s race conditions teda nemôže aplikačné rozhranie držať informáciu o značkovaní a teda ani spustiteľnosti prechodu na žiadnej inštancií procesu, ani o existencií inštancií procesov.
 
-Aktuálna verzia Petriflow poskytuje relatívne granulárne informácie o autorizácií na vykonávanie akcií pomocou rolí, neobsahuje však informáciu o používateľoch ani o tom ktorý používateľ má pridelené aké roly. Na implementáciu funkčného aplikačného rozhrania teda bude nutné dorobiť systém ktorý túto informáciu bude obsahovať.
+Aktuálna verzia Petriflow poskytuje relatívne granulárne informácie o autorizácií na vykonávanie akcií pomocou rolí, neobsahuje však zoznam používateľov, ich prístupových údajov a ich rolí. Na implementáciu funkčného aplikačného rozhrania, ktoré má zabezpečiť autorizáciu bude nutné dodať tieto informácie iným spôsobom.
 
 %TODO obrazok viacero PN -> viac endpointov API - point very cloudy
 
@@ -86,36 +87,59 @@ Používatelia s príslušnými rolami môžu taktiež vykonávať akcie na prec
 Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy sa používateľ autentifikuje, aby nadobudol identitu rozpoznanú našim systémom a boli mu pridelené roly.
 
 \subsection{Štruktúra aplikačného rozhrania}
-Náš systém musí prihláseným používateľom poskytnúť možnosť získavať informácie o stave prechodov a na prechodoch vykonávať rôzne akcie. Musí pracovať s rôznymi štruktúrami a viacerými inštanciami týchto procesov. Preto navrhujeme štruktúru aplikačného rozhrania nasledovne.
+Pri návrhu štruktúry aplikačného rozhrania treba dbať hlavne na prehľadnosť a jednoznačnosť rozhrania. Naše aplikačné rozhranie musí jednoznačne pokryť všetky možné koncové body, ktoré sú možné vygenerovať z procesného modelu Petriflow. Zároveň sme sa rozhodli pri návrhu rozhrania čo najviac držať návrhového vzoru \acrshort{rest}. 
 
-URL ktoré bude klient volať sa budú skladať zo štyroch častí.
+Vzor \acrshort{rest} je už mnoho rokov štandardom pri návrhu aplikačných rozhraní na internete. Jeho základný princíp je že medzi serverom a klientom sa bude presúvať textová reprezentácia objektov, tieto objekty sú adresované pomocou parametrov v URL danom volaní REST koncového bodu. Na manipuláciu s objektami na konkrétnych URL sa vužívajú HTTP medóty GET, POST, PUT, PATCH, DELETE, atď.  sa využívajú . GET získava objekt, POST vytvára nový, DELETE objekt vymazáva, atď.
+
+Objekty, pre ktoré musí náš systém vyprezentovať aplikačné rozhranie sú  procesy (Petriho siete), inštancie týchto procesov a prechody na týchto inštanciách. Ak by sme mali implementovať plné RESTful API so štandatrnou štrukúrou URL by mala nasledovný formát 
+"/net/[netID]/instance/[instanceID]/transition/[transitionID]/operation",  keďže však naše rozhranie bude poskytovať len možnosť spúšťať operácie na konkrétnych prechodoch a hierarchia objektov bude vždy rovnaká, rozhodli sme sa skrátiť tento zápis a vynechať typy objektov z URL.
+
+Generovaná URL ku ktorej budú mať prístup používatelia sa teda bude skladať z nasledujúcich štyroch častí.
 \begin{enumerate}
 	\item identifikátor siete
     \item číslo inštancie procesu
 	\item identifikátor prechodu
 	\item vykonávanú operáciu
 \end{enumerate}
-Príklad URL ciest pre jednu úlohu môžeme vidieť na ukážke \ref{alg:urls_example}
+
+Okrem automaticky generovaný ch ciest potrebujeme ešte zadefinovať cesty ktoré bude používať administrátor systému na obslužné dotazy, pomocou ktorých bude administrátor schopný pridávať odoberať a získavať informácie o modeloch. Pre tieto operácie vyhradíme adresu "/".
+
+Na ukážke \ref{alg:urls_example} môžeme vidieť  Príklad URL Pre verejné a pre obslužné administrátorské API.
 
 \begin{lstlisting}[ caption={Ukážka URL ciest k úlohe},label={alg:urls_example}]
-GET:
+API 
+[GET] 
 /ExampleNet/0/t1
 
-POST:
+[POST] 
 /ExampleNet/0/t1/assign
 /ExampleNet/0/t1/delegate
 /ExampleNet/0/t1/cancel
 /ExampleNet/0/t1/finish
+
+Admin API
+[POST] 
+/
+[GET] 
+/
+[DELETE] 
+/
 \end{lstlisting}
 
-Prvá cesta má HTTP metódu GET a predstavuje operáciu čítania aktuálnych dát v úlohe na danej inštancií procesu. Ostatné operácie majú metódu POST a reprezentujú dané operácie na inštancii úlohy.
-
-Okrem generovaných ciest pre procesy potrebujeme vyhradiť ešte cesty pre administrátora na obsluhu rozhrania. bude to cesta "/" s metódami POST a DELETE, určené pridávanie a vymazávanie procesov.
 
 \subsection{Architektúra}
-Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí, každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.
+Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí (servisov), každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.
 
-Softvér sa bude skladať z troch hlavných služieb: generátor, relay bod a autentifikačná služba.
+Jedna z požiadaviek na náš systém je aby bolo aplikačné rozhraní možné meniť za behu systému. Pri návrhu sme zvažovali dva spôsoby ako zabezpečiť tuto funkcionalitu.
+
+Jeden spôsob by bol napísať univerzálny kód koncového bodu, ktorý by príjmal akékoľvek požiadavky a potom pomocou internej logiky rozhodol, či je dotaz korektný a vykonal by adekvátnu akciu.  Takýto koncový bod by bol schopný okamžite zmeniť svoje nastavenie pri zmene procesného modelu. Nevýhodou tohto riešenia je že koncový bod by musel obsahovať logiku ktorá by držala štruktúru modelu a vedela by na jej základe spracovávať dopyty. Ďalšia nevýhoda tohto prístupu spočíva v nutnosti pregenerovať online dokumentáciu pri každej zmene modelu. Po hlbšej analýze dostupných technológií sme zistili, že zmena dokumentácie za behu servera nieje štandardná operácia ktorá je podporovaná v serverových frameworkoch. 
+
+Druhý spôsob by bol mať jednu službu, ktorá je schopná čítať procesné modely v Petriflow a na ich základe je schopná vygenerovať kód, mikroslužby, ktorá je schopná obslúžiť iba konkrétny model (množinu modelov).  Vygenerovanú službu následne spustí.
+Výhodou tohto prístupu je že keďže vygenerovaný kód nemusí obsahovať logiku, ktorá rozhoduje o tom, či je volanie validné a na ktorý koncový bod smeruje, tento kód je už dopredu vygenerovaný generátorom. Toto znižuje komplexitu kódu koncových bodov a zvyšuje ich priepustnosť. Ďalšou výhodou je že tento prístup nám umožňuje využívať štandardný spôsob generovania dokumentácie keďže ju nemusíme meniť za behu. Nevýhodou tohto prístupu je, že pri zmene procesného modelu môžeme očakávať nejaký čas, kedy bude rozhranie nedostupné. Keďže však pracujeme s predpokladom, že procesné modely sa nebudú meniť až tak často napriek tejto nevýhode sme sa rozhodli postupovať pri návrhu ďalej s týmto modelom. 
+
+
+
+Softvér sa bude skladať z troch hlavných služieb: generator service, relay service a auth service.
 
 \begin{itemize}
     \item Generator je služba, ktorá bude registrovať a zostavovať koncové body. Je to služba, na ktorú sa pripojí administrátor, zadá štruktúru siete a zoznam používateľov a rolí. Táto služba následne zaregistruje používateľov a ich roly, vygeneruje kód pre službu relay a túto službu spustí.
@@ -136,16 +160,15 @@ Softvér sa bude skladať z troch hlavných služieb: generátor, relay bod a au
 
 Autentifikáciu v našej aplikácií budeme riešiť pomocou štandardnej knižnice, ktorá poskytuje \acrshort{oauth}. Táto služba bude bežať v samostatnom kontajnery a prístup do nej bude len pomocou protokolu \acrshort{oauth} na overovanie klientov a prostredníctvom interného volania na registráciu používateľov.
 
-Ochrana pred neoprávneným prístupom bude ďalej realizovaná pomocou služby gateway. Táto služba bude jediný bod ako sa dá pristúpiť do našej domény z internetu. Služba bude povoľovať len dotazy ktoré špecifikujeme. Ochrana proti neopevnenému prístupu bude taktiež realizovaná na vrstve operačného systému pomocou firewallu.
+Ochrana pred neoprávneným prístupom bude ďalej realizovaná pomocou služby gateway. Táto služba bude jediný bod ako sa dá pristúpiť do našej domény z internetu. Služba bude povoľovať len dotazy ktoré špecifikujeme. Ochrana proti neprávnenému prístupu bude taktiež realizovaná na vrstve operačného systému pomocou firewallu.
 
 Ochrana proti \acrshort{dos} útokom bude taktiež realizovaná pomocou gateway služby. Táto služba bude slúžiť ako load balancer, a rovnomerne rozdeľovať dotazy medzi inštancie relay servisu tak, aby boli rovnomerne vyťažené.
 
 \subsection{Operácia systému}
+V tejto časti si priblížime akým spôsobom navrhujeme flow jendotlivých procesov v našom systéme. Najprv popíšeme proces autentifikácie a zavolania koncového bodu klientom a potom popíšeme volanie obslužného koncového bodu administrátorom
+\subsubsection{Používateľské API}
 Na diagrame \ref{api_operation} vidíme vo vrchnej časti proces prihasenia používateľa a v dolnej časti vykonanie dopytu na procesný server.
 
-Počas procesu prihlásenia používateľ najprv odošle dopyt na prihlásenie, gateway ho presmeruje na autorizačný servis a ten mu následne vráti autorizačný token.
-
-Proces dopytu na procesný server je zložitejší. Najprv klient pošle dopyt na náš systém, gateway ho nasmeruje na relay servis, ktorý si podľa autorizačného tokenu vypýta od auth servisu profil používateľa, pokiaľ má rolu potrebnú na spustenie prechodu a dotaz je validný, odošle relay dopyt ďalej na procesný server. Odpoveď z procesného servera sa následne propaguje spať ku klientovi.
 
 \begin{figure}[!htbp]
 	\centering
@@ -154,12 +177,22 @@ Proces dopytu na procesný server je zložitejší. Najprv klient pošle dopyt n
 	\label{api_operation}
 \end{figure}
 
-Proces zmeny rozhrania ako môžeme vidieť na diagrame \ref{change_operation}.
-Po tom, čo náš systém prijme požiadavku na zmenu rozhrania, najprv vyčistí prostredie, a stiahne najnovšiu verziu relay servisu. Následne vygeneruje kód koncových bodov, a zostavovanie tohto kódu. Ak prebehlo zostavovanie kódu v poriadku, a teda vygenerovaný ód je validný, odošleme pokyn na zastavenie starého rozhrania a paralelne spustíme proces registrácie nových používateľov a spustenie nového rozhrania. Naše rozhranie teda bude mať výpadok, len v období medzi vypnutím starej a zapnutím novej inštancie relay servisu.
+Počas procesu prihlásenia používateľ najprv odošle dopyt na prihlásenie našemu API.  Gateway ho presmeruje na autorizačný servis, ten overí jeho prihlasovacie údaje, ak sú správne vráti klientovi autorizačný token. Autentifikácia v takejto forme prebieha len pred prvým dopytom. K ďalším dopytom už klient priloží tento autorizačný token. 
+
+Proces dopytu na procesný server je zložitejší. Najprv klient pošle dopyt na náš systém, Gateway ho nasmeruje na relay servis. Ak klient odoslal dopyt na korektnú adresu Relay servis musí potvrdiť identitu klienta. Identitu klienta overuje pomocou priloženého autorizačného tokenu ktorý klient musí poskytnuť. Relay servis zistí identitu klienta tak, že pošle interný dopyt na  auth servis a podľa tokenu si vypýta profil používateľa s jeho rolami.  Pokiaľ má klient rolu potrebnú na spustenie konkrétnej akcie na prechode, ak je to potrebné Relay servis vykoná validáciu dát  v dotaze odošle dopyt na procesný server.  Odpoveď z procesného servera sa následne propaguje spať cez gateway servis ku klientovi.
+ 
+Keďže nebudeme mať prístup k nasadenému procesnému servisu bude volanie tohto serveru vykonané iba ako volanie prázdnej funkcie. Od tejto funkcie očakávame, že v prípade, ak prebehla akcia na prechode v poriadku vráti buď príslušné dáta alebo prázdnu odpoveď.  Ak sa klient pokúsi spustiť prechod, ktorý v konkrétnej inštancií procesu nieje spustiteľný alebo ak daná inštancia procesu neexistuje, očakávame, že volanie vráti príslušnú chybu. 
+
+\subsubsection{Obslužné API}
+Proces autentifikácie pri obslužnom volaní bude prebiehať rovnakým spôsobom ako pri  používateľskom volaní. Administrátor dostane autentifikačný token, pomocou ktorého pri všetkých ďalších volaniach preukazuje svoju identitu.
+
+Administrátor zadá požiadavku na zmenu rozhrania, bude presmerovaný na generator service. Ten rozanalyzuje nový procesný model, následne a odošle dopyt na auth service na registráciu nových používateľov. Paralelne vygeneruje nový kód pre relay service a spúšťa jeho kompiláciu a tetovanie. Po úspešnom ukončení oboch procesov odošle dopyt na vypnutie starého relay servisu a spúšťa novú verziu.
+
+Na diagrame \ref{change_operation} môžeme vidieť tento proces zmeny aplikačného rozhrania. 
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=10cm]{img/change_operation.png}
+	\includegraphics[width=10cm]{img/api_operation_change.png}
 	\caption{Proces zmeny rozhrania}
 	\label{change_operation}
 \end{figure}
@@ -178,9 +211,9 @@ Jazyk bol navrhnutý tak, aby bol čo najviac čitateľný, čo najviac sa vyhol
 
 V jazyku Kotlin sa deklarujú premenné pomocou kľúčových slov val alebo var, takto deklarujeme buď konštanty, alebo premenné. samotný typ premennej je vo väčšine prípadov odvodený z hodnoty ktorú premennej pridelíme. V prípade, že zadefinujeme premennú pomocou var a nemutujeme jej obsah, kompilátor hlási varovanie, že premenná môže byť zmenená na konštantu. Tento prístup však funguje len pri primitívnych dátových typoch. Pri kontajneroch sa uplatňuje rovnaký princíp použitím imutabilných dátových štruktúr list, map, a ďalšie. Ak chceme zadeklarovať list ktorého obsah plánujeme meniť musíme použiť typ mutableList. 
 
-Ďalšie vylepšenie typového systému prichádza implementáciou nulovateľných typov. Tento princíp obmedzuje potrebu používania try cathc blokov a na miesto toho ich nahradzuje nulovateľnými typmi. Ak pracujeme s funkciou, ktorá nemusí vždy vrátiť dáta, jej vstupný typ bude nulovateľný. Pri práci s takýmito nulovateľnými typmi nám kompilátor núti ošetriť prípady, kedy premenná obsahuje null. Na ukážke kódu \ref{alg:kt_null} vidíme, príklad funkcie, ktorá vracia nulovateľný String?. Ak sa pokúsime pristúpiť k parametru length tejto premennej pred tým ako ošetríme nulový prípad, kompilátor vyhlási kompilačnú chybu a nedovolí nám kód skompilovať. Ak by sme tento prípad neošetrili v Jave by došlo k chybe až pri behu programu. 
+Ďalšie vylepšenie typového systému prichádza implementáciou nulovateľných typov. Tento princíp obmedzuje potrebu používania try catch blokov a na miesto toho ich nahradzuje nulovateľnými typmi. Ak pracujeme s funkciou, ktorá nemusí vždy vrátiť dáta, jej vstupný typ bude nulovateľný. Pri práci s takýmito nulovateľnými typmi nám kompilátor núti ošetriť prípady, kedy premenná obsahuje null. Na ukážke kódu \ref{alg:kt_null} vidíme, príklad funkcie, ktorá vracia nulovateľný String?. Ak sa pokúsime pristúpiť k parametru length tejto premennej pred tým ako ošetríme nulový prípad, kompilátor vyhlási kompilačnú chybu a nedovolí nám kód skompilovať. Ak by sme tento prípad neošetrili v Jave by došlo k chybe až pri behu programu. 
 
-Ak korektne ošetríme nulový prípad kompilátor zmení ty premenenej na nenulovatľný a dovolí nám ďalej pracovať s premennou, lebo už je zaučené, že nenastane chyba pri prístupe k dátam. 
+Ak korektne ošetríme nulový prípad kompilátor zmení ty premenenej na nenulovateľný a dovolí nám ďalej pracovať s premennou, lebo už je zaučené, že nenastane chyba pri prístupe k dátam. 
 
 
 \begin{lstlisting}[ caption={Ukážka funkcie typov v jazyku Kotlin},label={alg:kt_null},language=Kotlin]
@@ -203,7 +236,7 @@ print(variable.length)
 \end{lstlisting}
 
 
-Ďalšie zlepšenie jazyka ktoré je veľmi užitočné pri práci s frameworkom Spring sú dátové triedy. Ak by sme v Jave chceli vytvoriť jednoduchú triedu, ktorá len drží dáta, musíme zadeklarovať triedu, jej konštruktor, dátové polia, a funkcie na nastavovanie a čítanie polí. v jazyku Kolin vieme zadeklarovať dátovú triedu pomocou jednoriadkového príkazu. Na ukážke kódu \ref{kt_dataclass} vidíme príklad dátovej triedy Person s povinnými prvými dvomi poľami firstName a lastName a nepovinnými poľami age a height. Pole firstName je konštantné, preto sa nebude dať meniť nie je nutné vynechať implementáciu nastavovacej funkcie ako v Jave. Polia age a height sú nepovinné.  
+Ďalšie zlepšenie jazyka ktoré je veľmi užitočné pri práci s frameworkom Spring sú dátové triedy. Ak by sme v Jave chceli vytvoriť jednoduchú triedu, ktorá len drží dáta, musíme zadeklarovať triedu, jej konštruktor, dátové polia, a funkcie na nastavovanie a čítanie polí. v jazyku Kolin vieme zadeklarovať dátovú triedu pomocou jednoriadkového príkazu. Na ukážke kódu \ref{alg:kt_dataclass} vidíme príklad dátovej triedy Person s povinnými prvými dvomi poľami firstName a lastName a nepovinnými poľami age a height. Pole firstName je konštantné, preto sa nebude dať meniť nie je nutné vynechať implementáciu nastavovacej funkcie ako v Jave. Polia age a height sú nepovinné.  
  
 V jazyku Kotlin je implementovaný aj princíp pomenovaných argumentov. To znamená, že konštruktor našej dátovej triedy Person môžeme zavolať s ľubovoľnou kombináciou nepovinných argumentov. 
 
@@ -226,7 +259,7 @@ Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru
 
 \subsubsection{Spring}
 Spring je jeden z najpoužívanejších frameworkov využívaných Java developermi. Framework je voľne šíriteľný a udržiavaný spoločnosťou Pivotal Software, Inc.
-%TODO SPPRING
+%TODO SPRING
 
 Všetky Spring Boot kontajnery sme inštalovali pomocou Spring initializr \cite{initializr}
 
@@ -246,7 +279,7 @@ Spring Cloud je framework, ktorý obsahuje bohatú sadu nástrojov na vytvárani
 %TODO Spring Cloud
 
 \subsubsection{Git}
-Git je najpoužívanejší nástroj na kontrolu revízií na svete. Bol vytvorený Linusom Torvaldsom v roku 2005 na kontrolu revízií pri vývoji jadra Linuxu. A rovnako ako Linux bol zverejnený na voľné používanie. V našom projekte sme použili git na kontrolu revízií samotného kódu našej aplikácie. Zároveň sme využili Java knižnicu JGit \cite{jgit}, čo je implementácia gitu v jave. Bola vyvinula a je ďalej udržiavaná spoločnosťou Eclipse Foundation, Inc.
+Git je najpoužívanejší nástroj na kontrolu revízií na svete. Bol vytvorený Linusom Torvaldsom v roku 2005 na kontrolu revízií pri vývoji jadra Linuxu. A rovnako ako Linux bol zverejnený na voľné používanie. V našom projekte sme použili git na kontrolu revízií samotného kódu našej aplikácie. Zároveň sme využili Java knižnicu JGit \cite{jgit}. Bola vyvinula a je ďalej udržiavaná spoločnosťou Eclipse Foundation, Inc. Táto knižnica nieje len wrapper na natívneho git klienta, je to plnohodnotná implementácia Git klienta v jazyku Java, toto nám zabezpečuje plnú funkcionalitu Git klienta bez nutnosti inštalovať Git samostane. 
 
 \subsubsection{Insomnia}
 Insomnia \cite{insomnia} je voľne šíriteľný softvér vyvíjaný spoločnosťou Floating Keyboard Software Inc. Je určený na testovanie REST a GraphQL služieb. Je to alternatíva ku známemu programu Postman. Je postavený na platforme Electron s použitím knižnice React. Insomnia nám dovolí vytvoriť a uložiť viacero testovacích dopytov, ktoré môžeme neskôr spustiť a overiť ich správne fungovanie. Insomnia taktiež podporuje autentifikačný protokol OAuth2. Okrem štandardných HTTP volaní podporuje aj čoraz viac populárny protokol GraphQL
@@ -308,7 +341,7 @@ Keď už máme dáta s používateľmi a modelom, zaregistrujeme používateľov
 Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Servisu poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore.
 
 \subsubsection{Príprava repozitára}
-Na spustenie Spring Boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit} čo je implementácia git klienta v jazyku Java.
+Na spustenie Spring Boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit}.
 
 Funkcia na prípravu repozitára najprv skontroluje či v dočasnom priečinku už repozitár neexistuje, ak existuje zavolá jgit ekvivalent funkcie "git reset origin/master" čím zmení lokálne súbory na aktuálnu verziu z repozitára. Súbory obsiahnuté v .gitignore sa ponechajú bez zmeny, a tým pádom akékoľvek cache súbory z predošlej kompilácie ostatnú nedotknuté čo urýchli kompiláciu kódu. Ak git reset z nejakého dôvodu zlyhá, funkcia vymaže akékoľvek pozostatky súborov v dočasnom priečinku a repozitár znovu naklonuje.
 
