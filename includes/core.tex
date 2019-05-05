@@ -172,7 +172,14 @@ V tejto kapitole najprv predstavíme technológie ktoré sme použili pri implem
 \subsubsection{Kotlin}
 Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krát zverejnený v roku 2011 spoločnosťou JetBrains(Andrey Breslav). Bol vyvinutý ako moderný staticky typovaný jazyk, ktorý podporuje rýchlu kompiláciu do javy. V roku 2017 ohlásil Google podporu pre Kotlin v operačnom systéme Android. V rovnakom roku ohlásil Pivotal Software oficiálnu podporu pre Kotlin vo verzii 5.0 ich frameworku Spring.
 
-Medzi jeho hlavné výhody patrí menší boilerplate (menej zbytočného kódu), a vylepšený systém typovania premenných. V Kotline  môžu byť premenné nulovateľné, to znamená, že kompilátor počíta s prípadom, že nulovateľná premenná ešte nie je inicializovaná. Kompilátor Kotlinu využíva pokročilú logiku na to, aby zistil v ktorých vetvách kódu premenné môžu obsahovať null a v ktorých nie. V prípade že podmienkou ošetríme nulový prípad kompilátor v druhej vetve programu zmení typ premennej tak, že už nie je nulovateľná \ref{alg:preview}. Teda v kóde(pokiaľ aktívne neobídeme typovú ochranu) nemôže nastať null pointer exception.
+Kotlin sa dá buď transpilovať do jazyka Java, alebo JavaScript, alebo sa dá kompilovať priamo do spustiteľného binárneho súboru pe všetky bežné operačné systémy (Linux, Windows, Android, iOS).
+
+Jazyk bol navrhnutý tak, aby bol čo najviac čitateľný, čo najviac sa vyhol potrebe písať zbytočný, alebo duplicitný kód a aby sa čo najviac vyhol chybám pri behu systému, a odchytal chyby už pri kompilácií. 
+
+Data Class
+
+
+V Kotline  môžu byť premenné nulovateľné, to znamená, že kompilátor počíta s prípadom, že nulovateľná premenná ešte nie je inicializovaná. Kompilátor Kotlinu využíva pokročilú logiku na to, aby zistil v ktorých vetvách kódu premenné môžu obsahovať null a v ktorých nie. V prípade že podmienkou ošetríme nulový prípad kompilátor v druhej vetve programu zmení typ premennej tak, že už nie je nulovateľná \ref{alg:preview}. Teda v kóde(pokiaľ aktívne neobídeme typovú ochranu) nemôže nastať null pointer exception.
 
 \begin{lstlisting}[ caption={Ukážka funkcie typov v jazyku Kotlin},label={alg:preview},language=Kotlin]
 // vráti null alebo String
@@ -193,14 +200,14 @@ if(variable == null){
 print(variable.length)
 \end{lstlisting}
 
-Kotlin sa dá buď transpilovať do jazyka java, alebo JavaScript, alebo sa dá kompilovať priamo do spustiteľného  binárneho súboru pe všetky bežné Operačné systémy (Linux, Windows, Android, iOS).
+
 My sme použili Kotlin kompilovaný do jazyka Java lebo nám to dovoľuje využívať výhody jazyka a zároveň využívať všetky knižnice, ktoré sú dostupné pre jazyk Java.
 
 \subsubsection{Gradle}
-Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný zostaviť takmer ľubovoľný program. Podporuje jazyky ako java, C++ Python, a mnoho ďalších. V našom projekte sa gradle použijeme na manažment závislostí, kompiláciu kódu a spustenie samotného skompilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použitia ukázali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu zostavovania softvéru takže jeho výkon je pri opakovanej kompilácií vyšší.
+Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný zostaviť takmer ľubovoľný program. Podporuje jazyky ako Java, C++ Python, a mnoho ďalších. V našom projekte sa gradle použijeme na manažment závislostí, kompiláciu kódu a spustenie samotného skompilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použitia ukázali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu zostavovania softvéru takže jeho výkon je pri opakovanej kompilácií vyšší.
 
 \subsubsection{Spring}
-Spring je jeden z najpoužívanejších frameworkov využívaných java developermi. Framework je voľne šíriteľný a udržiavaný spoločnosťou Pivotal Software, Inc.
+Spring je jeden z najpoužívanejších frameworkov využívaných Java developermi. Framework je voľne šíriteľný a udržiavaný spoločnosťou Pivotal Software, Inc.
 %TODO SPPRING
 
 Všetky Spring Boot kontajnery sme inštalovali pomocou Spring initializr \cite{initializr}
@@ -273,9 +280,9 @@ Okrem požiadavky na pridanie siete môže administrátor spustiť aj požiadavk
 \subsubsection{Čítanie súborov Petriflow a súborov s používateľmi}
 Na čítanie \acrshort{xml} súborov používame štandardnú knižnicu JAXB \cite{jaxb}. Táto knižnica podľa \acrshort{xsd} súborov vygeneruje triedy, so rovnakou štruktúrou ako majú entity v \acrshort{xml}.
 
-Vygenerovali sme teda dva balíky, jeden balík s triedami v jazyku java z definície Petrfilow a jeden s triedami z definície nášho súboru s používateľmi.
+Vygenerovali sme teda dva balíky, jeden balík s triedami v jazyku Java z definície Petrfilow a jeden s triedami z definície nášho súboru s používateľmi.
 
-Následne pri čítaní súborov použijeme triedu Unmarshaller balíka JAXB, ktorý prečíta textový súbor \acrshort{xml} a vráti java objekty s dátami zo súborov. Keďže jazyk kotlin, v ktorom pracujeme je plne kompatibilný s jazykom java, s týmito objektami môžeme ďalej pracovať ako so štandardnými kotlin dátovými objektami.
+Následne pri čítaní súborov použijeme triedu Unmarshaller balíka JAXB, ktorý prečíta textový súbor \acrshort{xml} a vráti Java objekty s dátami zo súborov. Keďže jazyk kotlin, v ktorom pracujeme je plne kompatibilný s jazykom Java, s týmito objektami môžeme ďalej pracovať ako so štandardnými kotlin dátovými objektami.
 
 \subsubsection{Registrácia používateľov}
 Keď už máme dáta s používateľmi a modelom, zaregistrujeme používateľov do našej autentifikačnej služby.
@@ -283,7 +290,7 @@ Keď už máme dáta s používateľmi a modelom, zaregistrujeme používateľov
 Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Servisu poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore.
 
 \subsubsection{Príprava repozitára}
-Na spustenie Spring Boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit} čo je implementácia git klienta v jazyku java.
+Na spustenie Spring Boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit} čo je implementácia git klienta v jazyku Java.
 
 Funkcia na prípravu repozitára najprv skontroluje či v dočasnom priečinku už repozitár neexistuje, ak existuje zavolá jgit ekvivalent funkcie "git reset origin/master" čím zmení lokálne súbory na aktuálnu verziu z repozitára. Súbory obsiahnuté v .gitignore sa ponechajú bez zmeny, a tým pádom akékoľvek cache súbory z predošlej kompilácie ostatnú nedotknuté čo urýchli kompiláciu kódu. Ak git reset z nejakého dôvodu zlyhá, funkcia vymaže akékoľvek pozostatky súborov v dočasnom priečinku a repozitár znovu naklonuje.
 
@@ -519,7 +526,7 @@ Pred tým ako sa pokúsime spustiť systém treba sa uistiť, že server, na kto
 Na nasadenie našej aplikácie potrebujeme vykonať nasledovné kroky:
 
 \begin{enumerate}
-    \item Uistíme sa, že na serveri je nainštalovaný nástroj Git a java 8.
+    \item Uistíme sa, že na serveri je nainštalovaný nástroj Git a Java 8.
 	\item Pomocou gitu stiahneme repozitár \cite{dp_repo} s aktuálnou verziou nášho systému.
     \item Skompilujeme a spustíme programu pomocou skriptu "run.sh" ktorý sa nachádza v priečinku repozitára. Tento skript stiahne Gradle 5.4.1, A postupne nainštaluje a spustí všetky kontajnery nášho systému.
 	Proces kompilácie a spúšťania kontajnerov je výpočtovo náročný a na serveroch so štyrmi a menej jadrami môže trvať viac ako 3 minúty. Pri prvom spustení si bude inštalačný skript sťahovať závislosti, preto tento proces môže trvať ešte dlhšie.
