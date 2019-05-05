@@ -174,14 +174,16 @@ Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krá
 
 Kotlin sa dá buď transpilovať do jazyka Java, alebo JavaScript, alebo sa dá kompilovať priamo do spustiteľného binárneho súboru pe všetky bežné operačné systémy (Linux, Windows, Android, iOS).
 
-Jazyk bol navrhnutý tak, aby bol čo najviac čitateľný, čo najviac sa vyhol potrebe písať zbytočný, alebo duplicitný kód a aby sa čo najviac vyhol chybám pri behu systému, a odchytal chyby už pri kompilácií. 
+Jazyk bol navrhnutý tak, aby bol čo najviac čitateľný, čo najviac sa vyhol potrebe písať zbytočný, alebo duplicitný kód a aby sa čo najviac vyhol chybám pri behu systému, a odchytal chyby už pri kompilácií. Na nasledujúcich príkladoch si ukážeme akými spôsobmi dosiahli tvorcovia tohto jazyku tieto ciele. 
 
-Data Class
+V jazyku Kotlin sa deklarujú premenné pomocou kľúčových slov val alebo var, takto deklarujeme buď konštanty, alebo premenné. samotný typ premennej je vo väčšine prípadov odvodený z hodnoty ktorú premennej pridelíme. V prípade, že zadefinujeme premennú pomocou var a nemutujeme jej obsah, kompilátor hlási varovanie, že premenná môže byť zmenená na konštantu. Tento prístup však funguje len pri primitívnych dátových typoch. Pri kontajneroch sa uplatňuje rovnaký princíp použitím imutabilných dátových štruktúr list, map, a ďalšie. Ak chceme zadeklarovať list ktorého obsah plánujeme meniť musíme použiť typ mutableList. 
+
+Ďalšie vylepšenie typového systému prichádza implementáciou nulovateľných typov. Tento princíp obmedzuje potrebu používania try cathc blokov a na miesto toho ich nahradzuje nulovateľnými typmi. Ak pracujeme s funkciou, ktorá nemusí vždy vrátiť dáta, jej vstupný typ bude nulovateľný. Pri práci s takýmito nulovateľnými typmi nám kompilátor núti ošetriť prípady, kedy premenná obsahuje null. Na ukážke kódu \ref{alg:kt_null} vidíme, príklad funkcie, ktorá vracia nulovateľný String?. Ak sa pokúsime pristúpiť k parametru length tejto premennej pred tým ako ošetríme nulový prípad, kompilátor vyhlási kompilačnú chybu a nedovolí nám kód skompilovať. Ak by sme tento prípad neošetrili v Jave by došlo k chybe až pri behu programu. 
+
+Ak korektne ošetríme nulový prípad kompilátor zmení ty premenenej na nenulovatľný a dovolí nám ďalej pracovať s premennou, lebo už je zaučené, že nenastane chyba pri prístupe k dátam. 
 
 
-V Kotline  môžu byť premenné nulovateľné, to znamená, že kompilátor počíta s prípadom, že nulovateľná premenná ešte nie je inicializovaná. Kompilátor Kotlinu využíva pokročilú logiku na to, aby zistil v ktorých vetvách kódu premenné môžu obsahovať null a v ktorých nie. V prípade že podmienkou ošetríme nulový prípad kompilátor v druhej vetve programu zmení typ premennej tak, že už nie je nulovateľná \ref{alg:preview}. Teda v kóde(pokiaľ aktívne neobídeme typovú ochranu) nemôže nastať null pointer exception.
-
-\begin{lstlisting}[ caption={Ukážka funkcie typov v jazyku Kotlin},label={alg:preview},language=Kotlin]
+\begin{lstlisting}[ caption={Ukážka funkcie typov v jazyku Kotlin},label={alg:kt_null},language=Kotlin]
 // vráti null alebo String
 fun maybeGetString():String?
 
@@ -191,8 +193,8 @@ val variable = maybeGetString()
 // nastane chyba pri kompilácií, lebo nieje ošetrený prípad, kedy je valiable null
 print(variable.length)
 
-if(variable == null){
-	variable = ""
+if(isNullOrEmpty(variable){
+	variable = "placeholder"
 }
 
 // nenastane chyba pri kompilácií, lebo bol ošetrný nulový priípad
@@ -201,7 +203,23 @@ print(variable.length)
 \end{lstlisting}
 
 
-My sme použili Kotlin kompilovaný do jazyka Java lebo nám to dovoľuje využívať výhody jazyka a zároveň využívať všetky knižnice, ktoré sú dostupné pre jazyk Java.
+Ďalšie zlepšenie jazyka ktoré je veľmi užitočné pri práci s frameworkom Spring sú dátové triedy. Ak by sme v Jave chceli vytvoriť jednoduchú triedu, ktorá len drží dáta, musíme zadeklarovať triedu, jej konštruktor, dátové polia, a funkcie na nastavovanie a čítanie polí. v jazyku Kolin vieme zadeklarovať dátovú triedu pomocou jednoriadkového príkazu. Na ukážke kódu \ref{kt_dataclass} vidíme príklad dátovej triedy Person s povinnými prvými dvomi poľami firstName a lastName a nepovinnými poľami age a height. Pole firstName je konštantné, preto sa nebude dať meniť nie je nutné vynechať implementáciu nastavovacej funkcie ako v Jave. Polia age a height sú nepovinné.  
+ 
+V jazyku Kotlin je implementovaný aj princíp pomenovaných argumentov. To znamená, že konštruktor našej dátovej triedy Person môžeme zavolať s ľubovoľnou kombináciou nepovinných argumentov. 
+
+\begin{lstlisting}[ caption={Ukážka dátových tried a pomenovaných argumentov v jazyku Kotlin},label={alg:kt_dataclass},language=Kotlin]
+	data class Person(
+		val firstName: String,
+		var lastName: String,
+		var age?: Int,
+		var height:? Int)
+
+  val p1 = Person("Jozef", "Mrkva", height=180)		
+	\end{lstlisting}
+
+
+
+My sme zvolili jazyk Kotlin pre náš projekt hlavne kvôli vylepšeniam v systéme typovania a zmenšenému boilerplatu. Ďalej nám využitie tohto jazyka umožnila bezproblémová integrácia s frameworkom Stping a ostatnými knižnicami v jazyku Java.	
 
 \subsubsection{Gradle}
 Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný zostaviť takmer ľubovoľný program. Podporuje jazyky ako Java, C++ Python, a mnoho ďalších. V našom projekte sa gradle použijeme na manažment závislostí, kompiláciu kódu a spustenie samotného skompilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použitia ukázali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu zostavovania softvéru takže jeho výkon je pri opakovanej kompilácií vyšší.
