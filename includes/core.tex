@@ -33,6 +33,7 @@ Majme procesne orientovaný systém ktorý implementuje procesy, popísane v Pet
 Keďže formalizmus Petriflow je schopný takýmto spôsobom popísať všetky interakcie používateľa so systémom je možné na jeho základe vygenerovať aj aplikačné rozhranie. Toto rozhranie sprístupní systém mimo jeho domény, zaručí autorizáciu podľa rolí, poskytne dokumentáciu o svojej štruktúre(a tým pádom aj štruktúre procesu) a zabezpečí validáciu dát, ktoré do systému používateľ odošle.
 
 Ak by rozhranie držalo informáciu o značkovaní, a teda spustiteľnosti prechodov, mohol by nasať stav kedy aplikačné rozhranie je v stave, ktorý naznačuje, že prechod sa nedá spustiť no procesný server už je v stave, kedy je prechod spustiteľný. Keďže proces môže mať viacero spustených inštancií musia v našom systéme tieto inštancie byť adresovateľné, keďže je však predpoklad, že inštancia môže v reálnom stave vzniknúť alebo zaniknúť nemôže náš systém z rovnakých dôvodov ako pri značkovaní držať informáciu o tom, či konkrétna inštancia procesu existuje. 
+
 Kvôli udržaniu konzistencie dát a vyhnutiu sa problémom s race conditions teda nemôže aplikačné rozhranie držať informáciu o značkovaní a teda ani spustiteľnosti prechodu na žiadnej inštancií procesu, ani o existencií inštancií procesov.
 
 Aktuálna verzia Petriflow poskytuje relatívne granulárne informácie o autorizácií na vykonávanie akcií pomocou rolí, neobsahuje však zoznam používateľov, ich prístupových údajov a ich rolí. Na implementáciu funkčného aplikačného rozhrania, ktoré má zabezpečiť autorizáciu bude nutné dodať tieto informácie iným spôsobom.
@@ -93,6 +94,7 @@ Vzor \acrshort{rest} je už mnoho rokov štandardom pri návrhu aplikačných ro
 
 Objekty, pre ktoré musí náš systém vyprezentovať aplikačné rozhranie sú  procesy (Petriho siete), inštancie týchto procesov a prechody na týchto inštanciách. Ak by sme mali implementovať plné RESTful API so štandatrnou štrukúrou URL by mala nasledovný formát 
 "/net/[netID]/instance/[instanceID]/transition/[transitionID]/operation",  keďže však naše rozhranie bude poskytovať len možnosť spúšťať operácie na konkrétnych prechodoch a hierarchia objektov bude vždy rovnaká, rozhodli sme sa skrátiť tento zápis a vynechať typy objektov z URL.
+%TODO how to list URLS?
 
 Generovaná URL ku ktorej budú mať prístup používatelia sa teda bude skladať z nasledujúcich štyroch častí.
 \begin{enumerate}
@@ -137,7 +139,7 @@ Jeden spôsob by bol napísať univerzálny kód koncového bodu, ktorý by prí
 Druhý spôsob by bol mať jednu službu, ktorá je schopná čítať procesné modely v Petriflow a na ich základe je schopná vygenerovať kód, mikroslužby, ktorá je schopná obslúžiť iba konkrétny model (množinu modelov).  Vygenerovanú službu následne spustí.
 Výhodou tohto prístupu je že keďže vygenerovaný kód nemusí obsahovať logiku, ktorá rozhoduje o tom, či je volanie validné a na ktorý koncový bod smeruje, tento kód je už dopredu vygenerovaný generátorom. Toto znižuje komplexitu kódu koncových bodov a zvyšuje ich priepustnosť. Ďalšou výhodou je že tento prístup nám umožňuje využívať štandardný spôsob generovania dokumentácie keďže ju nemusíme meniť za behu. Nevýhodou tohto prístupu je, že pri zmene procesného modelu môžeme očakávať nejaký čas, kedy bude rozhranie nedostupné. Keďže však pracujeme s predpokladom, že procesné modely sa nebudú meniť až tak často napriek tejto nevýhode sme sa rozhodli postupovať pri návrhu ďalej s týmto modelom. 
 
-Na diagrame \ref{architecture} vidíme návrch architektúry systému.Softvér sa bude skladať z troch hlavných služieb: generator service, relay service a auth service. 
+Na diagrame \ref{architecture} vidíme návrh architektúry systému.Softvér sa bude skladať z troch hlavných služieb: generator service, relay service a auth service. 
 \begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=10cm]{img/architecture.png}
@@ -246,19 +248,36 @@ V jazyku Kotlin je implementovaný aj princíp pomenovaných argumentov. To znam
 My sme zvolili jazyk Kotlin pre náš projekt hlavne kvôli vylepšeniam v systéme typovania a zmenšenému boilerplatu. Ďalej nám využitie tohto jazyka umožnila bezproblémová integrácia s frameworkom Stping a ostatnými knižnicami v jazyku Java.	
 
 \subsubsection{Gradle}
-Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný zostaviť takmer ľubovoľný program. Podporuje jazyky ako Java, C++ Python, a mnoho ďalších. V našom projekte sa gradle použijeme na manažment závislostí, kompiláciu kódu a spustenie samotného skompilovaného programu. Konfigurácia nástroja prebieha pomocou konfiguračného súboru napísaného v jazyku Groovy, tieto konfiguračné  súbory sa v našom prípade použitia ukázali ako veľmi prehľadné a ľahké na použitie. Gradle taktiež používa pokročilú techniku memoizácie procesu zostavovania softvéru takže jeho výkon je pri opakovanej kompilácií vyšší.
+Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný zostaviť takmer ľubovoľný program.  V našom projekte Gradle použijeme na manažment závislostí, kompiláciu kódu a spustenie samotného skompilovaného programu. 
 
-\subsubsection{Spring}
-Spring je jeden z najpoužívanejších frameworkov využívaných Java developermi. Framework je voľne šíriteľný a udržiavaný spoločnosťou Pivotal Software, Inc.
-%TODO SPRING
+Gradle urýchľuje proces zostavovania aplikácií použitím pokročilej techniku memoizácie pri každom kroku zostavovania. Pri zostavovaní teda spúšťa len procesy ktorým sa zmenili vstupné dáta  a teda očakávame iný výstup. Pri nezmenených dátach nieje nutné bežať tieto procesy znova. Gradle dokonca umožňuje vybudovanie vyrovnávacej pamäte ktorá je následne zdieľaná medzi viacerými zariadeniami.
 
-Všetky Spring Boot kontajnery sme inštalovali pomocou Spring initializr \cite{initializr}
+Gradle beží v JVM a na jeho spustenie postrebujeme mať k nainštalovaný Java Development Kit. Gradle však nieje obmedzený iba na zostaveovanie Java apliácií, medzi jayky ktoré je schopný zostavovať patri aj C++, Python, a mnoho ďalších.
 
-tento nástroj vygeneruje zip súbor so založeným projektom vo frameworku Spring Boot. Pri vytváraní projektu je možné si vybrať Jazyk v ktorom bude projekt založený a nástroj ktorý bude projekt zostavovať % --
+Konfigurácia nástroja Gradle prebieha pomocou konfiguračného súboru napísaného v jazyku Groovy. Keďže Gradle pomocou pluginov vždy implementuje všetky konenčné nastavnia a je nutné nastaviť iba veci, ktoré niesú podľa bežných konvencí, tieto konfiguračné  súbory sa v našom prípade ukázali ako veľmi krátke a prehľadné. 
+
+\subsubsection{Spring framework}
+Spring framework je open source projekt, udržiavaný  Pivotal Software, Inc. Je to Java framework a ekosystém pridružených modulov, pomocou ktorého sa dá implementovať takmer akýkoľvek biznisový zámer.  
+
+Základom Spring frameworku je Spring IoC Container ktorý obsahuje základné prostredie Spring frameworku. Do tohto kontajnera sa následne dajú pridať ľubovoľné moduly z rozsiahleho ekosystému Spring, ktorý obsahuje Spring moduly ale aj integrácie so softvérom tretích strán.
+
+Jadro Spring je založený na návrhovom vzore Inversion of Control, (inak aj Dependency Injection). Spring implementácia tohto modelu spočiva v použití tvz Beanov. Beany sú jednoduché singleton objekty ktoré obsahujú biznis logiku aplikácie. Pridaním anotácií týmto jednoduchým objektom im definujeme závislosti. Tieto v spolupráci s XML konfiguráciou a ak je to treba war súborom tretej strany spustia, napr. webový server, ktorý následne importuje inštancuje náš Bean a využíva z neho biznis logiku ktorú sme implementovali. 
+Tento prístup sa snaží uľahčiť prácu programátorom tým, že eliminuje potrebu implementácie platformy a umožňuje im sa viac sústrediť na biznis logiku aplikácie.  
+
+Spring framework implementuje aj vlasný systém na realizovanie Aspektovo orientovaného Programovania. Tieto 
+
+
+
+\subsubsection{Spring Boot}
+Spring Boot je jeden z projektov ekosystému Spring, ktorý sa snaží uľahčiť zakladanie projektov a konfiguráciu Spring projektov. Tento cieľ dosahuje uplatnením uprednostňovaním konvencie pred konfiguráciou. Toznamená, že developeri Sprignu pripravili dopredu nakonfigurované projekty, ktoré riešia bežné prípady použitia Spring Frameworku. 
+
+Medzi tieto projekty, tzv. startery patrí napr. Spring Boot Web Starter ktorý zabezpečuje funkcionalitu webového servera, Spring Boot Security Starter ktorý pridáva funkcionalitu autentifikácie a autorizácie, Spring Boot Data JPA Starter ktorý pridáva integráciu s perzistentnými úložiskami dát. Tieto startery obsahujú integráciu s vybranými nástrojmi, ktoré prednastavili developeri Springu podľa toho ako to oni považovali za najlepšie. V niektorých prípadoch obsahujú integrované servlety tretích strán, napríklad už spomínaný Web Starter obsahuje webový servlet Apache Tomcat. 
+
+V rámci ekosystému Spring Boot existuje aj nástroj Spring Initializr \cite{initializr}, pomocou tohto nástroja je možné vygenerovať a stiahnuť archív so Spring Boot projektom. Tento nástroj nám umožňuje nastaviť niektoré parametre projektu ako verziu Spring Boot, programovací jazyk, a umožňuje nám pridať do projektu základné závislosti.   
 
 \subsubsection{Spring cloud}
 
-Spring Cloud je framework, ktorý obsahuje bohatú sadu nástrojov na vytváranie mikroservisov a cloudových riešení. Medzi nástroje Spring Clopudu patí:
+Spring Cloud je sada modulov do Spring Frameworku, ktorá poskytuje širokú škálu nástrojov určených na použitie v distribuovaných Cloudových riešeniach. 
 
 \begin{itemize}
 	\item Cloud config - nástroj na distribúciu konfiguračných súborov medzi kontajnermi mikroservisov
@@ -267,7 +286,7 @@ Spring Cloud je framework, ktorý obsahuje bohatú sadu nástrojov na vytvárani
 	\item Cloud Authentication - Nástroj na riešenie komplexnej autentizácie a autorizácie v rámci
 
 \end{itemize}
-%TODO Spring Cloud
+
 
 \subsubsection{Git}
 Git je najpoužívanejší nástroj na kontrolu revízií na svete. Bol vytvorený Linusom Torvaldsom v roku 2005 na kontrolu revízií pri vývoji jadra Linuxu. A rovnako ako Linux bol zverejnený na voľné používanie. V našom projekte sme použili git na kontrolu revízií samotného kódu našej aplikácie. Zároveň sme využili Java knižnicu JGit \cite{jgit}. Bola vyvinula a je ďalej udržiavaná spoločnosťou Eclipse Foundation, Inc. Táto knižnica nieje len wrapper na natívneho git klienta, je to plnohodnotná implementácia Git klienta v jazyku Java, toto nám zabezpečuje plnú funkcionalitu Git klienta bez nutnosti inštalovať Git samostane. 
@@ -552,14 +571,13 @@ Posledná trasa smeruje všetky ostatné dopyty na relay servis. Ako môžeme vi
 Na operáciu gateway servisu nepotrebujeme žiadnu ďalšiu konfiguráciu. Všetky dopyty sú správne smerované servisom, pre ktoré sú určené.
 
 \subsection{Platforma}
-%todo rename?
 V nasledujúcej časti si priblížime aké prostredie sme využívali na vývoj a testovanie systému, ďalej si popíšeme kroky, ktoré sú potrebné na spustenie našej aplikácie
 
 Platforma na ktorú sme nasadzovali náš systém je virtuálny server poskytnutý Fakultou Elektrotechniky a Informatiky na Slovenskej Technickej Univerzite v Bratislave s operačným systémom Ubuntu 18.04.2 LTS Bionic Beaver. Server má k dispozícií 10GB operačnej pamäte, 4GB swap, a 8 jadier procesora.
 
 Pred tým ako sa pokúsime spustiť systém treba sa uistiť, že server, na ktorý plánujeme systém nasadiť bude mať aspoň 8GB voľnej operačnej pamäte a aspoň 2 procesorové jadrá.
-Na nasadenie našej aplikácie potrebujeme vykonať nasledovné kroky:
 
+Na nasadenie našej aplikácie potrebujeme vykonať nasledovné kroky:
 \begin{enumerate}
     \item Uistíme sa, že na serveri je nainštalovaný nástroj Git a Java 8.
 	\item Pomocou gitu stiahneme repozitár \cite{dp_repo} s aktuálnou verziou nášho systému.
@@ -569,23 +587,25 @@ Na nasadenie našej aplikácie potrebujeme vykonať nasledovné kroky:
     \item Na porte 7777 je prezentovane grafické rozhranie service discovery, tento port z bezpečnostných dôvodov neodporúčame povoliť cez firewall, namiesto toho na monitorovanie stavu systému odporúčame použiť ssh tunel pre tento port.
 \end{enumerate}
 
+
+
 \subsection{Bezpečnosť}
 Bezpečnosť je jednou zo základných faktorov ktoré zvážiť pri implementácií akéhokoľvek softvéru. V tejto časti si priblížime ako sme sprístupňovali k bezpečnosti pri návrhu našej aplikácie.  Na obrázku \ref{threat_analysis} vidíme diagram zobrazujúci architektúru nášho systému rozdeleného na rôzne bezpečnostné domény. Ďalej na diagrame môžeme vidieť ako prúdia dáta v našom systéme.  Keď posudzujeme bezpečnosť systému musíme ju posúdiť ako sú bezpečné jednotlivé časti systému, ako napríklad databázy, servery, a zároveň ako je zabezpečená a komunikácia medzi jednotlivými časťami aplikácie, hlavne keď komunikácia prechádza cez hranice bezpečnostnej domény.  
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=10cm]{img/threat_analysis.png}
+	\includegraphics[width=12cm]{img/threat_analysis.png}
 	\caption{Diagram Architektúry s bezpečnostnými doménami}
 	\label{threat_analysis}
 \end{figure}
 
-Komunikácia z internetu do API domény bude chránená tak, že povolíme jediný port na prístup do API domény prístup na tento port bude vždy autentifikovaný pomocou protokolu \acrshort{oauth}. V produkčnom prostredí navrhujeme zabezpečiť túto komunikáciu pomocou protokolu HTTPS, aby sa predišlo potenciálnemu úniku dát, prístupových údajov alebo man in the middle útoku. 
+Komunikácia z internetu do API domény je chránená tak, že cez firewall serveru je povolený jediný port na prístup do API domény prístup na tento port je vždy autentifikovaný pomocou protokolu \acrshort{oauth}. V produkčnom prostredí navrhujeme zabezpečiť túto komunikáciu pomocou protokolu HTTPS, aby sa predišlo potenciálnemu úniku dát, prístupových údajov alebo man in the middle útoku. 
 
 Bezpečnosť pri sťahovaní repozitára z Git archívu je zabezpečená pomocou protokolu SSH, ak by sme chceli zvýšiť bezpečnosť mohli by sme si vytvoriť vlastný Git server v rámci našej domény, čo však prináša potrebu tento server udržiavať.
 
-Komunikáciu z API na proocesný server nevieme v tomto bode navrhnúť keďže nevieme v akej doméne sa bude procesný server nachádzať. Ak by sa však nachádzal mimo domény API museli by sme komunikáciu zabezpečiť pomocou HTTPS, alebo s pridanou ochranou pomocou VPN alebo SSH tunelu.
+Komunikáciu z API na procesný server nevieme v tomto bode navrhnúť keďže nevieme v akej doméne sa bude v produkčnom prostredí procesný server nachádzať. Ak by sa však nachádzal mimo domény API museli by sme komunikáciu zabezpečiť pomocou HTTPS, alebo s pridanou ochranou pomocou VPN alebo SSH tunelu.
 
-Komunikácia v rámci našej domény prebieha pomocou interných protokolov cloudového riešenia v našom prípade HTTP.  Pri testovaní a vývoji bude naše riešenie nasadené celé v rámci jedného virtuálneho servera preto nepovažujeme za potrebné zabezpečovať túto komunikáciu. Ak by však produkčné prostredie bolo nasadené na viacerých virtuálnych alebo fyzických serveroch odporúčame použitie šifrovania spojenia. Na zabezpečenie šifrovanej komunikácie môžeme použiť šifrovanie jednotlivých spojení pomocou SSH, alebo využitie hotového riešenia na komunikáciu v rámci cloudových kontajnerov.
+Komunikácia v rámci našej domény prebieha pomocou interných protokolov cloudového riešenia v našom prípade HTTP.  Pri testovaní a vývoji je naše riešenie nasadené celé v rámci jedného virtuálneho servera preto nepovažujeme za potrebné zabezpečovať túto komunikáciu. Ak by však produkčné prostredie bolo nasadené na viacerých virtuálnych alebo fyzických serveroch odporúčame použitie šifrovania spojenia. Na zabezpečenie šifrovanej komunikácie môžeme použiť šifrovanie jednotlivých spojení pomocou SSH, alebo využitie hotového riešenia na komunikáciu v rámci cloudových kontajnerov.
 
 V rámci našej aplikácie sa nachádzajú dve domény, administrátorská a používateľská. V administrátorskej doméne sa nachádza služba generator. Ak by útočník získal kontrolu nad touto službou bol by schopný obmedziť funkčnosť nášho používateľského klientského rozhrania, zamedziť prístup používateľom k aplikačnému rozhraniu alebo naopak povoliť neoprávnenej osobe prístup k rozhraniu. Ak by útočník vypol  tento servis, neobmedzila by  sa schopnosť API odpovedať na používateľské dopyty obmedzila  by sa len schopnosť meniť rozhranie. Náš systém bude implementovaný tak, aby administrátor mal prístup k rozhraniu z internetu. Prístup ku generator servisu je len pomocou dopredu definovaných autentifikovaných HTTP volaní. Pre zvýšenie bezpečnosti v produkčnom prostredí odporúčame povolenie prístupu na generator servis len z vnútra našej domény, napr pomocou VPN/SSH.
 
@@ -597,6 +617,11 @@ Service discovery komunikuje iba na pomocou svojho protokolu s ostatnými kontaj
 
 Auth servis zasahuje do oboch našich bezpečnostných domén. Prihlasovacie údaje a roly sú však oddelené rôznym menným priestorom, to nám zaručuje, že pri registrácií nových rolí sa používatelia nemôžu dostať k prostriedkom, ktoré patria do administrátorskej domény. Samotnú
 autentifikáciu v našej aplikácií rieši auth servis pomocou štandardnej implementácie \acrshort{oauth}. Tento protokol zabezpečuje dostačujúci stupeň bezpečnosti pri autentifikácií. Útok pomocou napadnutia registrácie používateľov sme už spomenuli vyššie pri generator servise. Ak by útočník získal kontrolu nad auth servisom vedel by obmedziť prístup oprávneným používateľom, alebo neoprávnene získať prístup ku koncovým bodom relay servisu.
+
+V produkčnom prostredí taktiež odporúčame nasadiť riešenie na centralizované skladovanie logov zo všetkých servisov.
+
+%todo toto do zhodnotenia?
+Architektúram mikroservisov prináša do serverových systémov vysoký výkon a škálovateľnosť no tým, že sa skladá z viacerých oddelených servisov ktoré musia medzi sebou komunikovať, prináša zo sebou aj riziko napadnutia tejto komunikácie. Ak však vieme zaručiť bezpečnosť tejto komunikácie uzavretím systému do bezpečnej domény, alebo šifrovaním jednotlivých komunikačných kanálov, z bezpečnostného hľadiska je táto architektúra vyhovujúca na  implementáciu bezpečných a vysoko škálovateľných systémov
 
 
 \section{Testovanie}
