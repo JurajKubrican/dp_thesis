@@ -3,10 +3,35 @@
 \section{Analýza problému}
 V prvej kapitole si bližšie predstavíme problematiku procesov, formalizmus Petrifow s ktorým tieto procesy vieme modelovať, a priblížime si prostredie procesne orientovaných systémov a pre
 
-%TODO Teoriu Parafrazovat od Milana
+\subsection{Petriho siete}
+Hovorí sa, že Carl Adam Petri vymyslel koncept Petriho sietí v auguste 1939 keď mal iba 13 rokov. Vtedy ich používal ako mnemotechnickú pomôcku na memorovanie priebehu chemických reakcií. Svoju matematickú teóriu modelovania procesov v kontexte informatiky predstavil v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi na technickej univerzite v Darmstadte v Nemecku. Grafickú reprezentáciu so štvorcami, kruhmi a šípkami, ktorú poznáme v súčastnosti predstavil až o tri roky neskôr, čím zožal veľký úspech v informatickej komunite. \cite{petri50years} 
+
+Od uverejnenia Petriho dizertačnej práce v roku 1962 si jeho siete našli široké uplatnenie na poli modelovania procesov, asynchrónnych a distribuovaných systémov. 
+
+Vo svojvej grafickej reprezentácií Pertiho sieťe modelujú udalostné systémy pomocou bipartitného grafu ktorý sa skladá z miest(kruh) a prechodov (štvorec) ktoré sú pospájané orientovanými hranami(šipkami) s označením multiplicity. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkmi v miestach). 
+Miesta (S) reprezentujú podmienky ktoré musia byť splnené na to aby mohla prebegnúť nejaká akcia v procese.
+Prechody (T) reprezentujú samotné akcie v procese, ktoré menia jej stav konzumovaním a produkovaním tokenov.
+Hrany (A) reprezentujú tok prostriedkov v procese a v spojení s mistami a prechodmy tvoria štruktúru procesu
+Každá hrana má definovanú násobnosť (W) ktorá reprezentuje počet tokenov, ktoré sa pri spustní prechodu skonzumujú, ak hrana smeruje do prechodu, alebo vyprodukujú ak hrana vychádza z vrcholu. 
+
+
+
+
+
+
+
+
+
+  Ďalším výskumom sa z pôvodného konceptu ktorý bol určený na modelovanie analýzu komunikačných systémov vyvinul nástroj, ktorý sa používa naprieč mnohými oblasťami najmä na modelovanie paralelných a distribuovaných systémov.
+
+
+\subsection{Rozšírené Petriho siete}
+\subsubsection{Podsiete}
+\subsubsection{Roly}
+\subsubsection{Dáta}
+\subsubsection{Akcie}
 
 \subsection{Petriflow}
-Carl Adam Petri založil koncept Petriho sietí v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi - na Technickej Univerzite v Darmstadte. Ďalším výskumom sa z pôvodného konceptu ktorý bol určený na modelovanie analýzu komunikačných systémov vyvinul nástroj, ktorý sa používa naprieč mnohými oblasťami najmä na modelovanie paralelných a distribuovaných systémov.
 
 Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznis procesov. Je vyvíjaný spoločnosťou Netgrif na základe dlhodobých skúseností s klientmi, ktorý pomocou tohto formalizmu modelujú svoje biznis procesy, ktoré sú následne zavedené do používania.
 
@@ -23,13 +48,14 @@ V klasických Petriho sieťach je spustenie prechodu vždy atomická operácia. 
 Keďže každá úloha je samostatná sieť so štyrmi prechodmi, musíme pre každú úlohu zadefinovať roly pre všetky štyri operácie úlohy.
 
 \begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=6cm]{img/task_transition.png}
-	\caption{Úloha}
-	\label{task}
+\centering
+\includegraphics[width=6cm]{img/task_transition.png}
+\caption{Úloha}
+\label{task}
 \end{figure}
 
 \subsection{Aplikačné rozhranie}
+
 Majme procesne orientovaný systém ktorý implementuje procesy, popísane v Petriflow. S takýmto systémom používatelia interagujú iba presne popísaným spôsobom a to spúšťaním prechodov ktoré majú podľa svojich rolí oprávnenie spúšťať (delegovať, dokončiť,... ). Pri dokončení úlohy (prechodu) musí používateľ poskytnúť dáta popísané v dátových poliach.
 
 Keďže formalizmus Petriflow je schopný takýmto spôsobom popísať všetky interakcie používateľa so systémom je možné na jeho základe vygenerovať aj aplikačné rozhranie. Toto rozhranie sprístupní systém mimo jeho domény, zaručí autorizáciu podľa rolí, poskytne dokumentáciu o svojej štruktúre(a tým pádom aj štruktúre procesu) a zabezpečí validáciu dát, ktoré do systému používateľ odošle.
