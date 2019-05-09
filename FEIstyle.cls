@@ -51,11 +51,7 @@
 \ExecuteOptions{dp}
 \LoadClass[\myset]{\parentclass}
 
-\ifnum\FEIenglish=0
-    \usepackage[slovak]{babel}
-\else
-    \usepackage[english]{babel}
-\fi
+\usepackage[slovak, english]{babel}
 
 \usepackage[utf8]{inputenc}
 
