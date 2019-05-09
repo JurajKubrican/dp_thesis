@@ -14,8 +14,12 @@ Prechody (T) reprezentujú samotné akcie v procese, ktoré menia jej stav konzu
 Hrany (A) reprezentujú tok prostriedkov v procese a v spojení s mistami a prechodmy tvoria štruktúru procesu
 Každá hrana má definovanú násobnosť (W) ktorá reprezentuje počet tokenov, ktoré sa pri spustní prechodu skonzumujú, ak hrana smeruje do prechodu, alebo vyprodukujú ak hrana vychádza z vrcholu. 
 
-
-
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=6cm]{img/basic_net.svg}
+\caption{Úloha}
+\label{task}
+\end{figure}
 
 
 
@@ -33,7 +37,7 @@ Každá hrana má definovanú násobnosť (W) ktorá reprezentuje počet tokenov
 
 \subsection{Petriflow}
 
-Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznis procesov. Je vyvíjaný spoločnosťou Netgrif na základe dlhodobých skúseností s klientmi, ktorý pomocou tohto formalizmu modelujú svoje biznis procesy, ktoré sú následne zavedené do používania.
+Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznis procesov. 
 
 Formalizmus Petriflow rozširuje Petriho siete o ďalšie komponenty. Ako základ berie Petriho siete obohatené reset, inihibitor a read hrany. Aby sa dali modelovať moderné biznis procesy pridáva Petriflow do tohto modelu roly, dátové polia a akcie.
 
@@ -128,45 +132,30 @@ Pri návrhu štruktúry aplikačného rozhrania treba dbať hlavne na prehľadno
 
 Vzor \acrshort{rest} je už mnoho rokov štandardom pri návrhu aplikačných rozhraní na internete. Jeho základný princíp je že medzi serverom a klientom sa bude presúvať textová reprezentácia objektov, tieto objekty sú adresované pomocou parametrov v URL danom volaní REST koncového bodu. Na manipuláciu s objektami na konkrétnych URL sa vužívajú HTTP medóty GET, POST, PUT, PATCH, DELETE, atď.  sa využívajú . GET získava objekt, POST vytvára nový, DELETE objekt vymazáva, atď.
 
-Objekty, pre ktoré musí náš systém vyprezentovať aplikačné rozhranie sú  procesy (Petriho siete), inštancie týchto procesov a prechody na týchto inštanciách. Ak by sme mali implementovať plné RESTful \acrshort{api} so štandatrnou štrukúrou URL by mala nasledovný formát 
-"/net/[netID]/instance/[instanceID]/transition/[transitionID]/operation",  keďže však naše rozhranie bude poskytovať len možnosť spúšťať operácie na konkrétnych prechodoch a hierarchia objektov bude vždy rovnaká, rozhodli sme sa skrátiť tento zápis a vynechať typy objektov z URL.
-%TODO how to list URLS?
+Objekty, pre ktoré musí náš systém vyprezentovať aplikačné rozhranie sú  procesy (Petriho siete), inštancie týchto procesov a prechody na týchto inštanciách. Ak by sme mali implementovať plné RESTful \acrshort{api} so štandatrnou štrukúrou URL by mala nasledovný formát.
 
-Generovaná URL ku ktorej budú mať prístup používatelia sa teda bude skladať z nasledujúcich štyroch častí.
-\begin{enumerate}
-\item identifikátor siete
-\item číslo inštancie procesu
-\item identifikátor prechodu
-\item vykonávanú operáciu
-\end{enumerate}
+\[/net/[netID]/instance/[instanceID]/transition/[transitionID]/[operation] \]
 
+Keďže však naše rozhranie bude poskytovať len možnosť spúšťať operácie na konkrétnych prechodoch a hierarchia objektov bude vždy rovnaká, rozhodli sme sa skrátiť tento zápis a vynechať typy objektov z URL na nasledovný.
+\[/[netID]/[instanceID]/[transitionID]/[operation] \]
 Okrem automaticky generovaný ch ciest potrebujeme ešte zadefinovať cesty ktoré bude používať administrátor systému na obslužné dotazy, pomocou ktorých bude administrátor schopný pridávať odoberať a získavať informácie o modeloch. Pre tieto operácie vyhradíme adresu "/".
 
 Na ukážke \ref{alg:urls_example} môžeme vidieť  Príklad URL Pre verejné a pre obslužné administrátorské \acrshort{api}.
 
-\begin{lstlisting}[ caption={Ukážka URL ciest k úlohe},label={alg:urls_example}]
-API 
-[GET] 
-/ExampleNet/0/t1
-
-[POST] 
-/ExampleNet/0/t1/assign
-/ExampleNet/0/t1/delegate
-/ExampleNet/0/t1/cancel
-/ExampleNet/0/t1/finish
-
-Admin API
-[POST] 
-/
-[GET] 
-/
-[DELETE] 
-/
-\end{lstlisting}
-
-
-\subsection{Architektúra systému}
-Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí (servisov), každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.
+\begin{table}[caption={Ukážka URL ciest k úlohe},label={alg:urls_example}]
+\begin{tabular}{lllll}
+Používateľské API     & URL                       & Metóda       &                                      &  \\
+                      & /ExampleNet/0/t1          & {[}GET{]}    & Získanie dátových polí               &  \\
+                      & /ExampleNet/0/t1/assign   & {[}POST{]}   & Priradenie úlohy sebe                &  \\
+                      & /ExampleNet/0/t1/delegate & {[}POST{]}   & Priradenie úlohy inému požívatľovi   &  \\
+                      & /ExampleNet/0/t1/cancel   & {[}POST{]}   & Zrušenie priradenia                  &  \\
+                      & /ExampleNet/0/t1/finish   & {[}POST{]}   & Dokončenie úlohy                     &  \\
+Admininstrátorské API & /                         & {[}POST{]}   & Registrácia nového modelu            &  \\
+                      & /                         & {[}GET{]}    & Vypísanie zoznamu nasadených modelov &  \\
+                      & /                         & {[}DELETE{]} & Vymazanie modelu                     & 
+\end{tabular}
+\end{table} ction{Architektúra systému}
+Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľa    dnenie archite    ktúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí (servisov), každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.
 
 Jedna z požiadaviek na náš systém je aby bolo aplikačné rozhraní možné meniť za behu systému. Pri návrhu sme zvažovali dva spôsoby ako zabezpečiť tuto funkcionalitu.
 
@@ -511,6 +500,7 @@ Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť pr
 Vygenerovať túto službu je cieľom našej prace. Po vygenerovaní koncových bodov pre dané procesné modely bude táto služba prijímať požiadavky od klientov, autorizované požiadavky od klientov validovať a následne preposielať na procesný server. Okrem toho bude poskytovať dokumentáciu k daným koncovým bodom.
 
 Pred tým ako vygenerujme koncové body špecifické pre daný procesný model, je relay service iba prázdny Spring Boot kontajner so základnou konfiguráciou. Pre poskytnutie základnej funkcionality webového koncového bodu obsahuje kontajner balíček Spring Web Starter \cite{webstarter}, tento balíček poskytuje funkcionalitu, ktorá umožňuje pomocou anotácií mapovať funkcie tried na rôzne \acrshort{url}, špecifikovať, HTTP metódu, dátové polia vstupu a formát výstupu. Tieto mapovania následne oživí pomocou priloženého webového servera Apache Tomcat \cite{tomcat}
+
 
 Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne prezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotácie patrí @ApiOperation, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a @ApiParam ktorú sme použili na pridanie informácií o parametroch týchto funkcií.
 
