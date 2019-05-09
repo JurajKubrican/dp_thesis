@@ -8,11 +8,11 @@ Hovorí sa, že Carl Adam Petri vymyslel koncept Petriho sietí v auguste 1939 k
 
 Od uverejnenia Petriho dizertačnej práce v roku 1962 si jeho siete našli široké uplatnenie na poli modelovania procesov, asynchrónnych a distribuovaných systémov. 
 
-Vo svojvej grafickej reprezentácií Pertiho sieťe modelujú udalostné systémy pomocou bipartitného grafu ktorý sa skladá z miest(kruh) a prechodov (štvorec) ktoré sú pospájané orientovanými hranami(šipkami) s označením multiplicity. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkmi v miestach). 
-Miesta (S) reprezentujú podmienky ktoré musia byť splnené na to aby mohla prebegnúť nejaká akcia v procese.
+Vo svojej grafickej reprezentácií Petriho sieťe modelujú udalostné systémy pomocou bipartitného grafu ktorý sa skladá z miest(kruh) a prechodov (štvorec) ktoré sú pospájané orientovanými hranami(šipkami) s označením multiplicity. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkami v miestach). 
+Miesta (S) reprezentujú podmienky ktoré musia byť splnené na to aby mohla prebehnúť nejaká akcia v procese.
 Prechody (T) reprezentujú samotné akcie v procese, ktoré menia jej stav konzumovaním a produkovaním tokenov.
-Hrany (A) reprezentujú tok prostriedkov v procese a v spojení s mistami a prechodmy tvoria štruktúru procesu
-Každá hrana má definovanú násobnosť (W) ktorá reprezentuje počet tokenov, ktoré sa pri spustní prechodu skonzumujú, ak hrana smeruje do prechodu, alebo vyprodukujú ak hrana vychádza z vrcholu. 
+Hrany (A) reprezentujú tok prostriedkov v procese a v spojení s miestami a prechodmi tvoria štruktúru procesu
+Každá hrana má definovanú násobnosť (W) ktorá reprezentuje počet tokenov, ktoré sa pri spustení prechodu skonzumujú, ak hrana smeruje do prechodu, alebo vyprodukujú ak hrana vychádza z vrcholu. Na diagrame \ref{basic net} vidíme príklad Petriho siete ktorá modeluje jednoduchý paralelný proces. 
 
 \begin{figure}[!htbp]
 \centering
