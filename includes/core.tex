@@ -16,9 +16,9 @@ Každá hrana má definovanú násobnosť (W) ktorá reprezentuje počet tokenov
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=6cm]{img/basic_net.svg}
+\includegraphics[width=6cm]{img/basic_net.png}
 \caption{Úloha}
-\label{task}
+\label{basic_net}
 \end{figure}
 
 
@@ -140,22 +140,29 @@ Keďže však naše rozhranie bude poskytovať len možnosť spúšťať operác
 \[/[netID]/[instanceID]/[transitionID]/[operation] \]
 Okrem automaticky generovaný ch ciest potrebujeme ešte zadefinovať cesty ktoré bude používať administrátor systému na obslužné dotazy, pomocou ktorých bude administrátor schopný pridávať odoberať a získavať informácie o modeloch. Pre tieto operácie vyhradíme adresu "/".
 
-Na ukážke \ref{alg:urls_example} môžeme vidieť  Príklad URL Pre verejné a pre obslužné administrátorské \acrshort{api}.
+Na tabuľke \ref{urls_table} môžeme vidieť  Príklad URL Pre verejné a pre obslužné administrátorské \acrshort{api}.
 
-\begin{table}[caption={Ukážka URL ciest k úlohe},label={alg:urls_example}]
-\begin{tabular}{lllll}
-Používateľské API     & URL                       & Metóda       &                                      &  \\
-                      & /ExampleNet/0/t1          & {[}GET{]}    & Získanie dátových polí               &  \\
-                      & /ExampleNet/0/t1/assign   & {[}POST{]}   & Priradenie úlohy sebe                &  \\
-                      & /ExampleNet/0/t1/delegate & {[}POST{]}   & Priradenie úlohy inému požívatľovi   &  \\
-                      & /ExampleNet/0/t1/cancel   & {[}POST{]}   & Zrušenie priradenia                  &  \\
-                      & /ExampleNet/0/t1/finish   & {[}POST{]}   & Dokončenie úlohy                     &  \\
-Admininstrátorské API & /                         & {[}POST{]}   & Registrácia nového modelu            &  \\
-                      & /                         & {[}GET{]}    & Vypísanie zoznamu nasadených modelov &  \\
-                      & /                         & {[}DELETE{]} & Vymazanie modelu                     & 
+\begin{table}[]
+\begin{tabular}{|l|ll|}
+\hline
+\textbf{Používateľské API}     &                                            &                                      \\ \hline
+\textbf{URL}                   & \multicolumn{1}{l|}{\textbf{Metóda}}       & \textbf{Popis}                       \\ \hline
+/ExampleNet/0/t1               & \multicolumn{1}{l|}{\textit{{[}GET{]}}}    & Získanie dátových polí               \\ \hline
+/ExampleNet/0/t1/assign        & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Priradenie úlohy sebe                \\ \hline
+/ExampleNet/0/t1/delegate      & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Priradenie úlohy inému požívatľovi   \\ \hline
+/ExampleNet/0/t1/cancel        & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Zrušenie priradenia                  \\ \hline
+/ExampleNet/0/t1/finish        & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Dokončenie úlohy                     \\ \hline
+\textbf{Admininstrátorské API} & \textit{}                                  &                                      \\ \hline
+/                              & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Registrácia nového modelu            \\ \hline
+/                              & \multicolumn{1}{l|}{\textit{{[}GET{]}}}    & Vypísanie zoznamu nasadených modelov \\ \hline
+/                              & \multicolumn{1}{l|}{\textit{{[}DELETE{]}}} & Vymazanie modelu                     \\ \hline
 \end{tabular}
-\end{table} ction{Architektúra systému}
-Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľa    dnenie archite    ktúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí (servisov), každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.
+\caption{URL ciesty k V našom rozhraní}
+\label{urls_table}
+\end{table} 
+
+\subsection{Architektúra systému}
+Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí (služieb), každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroslužby sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.
 
 Jedna z požiadaviek na náš systém je aby bolo aplikačné rozhraní možné meniť za behu systému. Pri návrhu sme zvažovali dva spôsoby ako zabezpečiť tuto funkcionalitu.
 
@@ -194,16 +201,16 @@ Na diagrame \ref{api_operation} vidíme vo vrchnej časti proces prihasenia pou�
 	\label{api_operation}
 \end{figure}
 
-Počas procesu prihlásenia používateľ najprv odošle dopyt na prihlásenie našemu \acrshort{api}.  Gateway ho presmeruje na autorizačný servis, ten overí jeho prihlasovacie údaje, ak sú správne vráti klientovi autorizačný token. Autentifikácia v takejto forme prebieha len pred prvým dopytom. K ďalším dopytom už klient priloží tento autorizačný token. 
+Počas procesu prihlásenia používateľ najprv odošle dopyt na prihlásenie našemu \acrshort{api}.  Gateway ho presmeruje na autorizačná služba, ten overí jeho prihlasovacie údaje, ak sú správne vráti klientovi autorizačný token. Autentifikácia v takejto forme prebieha len pred prvým dopytom. K ďalším dopytom už klient priloží tento autorizačný token. 
 
-Proces dopytu na procesný server je zložitejší. Najprv klient pošle dopyt na náš systém, Gateway ho nasmeruje na relay servis. Ak klient odoslal dopyt na korektnú adresu Relay servis musí potvrdiť identitu klienta. Identitu klienta overuje pomocou priloženého autorizačného tokenu ktorý klient musí poskytnuť. Relay servis zistí identitu klienta tak, že pošle interný dopyt na  auth servis a podľa tokenu si vypýta profil používateľa s jeho rolami.  Pokiaľ má klient rolu potrebnú na spustenie konkrétnej akcie na prechode, ak je to potrebné Relay servis vykoná validáciu dát  v dotaze odošle dopyt na procesný server.  Odpoveď z procesného servera sa následne propaguje spať cez gateway servis ku klientovi.
+Proces dopytu na procesný server je zložitejší. Najprv klient pošle dopyt na náš systém, Gateway ho nasmeruje na Relay service. Ak klient odoslal dopyt na korektnú adresu Relay service musí potvrdiť identitu klienta. Identitu klienta overuje pomocou priloženého autorizačného tokenu ktorý klient musí poskytnuť. Relay service zistí identitu klienta tak, že pošle interný dopyt na  Auth service a podľa tokenu si vypýta profil používateľa s jeho rolami.  Pokiaľ má klient rolu potrebnú na spustenie konkrétnej akcie na prechode, ak je to potrebné Relay service vykoná validáciu dát  v dotaze odošle dopyt na procesný server.  Odpoveď z procesného servera sa následne propaguje spať cez gateway service ku klientovi.
  
-Keďže nebudeme mať prístup k nasadenému procesnému servisu bude volanie tohto serveru vykonané iba ako volanie prázdnej funkcie. Od tejto funkcie očakávame, že v prípade, ak prebehla akcia na prechode v poriadku vráti buď príslušné dáta alebo prázdnu odpoveď.  Ak sa klient pokúsi spustiť prechod, ktorý v konkrétnej inštancií procesu nieje spustiteľný alebo ak daná inštancia procesu neexistuje, očakávame, že volanie vráti príslušnú chybu. 
+Keďže nebudeme mať prístup k nasadenému procesnej službe bude volanie tohto serveru vykonané iba ako volanie prázdnej funkcie. Od tejto funkcie očakávame, že v prípade, ak prebehla akcia na prechode v poriadku vráti buď príslušné dáta alebo prázdnu odpoveď.  Ak sa klient pokúsi spustiť prechod, ktorý v konkrétnej inštancií procesu nieje spustiteľný alebo ak daná inštancia procesu neexistuje, očakávame, že volanie vráti príslušnú chybu. 
 
 \subsubsection{Obslužné API}
 Proces autentifikácie pri obslužnom volaní bude prebiehať rovnakým spôsobom ako pri  používateľskom volaní. Administrátor dostane autentifikačný token, pomocou ktorého pri všetkých ďalších volaniach preukazuje svoju identitu.
 
-Administrátor zadá požiadavku na zmenu rozhrania, bude presmerovaný na generator service. Ten rozanalyzuje nový procesný model, následne a odošle dopyt na auth service na registráciu nových používateľov. Paralelne vygeneruje nový kód pre relay service a spúšťa jeho kompiláciu a tetovanie. Po úspešnom ukončení oboch procesov odošle dopyt na vypnutie starého relay servisu a spúšťa novú verziu.
+Administrátor zadá požiadavku na zmenu rozhrania, bude presmerovaný na generator service. Ten rozanalyzuje nový procesný model, následne a odošle dopyt na auth service na registráciu nových používateľov. Paralelne vygeneruje nový kód pre relay service a spúšťa jeho kompiláciu a tetovanie. Po úspešnom ukončení oboch procesov odošle dopyt na vypnutie staréj inštancie Relay service a spúšťa novú inštanciu.
 
 Na diagrame \ref{change_operation} môžeme vidieť tento proces zmeny aplikačného rozhrania.
 
@@ -346,7 +353,7 @@ Zdrojovy kód týchto kontajnerov sme rozdelili do dvoch Git repozitárov. Relay
 
 
 \subsection{Generator service}
-Tento servis je základný stavebný kameň nášho rozhrania, jeho úlohou je na základe vstupu v podobe procesného modelu vo formáte Petriflow vygenerovať a spustiť inštancie relay service, ktorý bude prijímať samotné požiadavky od klienta. Základná operácia vygenerovania koncového dobu má nasledovné kroky:
+Táto služba je základným stavebným kameňom nášho rozhrania, jeho úlohou je na základe vstupu v podobe procesného modelu vo formáte Petriflow vygenerovať a spustiť inštancie relay service, ktorý bude prijímať samotné požiadavky od klienta. Základná operácia vygenerovania koncového dobu má nasledovné kroky:
 prijatie požiadavky,
 čítanie súborov Petriflow a súborov s používateľmi,
 registrácia používateľov,
@@ -399,7 +406,7 @@ Následne pri čítaní súborov použijeme triedu Unmarshaller balíka JAXB, kt
 \subsubsection{Registrácia používateľov}
 Keď už máme dáta s používateľmi a modelom, zaregistrujeme používateľov do našej autentifikačnej služby.
 
-Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Servisu poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore.
+Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Szlužbe poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore.
 
 \subsubsection{Príprava repozitára}
 Na spustenie Spring Boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit}.
@@ -412,9 +419,9 @@ Keď už je projekt stiahnutý a pripravený môžeme začať s generovaním kó
 Najprv pre každý procesný model vygenerujeme vlastnú triedu. Túto triedu vygenerujeme s nasledovnými anotáciami:
 
 \begin{itemize}
-\item @Controller Zabezpečuje spustenie funkcionality HTTP controllera
-\item @EnableResourceServer Zabezpečuje funkclionalitu autentifikácie pre danú triedu
-\item @RequestMapping Pridá pred predponu s ID siete pred URL koncových bodov danej triedy
+\item \texttt{@Controller} Zabezpečuje spustenie funkcionality HTTP controllera
+\item \texttt{@EnableResourceServer} Zabezpečuje funkclionalitu autentifikácie pre danú triedu
+\item \texttt{@RequestMapping} Pridá pred predponu s ID siete pred URL koncových bodov danej triedy
 \end{itemize}
 
 Následne vygenerujeme samotné funkcie triedy. Pre každý prechod v procesnom modeli vygenerujeme šesť funkcií. každá z nich reprezentuje jednu operáciu, ktorú môžeme s prechodom(úlohou) podľa Petriflow robiť.
@@ -493,7 +500,7 @@ fun data35(
 
 \subsubsection{Kompilácia a spustenie relay}
 
-Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód zkompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy relay servisu a spúšťame príkaz "gradle bootrun" ktorý spustí skompilovaný relay servis. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií relay servisu. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.
+Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód zkompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy Relay service a spúšťame príkaz "gradle bootrun" ktorý spustí skompilovaný Relay service. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií Relay service. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.
 
 \subsection{Relay Service}
 
@@ -502,7 +509,7 @@ Vygenerovať túto službu je cieľom našej prace. Po vygenerovaní koncových 
 Pred tým ako vygenerujme koncové body špecifické pre daný procesný model, je relay service iba prázdny Spring Boot kontajner so základnou konfiguráciou. Pre poskytnutie základnej funkcionality webového koncového bodu obsahuje kontajner balíček Spring Web Starter \cite{webstarter}, tento balíček poskytuje funkcionalitu, ktorá umožňuje pomocou anotácií mapovať funkcie tried na rôzne \acrshort{url}, špecifikovať, HTTP metódu, dátové polia vstupu a formát výstupu. Tieto mapovania následne oživí pomocou priloženého webového servera Apache Tomcat \cite{tomcat}
 
 
-Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne prezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotácie patrí @ApiOperation, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a @ApiParam ktorú sme použili na pridanie informácií o parametroch týchto funkcií.
+Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne prezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotácie patrí \texttt{@ApiOperation}, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a \texttt{@ApiParam} ktorú sme použili na pridanie informácií o parametroch týchto funkcií.
 
 Na vizualizáciu tejto dokumentácie sme použili balík Swagger UI, ktorý na adrese "/swagger-ui.html" poskytuje používateľské rozhranie v ktorom možno vidieť jednotlivé triedy a koncové body vygenerované naším systémom. Na obrázku \ref{swagger_ui} vidíme vizualizovanú dokumentáciu pre jednu sieť s názvom Example, ktorá obsahuje jeden prechod T1 ku ktorému je vygenerovaných päť koncových bodov. Zároveň vidíme predvolené koncové body na registráciu procesov do systému.
 
@@ -534,17 +541,17 @@ Resource server, nedrží informácie o používateľoch, ak však príde dopyt 
 
 Na spustenie autorizačného servera stačí importovať balíky  Spring Cloud Security a Spring Cloud OAuth, napísať základnú konfiguráciu a autorizačný server sa dá spustiť.
 
-Na integráciu so zvyškom nášho systému sme importovali tieto balíky aj do ostatných servisov a v prípade, kedy si funkcionalita vyžiadala autorizáciu  pridali sme potrebné anotácie. Aby sme dosiahli granulárnu kontrolu nad prístupom k funkcionalite, ku každej funkcií sme špecifikovali aké roly k nim majú prístup pomocou príslušnej anotácie.
+Na integráciu so zvyškom nášho systému sme importovali tieto balíky aj do ostatných služieb a v prípade, kedy si funkcionalita vyžiadala autorizáciu  pridali sme potrebné anotácie. Aby sme dosiahli granulárnu kontrolu nad prístupom k funkcionalite, ku každej funkcií sme špecifikovali aké roly k nim majú prístup pomocou príslušnej anotácie.
 
-Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tokenov využili in memory store. To znamená, že sa pri každom reštarte auth servisu tieto informácie zmažú. Keďže však používame architektúru mikroservisov, a servisy sú od seba do veľkej miery nezávislé, nie je potrebné reštartovať všetky servisy pri zmene jedného. Pri vývoji teda fakt, že používatelia boli uložený vo volatilnej pamäti nebol priveľkou prekážkou. Pre nasadenie systému do produkcie však bude nutné pridať do auth servisu perzistentné úložisko používateľov.
+Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tokenov využili in memory store. To znamená, že sa pri každom reštarte Auth Service tieto informácie zmažú. Keďže však používame architektúru mikroservisov, a služby sú od seba do veľkej miery nezávislé, nie je potrebné reštartovať všetky služby pri zmene jedného. Pri vývoji teda fakt, že používatelia boli uložený vo volatilnej pamäti nebol priveľkou prekážkou. Pre nasadenie systému do produkcie však bude nutné pridať do Auth service perzistentné úložisko používateľov.
 
 %TODO expand auth service
 %TODO auth by classes, by functions
 
 \subsection{Service Discovery}
-Service discovery je služba ktorá sleduje stav ostatných služieb a vie zabezpečiť koordináciu komunikácie medzi jednotlivými kontajnermi v cloudovom riešení. V našom systéme implementujeme service discovery ako Spring Boot kontajner s balíčkom Netflix Eureka \cite{eureka}. Nastavenie tohto balička si vyžaduje len importovať závislosť, použiť anot @EnableEurekaServer a nastaviť port servera, v našom prípade je to štandardný port 7777 a hostname Eurka servra.
+Service discovery je služba ktorá sleduje stav ostatných služieb a vie zabezpečiť koordináciu komunikácie medzi jednotlivými kontajnermi v cloudovom riešení. V našom systéme implementujeme service discovery ako Spring Boot kontajner s balíčkom Netflix Eureka \cite{eureka}. Nastavenie tohto balička si vyžaduje len importovať závislosť, použiť anot \texttt{@EnableEurekaServer} a nastaviť port servera, v našom prípade je to štandardný port 7777 a hostname Eurka servra.
 
-Na to aby sa ostatné kontajnery zahlásili do service discovery sme importovali v nich balíček Netflix Eureka Client, použili anotáciu @EnableDiscoveryClient a nastavili port, na ktorom sa nachádza discovery servis. Na to aby sme vedeli rozlíšiť typ servisu, ktorý sa pripája na service discovery je ešte potrebné zadať do konfigurácie meno servisu.
+Na to aby sa ostatné kontajnery zahlásili do service discovery sme importovali v nich balíček Netflix Eureka Client, použili anotáciu \texttt{@EnableDiscoveryClient} a nastavili port, na ktorom sa nachádza služba service discovery. Na to aby sme vedeli rozlíšiť typ služby, ktorý sa pripája na service discovery je ešte potrebné zadať do konfigurácie meno služby.
 
 Na ukážke kódu \ref{alg:eureka_config} vidíme príklad konfigurácie eureka servra a klienta.
 
@@ -567,7 +574,7 @@ eureka:
 	  defaultZone: "http://localhost:7777/eureka"
 \end{lstlisting}
 
-Po správnej inicializácií servera a klientov je na porte 7777 dostupná stránka s grafickým rozhraním. Na obrázku \ref{eureka_gui} vidíme screenshoot tejto obrazovky v našom testovacom prostredí. na obrázku vidíme základné informácie o serveri a tabuľku so zaregistrovanými kontajnermi nášho rozhrania. Vidíme, že na porte 8088 beží auth servis, na porte 8080 beží gateway, na porte 8081 beží generátor a na portoch 8082-8085 bežia štyri inštancie relay servisu.
+Po správnej inicializácií servera a klientov je na porte 7777 dostupná stránka s grafickým rozhraním. Na obrázku \ref{eureka_gui} vidíme screenshoot tejto obrazovky v našom testovacom prostredí. na obrázku vidíme základné informácie o serveri a tabuľku so zaregistrovanými kontajnermi nášho rozhrania. Vidíme, že na porte 8088 beží Auth service, na porte 8080 beží gateway, na porte 8081 beží generátor a na portoch 8082-8085 bežia štyri inštancie Relay service.
 
 \begin{figure}[!htbp]
 	\centering
@@ -577,10 +584,10 @@ Po správnej inicializácií servera a klientov je na porte 7777 dostupná strá
 \end{figure}
 
 \subsection{Gateway Service}
-Gateway service je rovnako ako ostatné servisy implementovaný ako Spring Boot aplikácia s pridaným balíkom Spring Cloud Gateway \cite{cloud_gateway}, ktorý zabezpečuje funkcionalitu routingu a load balancera.
-Na spustenie základnej funkcionality routingu v tomto prípade netreba použiť žiadnu anotáciu, stačí len zadefinovať trasy a k nim prislúchajúce filtre. Na ukážke kódu \ref{alg:gateway_config} vidíme konfiguráciu nášho gateway servisu. Na začiatku je definovaný port na ktorom počúva server, tento port je jediný port, ktorý bude prístupný vonkajšiemu svetu.
+Gateway service je rovnako ako ostatné služby implementovaný ako Spring Boot aplikácia s pridaným balíkom Spring Cloud Gateway \cite{cloud_gateway}, ktorý zabezpečuje funkcionalitu routingu a load balancera.
+Na spustenie základnej funkcionality routingu v tomto prípade netreba použiť žiadnu anotáciu, stačí len zadefinovať trasy a k nim prislúchajúce filtre. Na ukážke kódu \ref{alg:gateway_config} vidíme konfiguráciu nášho Gateway service. Na začiatku je definovaný port na ktorom počúva server, tento port je jediný port, ktorý bude prístupný vonkajšiemu svetu.
 
-\begin{lstlisting}[float, caption={Konfigurácia Gateway servisu},label={alg:gateway_config},language=yaml]
+\begin{lstlisting}[float, caption={Konfigurácia Gateway service},label={alg:gateway_config},language=yaml]
 server:
   port: 8080
 eureka:
@@ -616,11 +623,11 @@ spring:
 \end{lstlisting}
 
 Prvá \acrshort{url} ktorú máme v konfigurácií zadefinovanú je "/". Táto \acrshort{url} obsahuje funkcie obsluhu nášho rozhrania táto URL je smerovaná na generator service na porte 8081.
-Nasledujúce dve trasy smerujú na Auth servis na porte 8088. Prvá obsluhuje dopyty na autentifikáciu cez \acrshort{oauth}, druhá smeruje dopyt na získanie informácií o aktuálnom používateľovi.
+Nasledujúce dve trasy smerujú na Auth service na porte 8088. Prvá obsluhuje dopyty na autentifikáciu cez \acrshort{oauth}, druhá smeruje dopyt na získanie informácií o aktuálnom používateľovi.
 
-Posledná trasa smeruje všetky ostatné dopyty na relay servis. Ako môžeme vidieť URI cieľovej služby nie je s protokolom HTTP a portom na ktorom je služba a ale s protokolom lb a menom služby. Takáto notácia nám umožňuje využiť load balancer balíka Spring Cloud Gateway. Na to aby sme mohli využívať tento protokol musíme ešte nakonfigurovať spojenie so službou service discovery. Ak povolíme možnosť discovery locator, náš gateway servis si vypýta od service discovery informácie o lokácií služieb v našom cloudovom riešení a následne sme schopní adresovať ich pomocou mena, namiesto URI, a môžeme využívať možnosti load balancera. Load balancer sa dá nastaviť aj aby so statickým zoznamom URI jednotlivých inštancii služieb, riešenie cez service discovery locator sa však ukázalo ako praktickejšie, keďže vie dynamicky reagovať na počet spustených inštancií.
+Posledná trasa smeruje všetky ostatné dopyty na Relay service. Ako môžeme vidieť URI cieľovej služby nie je s protokolom HTTP a portom na ktorom je služba a ale s protokolom lb a menom služby. Takáto notácia nám umožňuje využiť load balancer balíka Spring Cloud Gateway. Na to aby sme mohli využívať tento protokol musíme ešte nakonfigurovať spojenie so službou service discovery. Ak povolíme možnosť discovery locator, náš Gateway service si vypýta od service discovery informácie o lokácií služieb v našom cloudovom riešení a následne sme schopní adresovať ich pomocou mena, namiesto URI, a môžeme využívať možnosti load balancera. Load balancer sa dá nastaviť aj aby so statickým zoznamom URI jednotlivých inštancii služieb, riešenie cez service discovery locator sa však ukázalo ako praktickejšie, keďže vie dynamicky reagovať na počet spustených inštancií.
 
-Na operáciu gateway servisu nepotrebujeme žiadnu ďalšiu konfiguráciu. Všetky dopyty sú správne smerované servisom, pre ktoré sú určené.
+Na operáciu Gateway service nepotrebujeme žiadnu ďalšiu konfiguráciu. Všetky dopyty sú správne smerované službám, pre ktoré sú určené.
 
 \subsection{Platforma}
 V nasledujúcej časti si priblížime aké prostredie sme využívali na vývoj a testovanie systému, ďalej si popíšeme kroky, ktoré sú potrebné na spustenie našej aplikácie
@@ -659,21 +666,21 @@ Komunikáciu z \acrshort{api} na procesný server nevieme v tomto bode navrhnú�
 
 Komunikácia v rámci našej domény prebieha pomocou interných protokolov cloudového riešenia v našom prípade HTTP.  Pri testovaní a vývoji je naše riešenie nasadené celé v rámci jedného virtuálneho servera preto nepovažujeme za potrebné zabezpečovať túto komunikáciu. Ak by však produkčné prostredie bolo nasadené na viacerých virtuálnych alebo fyzických serveroch odporúčame použitie šifrovania spojenia. Na zabezpečenie šifrovanej komunikácie môžeme použiť šifrovanie jednotlivých spojení pomocou SSH, alebo využitie hotového riešenia na komunikáciu v rámci cloudových kontajnerov.
 
-V rámci našej aplikácie sa nachádzajú dve domény, administrátorská a používateľská. V administrátorskej doméne sa nachádza služba generator. Ak by útočník získal kontrolu nad touto službou bol by schopný obmedziť funkčnosť nášho používateľského klientského rozhrania, zamedziť prístup používateľom k aplikačnému rozhraniu alebo naopak povoliť neoprávnenej osobe prístup k rozhraniu. Ak by útočník vypol  tento servis, neobmedzila by  sa schopnosť \acrshort{api} odpovedať na používateľské dopyty obmedzila  by sa len schopnosť meniť rozhranie. Náš systém bude implementovaný tak, aby administrátor mal prístup k rozhraniu z internetu. Prístup ku generator servisu je len pomocou dopredu definovaných autentifikovaných HTTP volaní. Pre zvýšenie bezpečnosti v produkčnom prostredí odporúčame povolenie prístupu na generator servis len z vnútra našej domény, napr pomocou VPN/SSH.
+V rámci našej aplikácie sa nachádzajú dve domény, administrátorská a používateľská. V administrátorskej doméne sa nachádza služba generator. Ak by útočník získal kontrolu nad touto službou bol by schopný obmedziť funkčnosť nášho používateľského klientského rozhrania, zamedziť prístup používateľom k aplikačnému rozhraniu alebo naopak povoliť neoprávnenej osobe prístup k rozhraniu. Ak by útočník vypol túto službu, neobmedzila by  sa schopnosť \acrshort{api} odpovedať na používateľské dopyty obmedzila  by sa len schopnosť meniť rozhranie. Náš systém bude implementovaný tak, aby administrátor mal prístup k rozhraniu z internetu. Prístup ku Generator service je len pomocou dopredu definovaných autentifikovaných HTTP volaní. Pre zvýšenie bezpečnosti v produkčnom prostredí odporúčame povolenie prístupu na Generator service len z vnútra našej domény, napr pomocou VPN/SSH.
 
-V používateľskej doméne sa nachádza relay servis. Ak by nad týmto servisom získal útočník kontrolu, mohol by neoprávnene spúšťať prechody a získavať dáta z prechodov na procesnom serveri. Keďže relay servis je vždy spustený vo viacerých inštanciách na obmedzenie funkčnosti prostredia by musel útočník vypnúť všetky inštancie relay servisu. Ak by útočník Všetky volania na relay servis sú autentifikované pomocou \acrshort{oauth}.  Aby sme ochránili procesný server proti SQL injection útokom navrhujeme v produkčnom prostredí presne špecifikovať formát vstupu pre jednotlivé typy polí a  implementovať čistenie vstupov pomocou štandartných nástrojov.
+V používateľskej doméne sa nachádza Relay servce. Ak by nad touto službou získal útočník kontrolu, mohol by neoprávnene spúšťať prechody a získavať dáta z prechodov na procesnom serveri. Keďže Relay service je vždy spustený vo viacerých inštanciách na obmedzenie funkčnosti prostredia by musel útočník vypnúť všetky inštancie Relay service. Ak by útočník Všetky volania na Relay service sú autentifikované pomocou \acrshort{oauth}.  Aby sme ochránili procesný server proti SQL injection útokom navrhujeme v produkčnom prostredí presne špecifikovať formát vstupu pre jednotlivé typy polí a  implementovať čistenie vstupov pomocou štandartných nástrojov.
 
-Gateway servis sám o sebe nespracováva žiadne používateľské dpyty iba ich smeruje ďalej do systému. Toto obmedzuje výber útokov možný na tento servis. Voči gateway servisu môže útočník použiť útok DDOS, V produkčnom prostredí sa takémuto útoku môžeme brániť použitím rate limitera. Ak by útočík získal kontrolu nad týmto servisom mohol by aplikačné rozhranie znefunkčniť alebo mu nížiť priepustnosť.
+Gateway service sám o sebe nespracováva žiadne používateľské dpyty iba ich smeruje ďalej do systému. Toto obmedzuje výber útokov možný na túto službu. Voči Gateway service môže útočník použiť útok DDOS, V produkčnom prostredí sa takémuto útoku môžeme brániť použitím rate limitera. Ak by útočík získal kontrolu nad touto službou mohol by aplikačné rozhranie znefunkčniť alebo mu nížiť priepustnosť.
 
-Service discovery komunikuje iba na pomocou svojho protokolu s ostatnými kontajermi v siei, takze opäť je výber útokov obmedzený. Keďe tneto servis používame sledovanie počtu a stavu inštancií relay servisu na účely load balalncingu, mohol by útočník reportovať iný počet alebo inú lokáciu inštancií relay servisu a tým obmedziť priepustnosť alebo znefunkčniť rozhranie.
+Service discovery komunikuje iba na pomocou svojho protokolu s ostatnými kontajermi v siei, takze opäť je výber útokov obmedzený. Keďže túto používame na používame sledovanie počtu a stavu inštancií Relay service na účely load balalncingu, mohol by útočník reportovať iný počet alebo inú lokáciu inštancií Relay service a tým obmedziť priepustnosť alebo znefunkčniť rozhranie.
 
-Auth servis zasahuje do oboch našich bezpečnostných domén. Prihlasovacie údaje a roly sú však oddelené rôznym menným priestorom, to nám zaručuje, že pri registrácií nových rolí sa používatelia nemôžu dostať k prostriedkom, ktoré patria do administrátorskej domény. Samotnú
-autentifikáciu v našej aplikácií rieši auth servis pomocou štandardnej implementácie \acrshort{oauth}. Tento protokol zabezpečuje dostačujúci stupeň bezpečnosti pri autentifikácií. Útok pomocou napadnutia registrácie používateľov sme už spomenuli vyššie pri generator servise. Ak by útočník získal kontrolu nad auth servisom vedel by obmedziť prístup oprávneným používateľom, alebo neoprávnene získať prístup ku koncovým bodom relay servisu.
+Auth service zasahuje do oboch našich bezpečnostných domén. Prihlasovacie údaje a roly sú však oddelené rôznym menným priestorom, to nám zaručuje, že pri registrácií nových rolí sa používatelia nemôžu dostať k prostriedkom, ktoré patria do administrátorskej domény. Samotnú
+autentifikáciu v našej aplikácií rieši Auth service pomocou štandardnej implementácie \acrshort{oauth}. Tento protokol zabezpečuje dostačujúci stupeň bezpečnosti pri autentifikácií. Útok pomocou napadnutia registrácie používateľov sme už spomenuli vyššie pri Generator service. Ak by útočník získal kontrolu nad Auth service vedel by obmedziť prístup oprávneným používateľom, alebo neoprávnene získať prístup ku koncovým bodom Relay service.
 
-V produkčnom prostredí taktiež odporúčame nasadiť riešenie na centralizované skladovanie logov zo všetkých servisov.
+V produkčnom prostredí taktiež odporúčame nasadiť riešenie na centralizované skladovanie logov zo všetkých služieb.
 
 %todo toto do zhodnotenia?
-Architektúram mikroservisov prináša do serverových systémov vysoký výkon a škálovateľnosť no tým, že sa skladá z viacerých oddelených servisov ktoré musia medzi sebou komunikovať, prináša zo sebou aj riziko napadnutia tejto komunikácie. Ak však vieme zaručiť bezpečnosť tejto komunikácie uzavretím systému do bezpečnej domény, alebo šifrovaním jednotlivých komunikačných kanálov, z bezpečnostného hľadiska je táto architektúra vyhovujúca na  implementáciu bezpečných a vysoko škálovateľných systémov
+Architektúram mikroservisov prináša do serverových systémov vysoký výkon a škálovateľnosť no tým, že sa skladá z viacerých oddelených služieb ktoré musia medzi sebou komunikovať, prináša zo sebou aj riziko napadnutia tejto komunikácie. Ak však vieme zaručiť bezpečnosť tejto komunikácie uzavretím systému do bezpečnej domény, alebo šifrovaním jednotlivých komunikačných kanálov, z bezpečnostného hľadiska je táto architektúra vyhovujúca na  implementáciu bezpečných a vysoko škálovateľných systémov
 
 
 \section{Testovanie}
@@ -688,22 +695,22 @@ Pri autorizačnom serveri sme testovali, či základným systémovým používat
 \begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=16cm]{img/insomnia_oauth.png}
-	\caption{Ukážka testu auth servisu}
+	\caption{Ukážka testu Auth service}
 	\label{insomnia_oauth}
 \end{figure}
 
 \subsubsection{Gateway service}
-Pri gateway service sme testovali správne nastavenie smerovania, a či server naozaj smeruje dotazy na správny server. Ďalej sme testovali funkcionalitu load balancera. Tú sme testovali tak, že sme spustili viaceré inštancie relay servisu, s miernymi zmenami v kóde a load balancer naše dopyty smeroval striedavo na rôzne inštancie relay servisu.
+Pri gateway service sme testovali správne nastavenie smerovania, a či server naozaj smeruje dotazy na správny server. Ďalej sme testovali funkcionalitu load balancera. Tú sme testovali tak, že sme spustili viaceré inštancie Relay service, s miernymi zmenami v kóde a load balancer naše dopyty smeroval striedavo na rôzne inštancie Relay service.
 
 \subsubsection{Generator service}
 Pri generator service sme testovali či sa vygeneroval spustiteľný kód. V prípade, že kód ktorý sa vygeneroval nebol syntakticky správny vrátil koncový bod generátora chybovú odpoveď. Jedna z chýb ktoré sme pri takomto testovaní objavili je chyba knižnice kotlinpoet, kedy sa pri generovaní zalomí dlhší text bez ošetrenia úvodzoviek a teda sa vygeneruje nevalidný kód.
 
-Ak sa korektne vygeneroval kód a spustila sa nová inštancia relay servisu testovali sme, či vygenerovaný kód validácie funguje korektne.
+Ak sa korektne vygeneroval kód a spustila sa nová inštancia Relay service testovali sme, či vygenerovaný kód validácie funguje korektne.
 
-Ďalej sme pri tejto službe testovali, či sa pri regenerácií relay servisu prejavila zmena v dokumentácií korektne, a či sa správne zaregistrovali používatelia v auth servise.
+Ďalej sme pri tejto službe testovali, či sa pri regenerácií Relay service prejavila zmena v dokumentácií korektne, a či sa správne zaregistrovali používatelia v Auth service.
 
 \subsubsection{Relay service}
-Pri tomto servise sme testovali funkčnosť validačných funkcií. Testovali sme, či neprítomnosť povinného dátového poľa vráti správnu chybovú hlášku, a či pri poliach s predpísaným formátom vstupu vráti servis chybu ak formát vstupu nie je korektný a či ak je formát správny prebehne funkcia korektne a vráti pozitívny výsledok. Na obrázku \ref{insomnia_200} vidíme príklad korektného dotazu a na obrázku \ref{insomnia_400} vidíme príklad dopytu, ktorý nemá správny formát dát v poli s enumeráciou.
+Pri tejto službe sme testovali funkčnosť validačných funkcií. Testovali sme, či neprítomnosť povinného dátového poľa vráti správnu chybovú hlášku, a či pri poliach s predpísaným formátom vstupu vráti služba chybu ak formát vstupu nie je korektný a či ak je formát správny prebehne funkcia korektne a vráti pozitívny výsledok. Na obrázku \ref{insomnia_200} vidíme príklad korektného dotazu a na obrázku \ref{insomnia_400} vidíme príklad dopytu, ktorý nemá správny formát dát v poli s enumeráciou.
 
 \begin{figure}[!htbp]
 	\centering
