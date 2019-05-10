@@ -42,11 +42,19 @@ $m0$ priraďuje miestam v modely nezáporný počet tokenov. Na to aby bol prech
 \[ \forall p \in \cdot t: m(p) \leq W((p,t)), t \in T\]
 
 Pre všetky miesta $p$, z ktorých vedie hrana do prechodu $t$, musí platiť, že počet značiek v danom mieste je väčší ako násobnosť danej hrany $ m(p) \leq W((p,t)) $. Pre všetky prechody v sieti, pre ktoré je táto podmienka splnená platí, že sú spustiteľné. Pokiaľ do prechodu nevedie žiadna hrana, prechod bude vždy spustiteľný.
-Na ukážke \ref 
+Na ukážke \ref {pn_example_run} môžeme vidieť priklad simulácie petriho siete. V prvom prípade je spustiteľný iba prehod T1, lebo do neho nesmeruje žiadna hrana. Do prechodu T2 smerujú dve hrany, prvá z miesta P2 s násobnosťou 1, sduhá z miesta P1 s násobnosťou 2. Práve podmienka druhej hrany nieje splnená, lebo mesto P1 obsahuje len jeden token. V druhom prípade je aj táto podmienka splnená.
  
-Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzumuje taký počet tokenov ,aka je násobnosť hrany. Zároveň sa do miest do ktorých vedú hrany z prechodu $t$ pridá toľko tokenov, aká je násobnosť danej hrany. Na ukážke  
+Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzumuje taký počet tokenov ,aka je násobnosť hrany. Zároveň sa do miest do ktorých vedú hrany z prechodu $t$ pridá toľko tokenov, aká je násobnosť danej hrany. Na ukážke \ref{pn_example_run} môžeme vidieť t
 
-\subsection{Rozšírené Petriho siete}
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=6cm]{img/pn_example_run.png}
+\caption{Simulácia Petriho siete}
+\label{pn_example_run}
+\end{figure}
+
+
+\subsection{Rozšírené Petriho siete a Petriflow}
 \subsubsection{Podsiete}
 
 \subsubsection{Roly}
