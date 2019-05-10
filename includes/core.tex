@@ -75,15 +75,12 @@ Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hran
  
 \paragraph{Reset} hrana umožňuje spustenie prechodu bez ohľadu na počet tokenov v mieste. Po spustení reset hrany sa mení počet tokenov v mieste na nula. Na diarame \ref{pn_arc_types} môžeme vidieť toto správanie.
 
-
-
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=6cm]{img/pn_arc_types.png}
-\caption{Simulácia Petriho siete}
+\caption{Ukážka rôznych hrán v Petriflow}
 \label{pn_arc_types}
 \end{figure}
-
 
 \subsubsection{Úlohy}
 Koncept podsietí vznikol z potreby abstrahovať často opakujúce sa vzory pri modelovaní procesov. Formalizmus petriflow rozširuje Petriho sieťe o úlohy. Úlohy pri modelovaní procesu používame ako prechody, no ich spúštanie pri simulácií nieje atomická operácia, ako pri klasických Petriho sieťach. Pri spustení úlohy sa skonzumujú tokeny v hlavnej sieti a prdajú sa do začiatočného miesta workflow siete na obrázku  \ref{pn_task}. Tokeny v hlavnej sieti sa vyprodukujú až pri dokonční workflow podsiete. V tejto podsieti môžeme vykonávaťnasledovné akcie: 
