@@ -4,35 +4,55 @@
 V prvej kapitole si bližšie predstavíme problematiku procesov, formalizmus Petrifow s ktorým tieto procesy vieme modelovať, a priblížime si prostredie procesne orientovaných systémov a pre
 
 \subsection{Petriho siete}
-Hovorí sa, že Carl Adam Petri vymyslel koncept Petriho sietí v auguste 1939 keď mal iba 13 rokov. Vtedy ich používal ako mnemotechnickú pomôcku na memorovanie priebehu chemických reakcií. Svoju matematickú teóriu modelovania procesov v kontexte informatiky predstavil v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi na technickej univerzite v Darmstadte v Nemecku. Grafickú reprezentáciu so štvorcami, kruhmi a šípkami, ktorú poznáme v súčastnosti predstavil až o tri roky neskôr, čím zožal veľký úspech v informatickej komunite. \cite{petri50years} 
+Carl Adam Petri vymyslel koncept Petriho sietí v auguste 1939 keď mal iba 13 rokov. Vtedy ich používal ako mnemotechnickú pomôcku na memorovanie priebehu chemických reakcií. Svoju matematickú teóriu modelovania procesov v kontexte informatiky predstavil v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi na technickej univerzite v Darmstadte v Nemecku. Grafickú reprezentáciu so štvorcami, kruhmi a šípkami, ktorú poznáme v súčastnosti predstavil až o tri roky neskôr, čím zožal veľký úspech v informatickej komunite. \cite{petri50years} 
 
 Od uverejnenia Petriho dizertačnej práce v roku 1962 si jeho siete našli široké uplatnenie na poli modelovania procesov, asynchrónnych a distribuovaných systémov. 
 
-Vo svojej grafickej reprezentácií Petriho sieťe modelujú udalostné systémy pomocou bipartitného grafu ktorý sa skladá z miest(kruh) a prechodov (štvorec) ktoré sú pospájané orientovanými hranami(šipkami) s označením multiplicity. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkami v miestach). 
-Miesta (S) reprezentujú podmienky ktoré musia byť splnené na to aby mohla prebehnúť nejaká akcia v procese.
-Prechody (T) reprezentujú samotné akcie v procese, ktoré menia jej stav konzumovaním a produkovaním tokenov.
-Hrany (A) reprezentujú tok prostriedkov v procese a v spojení s miestami a prechodmi tvoria štruktúru procesu
-Každá hrana má definovanú násobnosť (W) ktorá reprezentuje počet tokenov, ktoré sa pri spustení prechodu skonzumujú, ak hrana smeruje do prechodu, alebo vyprodukujú ak hrana vychádza z vrcholu. Na diagrame \ref{basic net} vidíme príklad Petriho siete ktorá modeluje jednoduchý paralelný proces. 
+Petriho sieť je definovaná ako štvorica
+
+\[N = (P, T, F, W )\]
+Pričom platí že
+\begin{itemize}
+\item P je konečná množina miest v sieti
+\item T je množina prechodov taká,
+\item $P\cap T = \varnothing$ (Množina prechodov a miest má prázdny prienik ) 
+\item $F \subseteq (P \times T)\cup(T \times P)$ je množina hrán siete
+\item $W: F \rightarrow z, z \subseteq \mathbb Z+$, $W$ prideľuje hranám násobnosť 
+%\item $m0: P \rightarrow n, n \subseteq \mathbb N$, $m0$ prideľuje miestam počiatočné značkovanie 
+\end{itemize}
+
+Vo svojej grafickej reprezentácií Petriho siete modelujú udalostné systémy pomocou bipartitného grafu ktorý sa skladá z miest(kruh) a prechodov (štvorec) ktoré sú pospájané orientovanými hranami(šipkami) s označením násobnosti. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkami v miestach).
+Grafická reprezentácia Petriho sietí poskytuje intuitívny modelovací nástroj na modelovania jednoduchých no aj komplexných paralelných procesov. Na diagrame \ref{basic_net} vidíme príklad Petriho siete ktorá modeluje jednoduchý paralelný proces. 
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=6cm]{img/basic_net.png}
-\caption{Úloha}
+\caption{Príklad paralelného procesu}
 \label{basic_net}
 \end{figure}
 
 
+\subsection{Spúšťanie prechodov}
+Petriho siete okrem možnosti modelovať štruktúru procesov ponúkajú aj možnosť simulovať priebeh namodelovných procesov.
+Na to aby sme mohli simulovať preibeh procesu po trevujeme do sieťe pridať počiatočný stav sete pridaním počiatočného značkovania  
 
+\[N = (P, T, F, W, m_0 ), m0: P \rightarrow n, n \subseteq \mathbb N\]
 
+$m0$ priraďuje miestam v modely nezáporný počet tokenov. Na to aby bol prechod spustitlný musí byť splnená nasledovná podmienka:
+\[ \forall p \in \cdot t: m(p) \leq W((p,t)), t \in T\]
 
-
-  Ďalším výskumom sa z pôvodného konceptu ktorý bol určený na modelovanie analýzu komunikačných systémov vyvinul nástroj, ktorý sa používa naprieč mnohými oblasťami najmä na modelovanie paralelných a distribuovaných systémov.
-
+Pre všetky miesta $p$, z ktorých vedie hrana do prechodu $t$, musí platiť, že počet značiek v danom mieste je väčší ako násobnosť danej hrany $ m(p) \leq W((p,t)) $. Pre všetky prechody v sieti, pre ktoré je táto podmienka splnená platí, že sú spustiteľné. Pokiaľ do prechodu nevedie žiadna hrana, prechod bude vždy spustiteľný.
+Na ukážke \ref 
+ 
+Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzumuje taký počet tokenov ,aka je násobnosť hrany. Zároveň sa do miest do ktorých vedú hrany z prechodu $t$ pridá toľko tokenov, aká je násobnosť danej hrany. Na ukážke  
 
 \subsection{Rozšírené Petriho siete}
 \subsubsection{Podsiete}
+
 \subsubsection{Roly}
+
 \subsubsection{Dáta}
+
 \subsubsection{Akcie}
 
 \subsection{Petriflow}
