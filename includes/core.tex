@@ -56,8 +56,31 @@ Po spustení prechodu T2 sa skonzumujú dva tokeny z miesta P1, lebo násobnosť
 \end{figure}
 
 \subsubsection{Dosiahnuteľnosť}
+Dosiahnuteľnosť je vlastnosť značkovania $m$ v sieti so značkovaním $m_0$. Ak v sieti so značkovaním $m_0$ existuje postupnosť spustení prechodov taká, že v sieti vieme dosiahnuť značkovanie $m$ hovoríme, že značkovanie $m$ je v sieti dosiahnuteľné zo značkovania $m_0$
+
+\subsubsection{Živosť}
+Je vlastnosť prechodov v Petriho sietí, s počiatočným značkovaním $m_0$ ktorá hovorí o tom, či a koľko krát je daný prechod spustiteľný zo značkovaní dosiahnuteľných zo značkovania $m_0$  Poznáme štyri stupne živosti prechodov:
+\begin{itemize}
+\item $L_0$ - neexistuje značkovanie $m$ dosiahnuteľné z $m_0$ z ktorého je prechod spustiteľný
+\item $L_1$ - existuje značkovanie $m$ dosiahnuteľné z $m_0$ také že prechod je spustiteľný aspoň jeden krát
+\item $L_2$ - pre každé $k \in \mathbb N$  existuje značkovanie $m$ dosiahnuteľné z $m_0$ také, že prechod je možné spustiť $k$ krát
+\item $L_3$ - existuje značkovanie $m$ dosiahnuteľné z $m_0$  také, že prechod môžeme spustiť nekonečne veľa krát
+\item $L_4$ - pre každé značkovanie $m$  dosiahnuteľné z $m_0$ existuje značkovanie $m'$ dosiahnuteľné z $m$ v ktorom bude prechod spustiteľný
+\end{itemize}
+
+\subsubsection{Ohraničenosť}
+Sieť so je ohraničená vtedy, ak existuje konečná množina značkovaní, dosiahnuteľných z $m_0$.
 
 \subsubsection{Workflow siete}
+Workflow siete sú špeciálnou podmnožinou Petriho sietí, ktoré spĺňajú nasledujúce podmienky:
+\begin{itemize}
+\item Musia obsahovať práve jedno vstupné a jedno výstupné miesto.
+\item Počiatočné značkovanie $m_0$ musí byť také že vstupné miesto musí obsahovať práve jeden token, žiadne iné miesta nemajú tokeny
+\item Všetky prechody musia mať živosť aspoň $L_1$ 
+\item Sieť musí byť ohraničená
+\end{itemize}
+%TODO check
+Takéto siete modelujú 
 
 \subsection{Rozšírené Petriho siete a Petriflow}
 
@@ -66,6 +89,8 @@ Od uverejnenia Petriho sietí v roku 1968 vzniklo mnoho rozšírení, ktoré pri
 
 Formalizmus Petriflow stavia na Petriho sieťach rozšírených o pokročilé hrany a rozširuje ich o roly, dáta a akcie. Petriflow taktiež využíva siete vyššieho stupňa použitím podsiete úlohy.
 
+\subsubsection{Statické miesta}
+%TODO
 
 \subsubsection{Hrany}
 Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hrany inhibitor, read a reset. Tieto hrany môžu byť orientované iba od miesta k prechodu, aby bola možná ich rozšrená funkcionalita.
