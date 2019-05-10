@@ -32,7 +32,7 @@ Grafická reprezentácia Petriho sietí poskytuje intuitívny modelovací nástr
 \end{figure}
 
 
-\subsection{Spúšťanie prechodov}
+\subsubsection{Spúšťanie prechodov}
 Petriho siete okrem možnosti modelovať štruktúru procesov ponúkajú aj možnosť simulovať priebeh namodelovaných procesov.
 Na to aby sme mohli simulovať priebeh procesu potrebujeme do siete pridať počiatočný stav sete pridaním počiatočného značkovania  
 
@@ -55,49 +55,132 @@ Po spustení prechodu T2 sa skonzumujú dva tokeny z miesta P1, lebo násobnosť
 \label{pn_example_run}
 \end{figure}
 
+\subsubsection{Dosiahnuteľnosť}
+
+\subsubsection{Workflow siete}
+
 \subsection{Rozšírené Petriho siete a Petriflow}
 
 So stúpajúcou komplexitou udalostných systémov rastú aj nároky na formalizmus, pomocou ktorého sa systém snažíme modelovať. 
 Od uverejnenia Petriho sietí v roku 1968 vzniklo mnoho rozšírení, ktoré pridávajú novú funkcionalitu do modelovacieho formalizmu alebo uľahčujú modelovanie abstrakciou. 
 
-Formalizmus Petriflow stavia na Petriho sieťach rozšírených o reset, inhibitor a read hrany a rozširuje ich o roly, dáta a akcie. Petriflow taktiež využíva siete vyššieho stupňa použitím podsiete úlohy.
-
-Rozne typy hrán
-
-\subsubsection{Podsiete}
+Formalizmus Petriflow stavia na Petriho sieťach rozšírených o pokročilé hrany a rozširuje ich o roly, dáta a akcie. Petriflow taktiež využíva siete vyššieho stupňa použitím podsiete úlohy.
 
 
+\subsubsection{Hrany}
+Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hrany inhibitor, read a reset. Tieto hrany môžu byť orientované iba od miesta k prechodu, aby bola možná ich rozšrená funkcionalita.
+\paragraph{Inhibitor} hrana invertuje  podmienku spustenia prechodu tak, že umožní spustenie prechodu iba ak sa v mieste nachádza ostro menší počet tokenov ako je násobnosť hrany. Pri spustení prľahlého prechodu sa nekonzumujú žiadne tokeny z miesta. Na diagrame  \ref{pn_arc_types} v prvom riadku môžeme vidieť príklad tohto správania. prechod vľavo nieje spustitelný no prechod v pravo spustitelný je. 
 
-\subsubsection{Roly}
+\paragraph{Read} hrana má rovnakú podmienku spustenia ako základná hrana, no neupravuje počet tokenov v mieste. Na diagrame  \ref{pn_arc_types} v druhom riadku môžeme vidieť read hranu pred a po spustení priľahlého prechodu. 
+ 
+\paragraph{Reset} hrana umožňuje spustenie prechodu bez ohľadu na počet tokenov v mieste. Po spustení reset hrany sa mení počet tokenov v mieste na nula. Na diarame \ref{pn_arc_types} môžeme vidieť toto správanie.
 
-\subsubsection{Dáta}
 
-\subsubsection{Akcie}
-
-XML notacia petriflow
-
-\subsection{Petriflow}
-
-Formalizmus Petriflow je rozšírenie Petriho sietí, ktoré bolo navrhnuté na modelovanie komplexných biznis procesov. 
-
-Formalizmus Petriflow rozširuje Petriho siete o ďalšie komponenty. Ako základ berie Petriho siete obohatené reset, inihibitor a read hrany. Aby sa dali modelovať moderné biznis procesy pridáva Petriflow do tohto modelu roly, dátové polia a akcie.
-
-Roly definujú kto je oprávnený spúšťať rôzne prechody.
-
-Dátové polia definujú štruktúru dát ktoré každá inštancia procesu obsahuje počas svojho behu.
-
-Akcie definujú vzťahy a interakcie medzi jednotlivými dátovými poľami a prechodmi.
-
-V klasických Petriho sieťach je spustenie prechodu vždy atomická operácia. Petriflow obsahuje dva typy prechodov. Udalostné prechody, ktoré sú rovnako  ako v klasických PN sieťach atomické, avšak vždy ich spúšťa nejaká osoba(používateľ) v systéme. Druhý typ prechodu je úloha. Úlohu môžeme vnímať ako podsieť na obrázku \ref{task}. Na začiatku je úloha nepridelená, ako prvý krok je potrebné ju niekomu (aj sebe) prideliť. Následne môže toto pridelenie zrušiť, prideliť inej osobe, alebo úlohu dokončiť. My sa ďalej budeme zaoberať len úlohami.
-
-Keďže každá úloha je samostatná sieť so štyrmi prechodmi, musíme pre každú úlohu zadefinovať roly pre všetky štyri operácie úlohy.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=6cm]{img/task_transition.png}
-\caption{Úloha}
-\label{task}
+\includegraphics[width=6cm]{img/pn_arc_types.png}
+\caption{Simulácia Petriho siete}
+\label{pn_arc_types}
 \end{figure}
+
+
+\subsubsection{Úlohy}
+Koncept podsietí vznikol z potreby abstrahovať často opakujúce sa vzory pri modelovaní procesov. Formalizmus petriflow rozširuje Petriho sieťe o úlohy. Úlohy pri modelovaní procesu používame ako prechody, no ich spúštanie pri simulácií nieje atomická operácia, ako pri klasických Petriho sieťach. Pri spustení úlohy sa skonzumujú tokeny v hlavnej sieti a prdajú sa do začiatočného miesta workflow siete na obrázku  \ref{pn_task}. Tokeny v hlavnej sieti sa vyprodukujú až pri dokonční workflow podsiete. V tejto podsieti môžeme vykonávaťnasledovné akcie: 
+
+\begin{itemize}
+\item Assign - Aktér, ktorý spustí tento prechod si pridelí úlohu na vykonávanie, takže on bude zodpovedný za vykonávanie namodelovanéj úlohy.
+\item Cancel - Pridelenie úlohy sa zruší
+\item Delegate - Aktér môže prideliť úlohu niekomu inému
+\item Finish - Dokončenie úlohy. 
+\end{itemize}
+
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=6cm]{img/pn_task.png}
+\caption{Úloha}
+\label{pn_task}
+\end{figure}
+
+
+\subsubsection{Roly}
+Pri modelovaní biznis procesov nastáva situácia, že isté úlohy môže vykonávať iba istá skupina aktérov, toto môžu byť rôzne skupiny používateľov alebo automatickí systémoví aktéri.  Formalizmus Petriflow rozširuje Petriho siete o Roly, ktoré upravujú podmienku spustenia prechodu. Prechod vždy spúšťa nejaký aktér. Pri spúšťaní prechodu (úlohy) musí byť okrem splnennia podmienok na počty tokenov v miestach splnená aj podmienka, že aktér spúšťajuci prechod musí mať pridelenú rolu oprávňujucu ho vykonať súto operáciu. 
+
+Pri jednoduchých prechodoch je definované, aké roly sú oprávnené spúšťať prechod spustiť.Keďže však úlohy v Petriflow reprezentujú podsieť s viacerými rôznymi operáciami musia byť pri úlohách definované viaceré skupiny rolí, ktoré môžu spúšťať konkrétne prechody v podsieti. Pri úlohe sa teda definujú roly na:
+\begin{itemize}
+\item vykonávanie úlohy - oprávňuje aktéra spustiť akciu assign, finish a cancel
+\item delegovanie úlohy - oprávňuje aktéra delegovať úlohu používateľovi
+\item prezeranie dát - oprávňuje aktéra  iba čítať dáta z úlohy
+\end{itemize}
+
+\subsubsection{Dáta}
+Reálne biznis procesy často obsahujú dáta ktoré  počas procesu treba doplniť a presunúť do iných častí systému. Petriflow preto rozširuje Petriho siete o dátové polia, ktoré v procesnom modeli reprezentuje definíciami typov dátových polí. Takéto definície dátových polí by sa dali prirovnať ku globálnym premenným v rámci procesného modelu.  
+
+Medzi dátové typy ktoré môžu  mať tieto dátové premenné patria primitívne hodnoty ako číslo, textový reťazec, boolean, dátum a čas. Ďalej môžu tieto polia mať typ referencie na používateľa alebo na inštanciu procesu. Medzi dátové typy patrí aj enumerácia s pevne danými hodnotami.
+
+Dátové poli môžu byť naviazané na prechody(úlohy). Takýmto spôsobom v Petriflow definujeme v ktorých fázach procesu môže používateľ interagovať s dátovými poľami. Jeden prechod môže mať na seba naviazané ľubovoľné dátové polia zo siete. Pri naviazaní dátového poľa zároveň definujeme, či je možné pole upravovať, či je možné čítať jeho hodnotu, alebo má byť skryté a či je na dokončenie úlohy(spustenie prechodu) potrebné dané dátové pole vyplniť.  
+
+\subsubsection{Akcie}
+Aby bolo možné v Petriflow modelovať aj komplexnejšiu biznis logiku procesného systému boli do neho pridané akcie. Akcie sú funkcie, ktoré sú spúšťané vždy, keď sa zmení hodnota dátového poľa. Akcie sú definované v dvoch fázach, najprv definujeme referencie na dátové polia, ktorých sa akcia týka, a následne je definovaná funkcia, napísaná v domain sprecific jazyku vyvinutom pre Petriflow pomocou Groovy DSL. 
+
+Pomocou tohto jazyku je možné definovať funkcie, ktoré vykonávajú matematické a logické operácie s dátovými premennými. 
+
+\subsubsection{Formát Petriflow}
+%todo menit nazov
+Pre udržanie kompatibility s bežnými nástrojmi na modelovanie Petriho sietí sa zapisujú modely Petriflow v jazku XML. Na základnej úrovni XML dokumentu sa nachádzajú roly, dáta, prechody, miesta, hrany a akcie. Na ukážke \ref{alg:petriflow} vidíme príklad jednoduchého modelu v Petriflow. 
+V model obsahuje jednu rolu s menom role, 
+jedno dátové pole, toto dátové pole je typu enumeration s troma možnými hodnotami. 
+Ďalej obsahuje model jeden prechod. Tento prechod obsahuje referenciu na rolu "role" a informáciu, že táto rola oprávňuje na vykonanie a delegovanie danej úlohy. Ďalej obsahuje prechod referenciu na dátové pole a informáciu, že je pole sa pri vykonávaní úlohy môže editovať a je povinné.
+Na koniec príklad obsahuje jedno statické miesto a jednu reset hranu . V mieste by mohla byť definovaná akcia, no keďže v tejto práci sa Akciam ďalej nebudeme venovať z príkladu sme ich vynechali.
+
+\begin{lstlisting}[ float,caption={Ukážka jendoduchého modelu Petriflow}, label={alg:petriflow}, language=XML]
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://modeler.netgrif.com/petriflow_schema.xsd">
+          
+    <role><id>role</id><name>role</name></role>
+    <data type="enumeration"> 
+        <id>enumeration</id>
+        <title>enumeration</title>
+        <values>opt_1</values>
+        <values>opt_2</values>
+    </data>
+    <transition><id>t1</id><x>300</x><y>220</y>
+        <label>T1</label>
+        <roleRef>
+            <id>role</id>
+            <logic>
+                <perform>true</perform>
+                <delegate>true</delegate>
+            </logic>
+        </roleRef>
+        <dataRef> 
+            <id>enumeration</id>
+            <logic>
+                <behavior>editable</behavior>
+                <behavior>required</behavior>
+            </logic>
+        </dataRef>
+    </transition>
+    <place><id>p1</id><x>220</x><y>220</y>
+        <label>P1</label>
+        <tokens>1</tokens>
+        <static>true</static>
+        </place>
+    <arc><id>A1</id>
+        <type>reset</type>
+        <sourceId>p1</sourceId>
+        <destinationId>t1</destinationId>
+        <multiplicity>1</multiplicity>
+    </arc>
+</document>
+\end{lstlisting}
+
+
+
+
+
 
 \subsection{Aplikačné rozhranie}
 
