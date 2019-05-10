@@ -33,19 +33,21 @@ Grafická reprezentácia Petriho sietí poskytuje intuitívny modelovací nástr
 
 
 \subsection{Spúšťanie prechodov}
-Petriho siete okrem možnosti modelovať štruktúru procesov ponúkajú aj možnosť simulovať priebeh namodelovných procesov.
-Na to aby sme mohli simulovať preibeh procesu po trevujeme do sieťe pridať počiatočný stav sete pridaním počiatočného značkovania  
+Petriho siete okrem možnosti modelovať štruktúru procesov ponúkajú aj možnosť simulovať priebeh namodelovaných procesov.
+Na to aby sme mohli simulovať priebeh procesu potrebujeme do siete pridať počiatočný stav sete pridaním počiatočného značkovania  
 
 \[N = (P, T, F, W, m_0 ), m0: P \rightarrow n, n \subseteq \mathbb N\]
 
-$m0$ priraďuje miestam v modely nezáporný počet tokenov. Na to aby bol prechod spustitlný musí byť splnená nasledovná podmienka:
+$m0$ priraďuje miestam v modely nezáporný počet tokenov. Na to aby bol prechod spustiteľný musí byť splnená nasledovná podmienka:
 \[ \forall p \in \cdot t: m(p) \leq W((p,t)), t \in T\]
 
 Pre všetky miesta $p$, z ktorých vedie hrana do prechodu $t$, musí platiť, že počet značiek v danom mieste je väčší ako násobnosť danej hrany $ m(p) \leq W((p,t)) $. Pre všetky prechody v sieti, pre ktoré je táto podmienka splnená platí, že sú spustiteľné. Pokiaľ do prechodu nevedie žiadna hrana, prechod bude vždy spustiteľný.
-Na ukážke \ref {pn_example_run} môžeme vidieť priklad simulácie petriho siete. V prvom prípade je spustiteľný iba prehod T1, lebo do neho nesmeruje žiadna hrana. Do prechodu T2 smerujú dve hrany, prvá z miesta P2 s násobnosťou 1, sduhá z miesta P1 s násobnosťou 2. Práve podmienka druhej hrany nieje splnená, lebo mesto P1 obsahuje len jeden token. V druhom prípade je aj táto podmienka splnená.
+Na ukážke \ref {pn_example_run} môžeme vidieť príklad simulácie Petriho siete. V prvom prípade je spustiteľný iba prechod T1, lebo do neho nesmeruje žiadna hrana. Do prechodu T2 smerujú dve hrany, prvá z miesta P2 s násobnosťou 1, druhá z miesta P1 s násobnosťou 2. Práve podmienka druhej hrany nieje splnená, lebo mesto P1 obsahuje len jeden token. V druhom prípade je aj táto podmienka splnená.
  
-Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzumuje taký počet tokenov ,aka je násobnosť hrany. Zároveň sa do miest do ktorých vedú hrany z prechodu $t$ pridá toľko tokenov, aká je násobnosť danej hrany. Na ukážke \ref{pn_example_run} môžeme vidieť t
+Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzumuje taký počet tokenov ,aká je násobnosť hrany. Zároveň sa do miest do ktorých vedú hrany z prechodu $t$ pridá toľko tokenov, aká je násobnosť danej hrany. Na ukážke \ref{pn_example_run} môžeme vidieť príklad troch stavov Petriho siete. Prvý stav obsahuje počiatočné značkovania. 
+Spustením prechodu T1 vyprodukujeme v meste P1 jeden token navyše, to nám umožňuje spustiť prechod T2. 
 
+Po spustení prechodu T2 sa skonzumujú dva tokeny z miesta P1, lebo násobnosť hrany  z P1 to T2 je 2. V mieste P2 sa skonzumuje jeden token, no zároveň sa jeden token vyprodukuje, lebo hrany s rovnakou násobnosťou jedna smerujú medzi P2 a T2 oboma smermi. V mieste P3 sa vyprodukuje jeden token.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=6cm]{img/pn_example_run.png}
@@ -53,15 +55,26 @@ Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzu
 \label{pn_example_run}
 \end{figure}
 
-
 \subsection{Rozšírené Petriho siete a Petriflow}
+
+So stúpajúcou komplexitou udalostných systémov rastú aj nároky na formalizmus, pomocou ktorého sa systém snažíme modelovať. 
+Od uverejnenia Petriho sietí v roku 1968 vzniklo mnoho rozšírení, ktoré pridávajú novú funkcionalitu do modelovacieho formalizmu alebo uľahčujú modelovanie abstrakciou. 
+
+Formalizmus Petriflow stavia na Petriho sieťach rozšírených o reset, inhibitor a read hrany a rozširuje ich o roly, dáta a akcie. Petriflow taktiež využíva siete vyššieho stupňa použitím podsiete úlohy.
+
+Rozne typy hrán
+
 \subsubsection{Podsiete}
+
+
 
 \subsubsection{Roly}
 
 \subsubsection{Dáta}
 
 \subsubsection{Akcie}
+
+XML notacia petriflow
 
 \subsection{Petriflow}
 
