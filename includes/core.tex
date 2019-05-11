@@ -1,10 +1,10 @@
 % !TeX spellcheck = sk_SK
 
 \section{Analýza problému}
-V prvej kapitole si bližšie predstavíme problematiku procesov, formalizmus Petrifow s ktorým tieto procesy vieme modelovať, a priblížime si prostredie procesne orientovaných systémov a pre
+V prvej kapitole si bližšie predstavíme problematiku procesov, formalizmus Petriflow s ktorým tieto procesy vieme modelovať, a priblížime si prostredie procesne orientovaných systémov a pre
 
 \subsection{Petriho siete}
-Carl Adam Petri vymyslel koncept Petriho sietí v auguste 1939 keď mal iba 13 rokov. Vtedy ich používal ako mnemotechnickú pomôcku na memorovanie priebehu chemických reakcií. Svoju matematickú teóriu modelovania procesov v kontexte informatiky predstavil v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi na technickej univerzite v Darmstadte v Nemecku. Grafickú reprezentáciu so štvorcami, kruhmi a šípkami, ktorú poznáme v súčastnosti predstavil až o tri roky neskôr, čím zožal veľký úspech v informatickej komunite. \cite{petri50years} 
+Carl Adam Petri vymyslel koncept Petriho sietí v auguste 1939 keď mal iba 13 rokov. Vtedy ich používal ako mnemotechnickú pomôcku na memorovanie priebehu chemických reakcií. Svoju matematickú teóriu modelovania procesov v kontexte informatiky predstavil v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi na technickej univerzite v Darmstadte v Nemecku. Grafickú reprezentáciu so štvorcami, kruhmi a šípkami, ktorú poznáme v súčasnosti predstavil až o tri roky neskôr, čím zožal veľký úspech v informatickej komunite. \cite{petri50years} 
 
 Od uverejnenia Petriho dizertačnej práce v roku 1962 si jeho siete našli široké uplatnenie na poli modelovania procesov, asynchrónnych a distribuovaných systémov. 
 
@@ -21,7 +21,7 @@ Pričom platí že
 %\item $m0: P \rightarrow n, n \subseteq \mathbb N$, $m0$ prideľuje miestam počiatočné značkovanie 
 \end{itemize}
 
-Vo svojej grafickej reprezentácií Petriho siete modelujú udalostné systémy pomocou bipartitného grafu ktorý sa skladá z miest(kruh) a prechodov (štvorec) ktoré sú pospájané orientovanými hranami(šipkami) s označením násobnosti. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkami v miestach).
+Vo svojej grafickej reprezentácií Petriho siete modelujú udalostné systémy pomocou bipartitného grafu ktorý sa skladá z miest(kruh) a prechodov (štvorec) ktoré sú pospájané orientovanými hranami(šípkami) s označením násobnosti. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkami v miestach).
 Grafická reprezentácia Petriho sietí poskytuje intuitívny modelovací nástroj na modelovania jednoduchých no aj komplexných paralelných procesov. Na diagrame \ref{basic_net} vidíme príklad Petriho siete ktorá modeluje jednoduchý paralelný proces. 
 
 \begin{figure}[!htbp]
@@ -42,7 +42,7 @@ $m0$ priraďuje miestam v modely nezáporný počet tokenov. Na to aby bol prech
 \[ \forall p \in \cdot t: m(p) \leq W((p,t)), t \in T\]
 
 Pre všetky miesta $p$, z ktorých vedie hrana do prechodu $t$, musí platiť, že počet značiek v danom mieste je väčší ako násobnosť danej hrany $ m(p) \leq W((p,t)) $. Pre všetky prechody v sieti, pre ktoré je táto podmienka splnená platí, že sú spustiteľné. Pokiaľ do prechodu nevedie žiadna hrana, prechod bude vždy spustiteľný.
-Na ukážke \ref {pn_example_run} môžeme vidieť príklad simulácie Petriho siete. V prvom prípade je spustiteľný iba prechod T1, lebo do neho nesmeruje žiadna hrana. Do prechodu T2 smerujú dve hrany, prvá z miesta P2 s násobnosťou 1, druhá z miesta P1 s násobnosťou 2. Práve podmienka druhej hrany nieje splnená, lebo mesto P1 obsahuje len jeden token. V druhom prípade je aj táto podmienka splnená.
+Na ukážke \ref {pn_example_run} môžeme vidieť príklad simulácie Petriho siete. V prvom prípade je spustiteľný iba prechod T1, lebo do neho nesmeruje žiadna hrana. Do prechodu T2 smerujú dve hrany, prvá z miesta P2 s násobnosťou 1, druhá z miesta P1 s násobnosťou 2. Práve podmienka druhej hrany nie je splnená, lebo mesto P1 obsahuje len jeden token. V druhom prípade je aj táto podmienka splnená.
  
 Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzumuje taký počet tokenov ,aká je násobnosť hrany. Zároveň sa do miest do ktorých vedú hrany z prechodu $t$ pridá toľko tokenov, aká je násobnosť danej hrany. Na ukážke \ref{pn_example_run} môžeme vidieť príklad troch stavov Petriho siete. Prvý stav obsahuje počiatočné značkovania. 
 Spustením prechodu T1 vyprodukujeme v meste P1 jeden token navyše, to nám umožňuje spustiť prechod T2. 
@@ -93,12 +93,12 @@ Formalizmus Petriflow stavia na Petriho sieťach rozšírených o pokročilé hr
 %TODO
 
 \subsubsection{Hrany}
-Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hrany inhibitor, read a reset. Tieto hrany môžu byť orientované iba od miesta k prechodu, aby bola možná ich rozšrená funkcionalita.
-\paragraph{Inhibitor} hrana invertuje  podmienku spustenia prechodu tak, že umožní spustenie prechodu iba ak sa v mieste nachádza ostro menší počet tokenov ako je násobnosť hrany. Pri spustení prľahlého prechodu sa nekonzumujú žiadne tokeny z miesta. Na diagrame  \ref{pn_arc_types} v prvom riadku môžeme vidieť príklad tohto správania. prechod vľavo nieje spustitelný no prechod v pravo spustitelný je. 
+Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hrany inhibitor, read a reset. Tieto hrany môžu byť orientované iba od miesta k prechodu, aby bola možná ich rozšírená funkcionalita.
+\paragraph{Inhibitor} hrana invertuje  podmienku spustenia prechodu tak, že umožní spustenie prechodu iba ak sa v mieste nachádza ostro menší počet tokenov ako je násobnosť hrany. Pri spustení priľahlého prechodu sa nekonzumujú žiadne tokeny z miesta. Na diagrame  \ref{pn_arc_types} v prvom riadku môžeme vidieť príklad tohto správania. prechod vľavo nie je spustiteľný no prechod vpravo spustiteľný je. 
 
 \paragraph{Read} hrana má rovnakú podmienku spustenia ako základná hrana, no neupravuje počet tokenov v mieste. Na diagrame  \ref{pn_arc_types} v druhom riadku môžeme vidieť read hranu pred a po spustení priľahlého prechodu. 
  
-\paragraph{Reset} hrana umožňuje spustenie prechodu bez ohľadu na počet tokenov v mieste. Po spustení reset hrany sa mení počet tokenov v mieste na nula. Na diarame \ref{pn_arc_types} môžeme vidieť toto správanie.
+\paragraph{Reset} hrana umožňuje spustenie prechodu bez ohľadu na počet tokenov v mieste. Po spustení reset hrany sa mení počet tokenov v mieste na nula. Na diagrame \ref{pn_arc_types} môžeme vidieť toto správanie.
 
 \begin{figure}[!htbp]
 \centering
@@ -108,10 +108,10 @@ Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hran
 \end{figure}
 
 \subsubsection{Úlohy}
-Koncept podsietí vznikol z potreby abstrahovať často opakujúce sa vzory pri modelovaní procesov. Formalizmus petriflow rozširuje Petriho sieťe o úlohy. Úlohy pri modelovaní procesu používame ako prechody, no ich spúštanie pri simulácií nieje atomická operácia, ako pri klasických Petriho sieťach. Pri spustení úlohy sa skonzumujú tokeny v hlavnej sieti a prdajú sa do začiatočného miesta workflow siete na obrázku  \ref{pn_task}. Tokeny v hlavnej sieti sa vyprodukujú až pri dokonční workflow podsiete. V tejto podsieti môžeme vykonávaťnasledovné akcie: 
+Koncept podsietí vznikol z potreby abstrahovať často opakujúce sa vzory pri modelovaní procesov. Formalizmus Petriflow rozširuje Petriho siete o úlohy. Úlohy pri modelovaní procesu používame ako prechody, no ich spúšťanie pri simulácií nie je atomická operácia, ako pri klasických Petriho sieťach. Pri spustení úlohy sa skonzumujú tokeny v hlavnej sieti a pridajú sa do začiatočného miesta workflow siete na obrázku  \ref{pn_task}. Tokeny v hlavnej sieti sa vyprodukujú až pri dokončení workflow podsiete. V tejto podsieti môžeme vykonávať nasledovné akcie: 
 
 \begin{itemize}
-\item Assign - Aktér, ktorý spustí tento prechod si pridelí úlohu na vykonávanie, takže on bude zodpovedný za vykonávanie namodelovanéj úlohy.
+\item Assign - Aktér, ktorý spustí tento prechod si pridelí úlohu na vykonávanie, takže on bude zodpovedný za vykonávanie namodelovanej úlohy.
 \item Cancel - Pridelenie úlohy sa zruší
 \item Delegate - Aktér môže prideliť úlohu niekomu inému
 \item Finish - Dokončenie úlohy. 
@@ -127,9 +127,9 @@ Koncept podsietí vznikol z potreby abstrahovať často opakujúce sa vzory pri 
 
 
 \subsubsection{Roly}
-Pri modelovaní biznis procesov nastáva situácia, že isté úlohy môže vykonávať iba istá skupina aktérov, toto môžu byť rôzne skupiny používateľov alebo automatickí systémoví aktéri.  Formalizmus Petriflow rozširuje Petriho siete o Roly, ktoré upravujú podmienku spustenia prechodu. Prechod vždy spúšťa nejaký aktér. Pri spúšťaní prechodu (úlohy) musí byť okrem splnennia podmienok na počty tokenov v miestach splnená aj podmienka, že aktér spúšťajuci prechod musí mať pridelenú rolu oprávňujucu ho vykonať súto operáciu. 
+Pri modelovaní biznis procesov nastáva situácia, že isté úlohy môže vykonávať iba istá skupina aktérov, toto môžu byť rôzne skupiny používateľov alebo automatickí systémoví aktéri.  Formalizmus Petriflow rozširuje Petriho siete o Roly, ktoré upravujú podmienku spustenia prechodu. Prechod vždy spúšťa nejaký aktér. Pri spúšťaní prechodu (úlohy) musí byť okrem splnenia podmienok na počty tokenov v miestach splnená aj podmienka, že aktér spúšťajúci prechod musí mať pridelenú rolu oprávňujúcu  ho vykonať túto operáciu. 
 
-Pri jednoduchých prechodoch je definované, aké roly sú oprávnené spúšťať prechod spustiť.Keďže však úlohy v Petriflow reprezentujú podsieť s viacerými rôznymi operáciami musia byť pri úlohách definované viaceré skupiny rolí, ktoré môžu spúšťať konkrétne prechody v podsieti. Pri úlohe sa teda definujú roly na:
+Pri jednoduchých prechodoch je definované, aké roly sú oprávnené spúšťať prechod spustiť. Keďže však úlohy v Petriflow reprezentujú podsieť s viacerými rôznymi operáciami musia byť pri úlohách definované viaceré skupiny rolí, ktoré môžu spúšťať konkrétne prechody v podsieti. Pri úlohe sa teda definujú roly na:
 \begin{itemize}
 \item vykonávanie úlohy - oprávňuje aktéra spustiť akciu assign, finish a cancel
 \item delegovanie úlohy - oprávňuje aktéra delegovať úlohu používateľovi
@@ -150,16 +150,16 @@ Pomocou tohto jazyku je možné definovať funkcie, ktoré vykonávajú matemati
 
 \subsubsection{Formát Petriflow}
 %todo menit nazov
-Pre udržanie kompatibility s bežnými nástrojmi na modelovanie Petriho sietí sa zapisujú modely Petriflow v jazku XML. Na základnej úrovni XML dokumentu sa nachádzajú roly, dáta, prechody, miesta, hrany a akcie. Na ukážke \ref{alg:petriflow} vidíme príklad jednoduchého modelu v Petriflow. 
+Pre udržanie kompatibility s bežnými nástrojmi na modelovanie Petriho sietí sa zapisujú modely Petriflow v jazyku XML. Na základnej úrovni XML dokumentu sa nachádzajú roly, dáta, prechody, miesta, hrany a akcie. Na ukážke \ref{alg:Petriflow} vidíme príklad jednoduchého modelu v Petriflow. 
 V model obsahuje jednu rolu s menom role, 
 jedno dátové pole, toto dátové pole je typu enumeration s troma možnými hodnotami. 
 Ďalej obsahuje model jeden prechod. Tento prechod obsahuje referenciu na rolu "role" a informáciu, že táto rola oprávňuje na vykonanie a delegovanie danej úlohy. Ďalej obsahuje prechod referenciu na dátové pole a informáciu, že je pole sa pri vykonávaní úlohy môže editovať a je povinné.
-Na koniec príklad obsahuje jedno statické miesto a jednu reset hranu . V mieste by mohla byť definovaná akcia, no keďže v tejto práci sa Akciam ďalej nebudeme venovať z príkladu sme ich vynechali.
+Na koniec príklad obsahuje jedno statické miesto a jednu reset hranu . V mieste by mohla byť definovaná akcia, no keďže v tejto práci sa akciám ďalej nebudeme venovať z príkladu sme ich vynechali.
 
-\begin{lstlisting}[ float,caption={Ukážka jendoduchého modelu Petriflow}, label={alg:petriflow}, language=XML]
+\begin{lstlisting}[ float,caption={Ukážka jednoduchého modelu Petriflow}, label={alg:Petriflow}, language=XML]
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="https://modeler.netgrif.com/petriflow_schema.xsd">
+          xsi:noNamespaceSchemaLocation="https://modeler.netgrif.com/Petriflow_schema.xsd">
           
     <role><id>role</id><name>role</name></role>
     <data type="enumeration"> 
@@ -222,7 +222,7 @@ Aktuálna verzia Petriflow poskytuje relatívne granulárne informácie o autori
 
 V tejto kapitole najprv stručne opíšeme hlavnú funkcionalitu navrhovanej aplikácie, potom zadefinujeme funkcionálne a nefunkcionálne požiadavky na aplikáciu.
 
-Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie medzi procesným serverom a internetom. Bude umožňovať klientovi pripojiť sa na procesný server cez internet, autentifikovať sa, získať informácie o dátach v prechodoch petriho siete a bude umožňovať modifikovať stav siete (procesu) spúšťaním prechodov.
+Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie medzi procesným serverom a internetom. Bude umožňovať klientovi pripojiť sa na procesný server cez internet, autentifikovať sa, získať informácie o dátach v prechodoch Petriho siete a bude umožňovať modifikovať stav siete (procesu) spúšťaním prechodov.
 
 \subsection{Funkcionálne požiadavky}
 
@@ -258,7 +258,7 @@ Napokon v časti Operácia systému predstavíme control flow navrhnutej apliká
 V kapitole Špecifikácia v časti Funkcionálne požiadavky ja uvedené aké interakcie očakávame, že používateľ a administrátor musia byť schopný vykonávať s naším systémom. Následné interakcie a ďalej analyzujeme v tejto časti našej práce. 
 
 \subsubsection{Registrácia modelu}
-Prvý prípad použitia je registrácia modelu. Aktér ktorý môže registrovať modely je len administrátor. Pri tejto akcií administrátor poskytne nášmu systému informácie o štruktúre procesu vo formáte petriflow, zoznam používateľov im prislúchajúcich rolí v \acrshort{xml} a unikátny identifikátor siete.
+Prvý prípad použitia je registrácia modelu. Aktér ktorý môže registrovať modely je len administrátor. Pri tejto akcií administrátor poskytne nášmu systému informácie o štruktúre procesu vo formáte Petriflow, zoznam používateľov im prislúchajúcich rolí v \acrshort{xml} a unikátny identifikátor siete.
 
 Pokiaľ chce administrátor upraviť nasadený proces spustí proces registrácie nanovo s upravenými údajmi o sieti, používateľoch a rolách.
 
@@ -268,7 +268,7 @@ Administrátor taktiež môže sieť vymazať.
 Keď už sú sieť aj používatelia úspešne zaregistrovaný, si môžu používatelia, vyžiadať informácie o prechode. Tieto informácie budú poskytnuté len používateľovi s rolou oprávnenou na čítanie dát z daného prechodu.
 
 \subsubsection{Vykonanie akcie na prechode}
-Používatelia s príslušnými rolami môžu taktiež vykonávať akcie na prechodoch. Tieto akcie vyplývajú z definície petriflow a patrí medzi ne assign, delegate, cancel, a finish. Na každú z týchto akcií potrebuje používateľ mať opávnenie (rolu, ktorá je oprávnená vykonávať túto akciu), a každá z nich vyžaduje iné vstupné dáta.
+Používatelia s príslušnými rolami môžu taktiež vykonávať akcie na prechodoch. Tieto akcie vyplývajú z definície Petriflow a patrí medzi ne assign, delegate, cancel, a finish. Na každú z týchto akcií potrebuje používateľ mať oprávnenie (rolu, ktorá je oprávnená vykonávať túto akciu), a každá z nich vyžaduje iné vstupné dáta.
 
 \subsubsection{Autentifikácia}
 Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy sa používateľ autentifikuje, aby nadobudol identitu rozpoznanú našim systémom a boli mu pridelené roly.
@@ -276,9 +276,9 @@ Z požiadavky na bezpečnosť aplikácie vyplýva ešte prípad použitia, kedy 
 \subsection{Štruktúra aplikačného rozhrania}
 Pri návrhu štruktúry aplikačného rozhrania treba dbať hlavne na prehľadnosť a jednoznačnosť rozhrania. Naše aplikačné rozhranie musí jednoznačne pokryť všetky možné koncové body, ktoré sú možné vygenerovať z procesného modelu Petriflow. Zároveň sme sa rozhodli pri návrhu rozhrania čo najviac držať návrhového vzoru \acrshort{rest}. 
 
-Vzor \acrshort{rest} je už mnoho rokov štandardom pri návrhu aplikačných rozhraní na internete. Jeho základný princíp je že medzi serverom a klientom sa bude presúvať textová reprezentácia objektov, tieto objekty sú adresované pomocou parametrov v URL danom volaní REST koncového bodu. Na manipuláciu s objektami na konkrétnych URL sa vužívajú HTTP medóty GET, POST, PUT, PATCH, DELETE, atď.  sa využívajú . GET získava objekt, POST vytvára nový, DELETE objekt vymazáva, atď.
+Vzor \acrshort{rest} je už mnoho rokov štandardom pri návrhu aplikačných rozhraní na internete. Jeho základný princíp je že medzi serverom a klientom sa bude presúvať textová reprezentácia objektov, tieto objekty sú adresované pomocou parametrov v URL danom volaní REST koncového bodu. Na manipuláciu s objektami na konkrétnych URL sa využívajú HTTP metódy GET, POST, PUT, PATCH, DELETE, atď.  sa využívajú . GET získava objekt, POST vytvára nový, DELETE objekt vymazáva, atď.
 
-Objekty, pre ktoré musí náš systém vyprezentovať aplikačné rozhranie sú  procesy (Petriho siete), inštancie týchto procesov a prechody na týchto inštanciách. Ak by sme mali implementovať plné RESTful \acrshort{api} so štandatrnou štrukúrou URL by mala nasledovný formát.
+Objekty, pre ktoré musí náš systém vyprezentovať aplikačné rozhranie sú  procesy (Petriho siete), inštancie týchto procesov a prechody na týchto inštanciách. Ak by sme mali implementovať plné RESTful \acrshort{api} so štandardnou štruktúrou URL by mala nasledovný formát.
 
 \[/net/[netID]/instance/[instanceID]/transition/[transitionID]/[operation] \]
 
@@ -295,29 +295,29 @@ Na tabuľke \ref{urls_table} môžeme vidieť  Príklad URL Pre verejné a pre o
 \textbf{URL}                   & \multicolumn{1}{l|}{\textbf{Metóda}}       & \textbf{Popis}                       \\ \hline
 /ExampleNet/0/t1               & \multicolumn{1}{l|}{\textit{{[}GET{]}}}    & Získanie dátových polí               \\ \hline
 /ExampleNet/0/t1/assign        & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Priradenie úlohy sebe                \\ \hline
-/ExampleNet/0/t1/delegate      & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Priradenie úlohy inému požívatľovi   \\ \hline
+/ExampleNet/0/t1/delegate      & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Priradenie úlohy inému požívateľovi   \\ \hline
 /ExampleNet/0/t1/cancel        & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Zrušenie priradenia                  \\ \hline
 /ExampleNet/0/t1/finish        & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Dokončenie úlohy                     \\ \hline
-\textbf{Admininstrátorské API} & \textit{}                                  &                                      \\ \hline
+\textbf{Administrátorské API} & \textit{}                                  &                                      \\ \hline
 /                              & \multicolumn{1}{l|}{\textit{{[}POST{]}}}   & Registrácia nového modelu            \\ \hline
 /                              & \multicolumn{1}{l|}{\textit{{[}GET{]}}}    & Vypísanie zoznamu nasadených modelov \\ \hline
 /                              & \multicolumn{1}{l|}{\textit{{[}DELETE{]}}} & Vymazanie modelu                     \\ \hline
 \end{tabular}
-\caption{URL ciesty k V našom rozhraní}
+\caption{URL ciest v našom rozhraní}
 \label{urls_table}
 \end{table} 
 
 \subsection{Architektúra systému}
-Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí (služieb), každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroslužby sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.
+Aby sme splnili požiadavku na jednoduché škálovanie aplikácie a pre sprehľadnenie architektúry zvolili sme si architektúru mikroservisov. Táto architektúra pozostáva z viacerých oddelených častí (služieb), každá z týchto častí má svoju jasne definovanú funkciu. Takéto mikroservisy sú jednoducho testovateľné, dajú sa nasadzovať postupne a nezávisle od seba a softvér navrhnutý v tejto architektúre býva spravidla robustný a vysoko škálovateľný.
 
 Jedna z požiadaviek na náš systém je aby bolo aplikačné rozhraní možné meniť za behu systému. Pri návrhu sme zvažovali dva spôsoby ako zabezpečiť tuto funkcionalitu.
 
-Jeden spôsob by bol napísať univerzálny kód koncového bodu, ktorý by príjmal akékoľvek požiadavky a potom pomocou internej logiky rozhodol, či je dotaz korektný a vykonal by adekvátnu akciu.  Takýto koncový bod by bol schopný okamžite zmeniť svoje nastavenie pri zmene procesného modelu. Nevýhodou tohto riešenia je že koncový bod by musel obsahovať logiku ktorá by držala štruktúru modelu a vedela by na jej základe spracovávať dopyty. Ďalšia nevýhoda tohto prístupu spočíva v nutnosti pregenerovať online dokumentáciu pri každej zmene modelu. Po hlbšej analýze dostupných technológií sme zistili, že zmena dokumentácie za behu servera nieje štandardná operácia ktorá je podporovaná v serverových frameworkoch. 
+Jeden spôsob by bol napísať univerzálny kód koncového bodu, ktorý by prijímal  akékoľvek požiadavky a potom pomocou internej logiky rozhodol, či je dotaz korektný a vykonal by adekvátnu akciu.  Takýto koncový bod by bol schopný okamžite zmeniť svoje nastavenie pri zmene procesného modelu. Nevýhodou tohto riešenia je že koncový bod by musel obsahovať logiku ktorá by držala štruktúru modelu a vedela by na jej základe spracovávať dopyty. Ďalšia nevýhoda tohto prístupu spočíva v nutnosti pregenerovať online dokumentáciu pri každej zmene modelu. Po hlbšej analýze dostupných technológií sme zistili, že zmena dokumentácie za behu servera nie je štandardná operácia ktorá je podporovaná v serverových frameworkoch. 
 
-Druhý spôsob by bol mať jednu službu, ktorá je schopná čítať procesné modely v Petriflow a na ich základe je schopná vygenerovať kód, mikroslužby, ktorá je schopná obslúžiť iba konkrétny model (množinu modelov).  Vygenerovanú službu následne spustí.
+Druhý spôsob by bol mať jednu službu, ktorá je schopná čítať procesné modely v Petriflow a na ich základe je schopná vygenerovať kód, mikroservisy, ktorá je schopná obslúžiť iba konkrétny model (množinu modelov).  Vygenerovanú službu následne spustí.
 Výhodou tohto prístupu je že keďže vygenerovaný kód nemusí obsahovať logiku, ktorá rozhoduje o tom, či je volanie validné a na ktorý koncový bod smeruje, tento kód je už dopredu vygenerovaný generátorom. Toto znižuje komplexitu kódu koncových bodov a zvyšuje ich priepustnosť. Ďalšou výhodou je že tento prístup nám umožňuje využívať štandardný spôsob generovania dokumentácie keďže ju nemusíme meniť za behu. Nevýhodou tohto prístupu je, že pri zmene procesného modelu môžeme očakávať nejaký čas, kedy bude rozhranie nedostupné. Keďže však pracujeme s predpokladom, že procesné modely sa nebudú meniť až tak často napriek tejto nevýhode sme sa rozhodli postupovať pri návrhu ďalej s týmto modelom. 
 
-Na diagrame \ref{architecture} vidíme návrh architektúry systému.Softvér sa bude skladať z troch hlavných služieb: generator service, relay service a auth service. 
+Na diagrame \ref{architecture} vidíme návrh architektúry systému. Softvér sa bude skladať z troch hlavných služieb: generator service, relay service a auth service. 
 \begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=10cm]{img/architecture.png}
@@ -335,7 +335,7 @@ Na diagrame \ref{architecture} vidíme návrh architektúry systému.Softvér sa
 
 
 \subsection{Operácia systému}
-V tejto časti si priblížime akým spôsobom navrhujeme flow jendotlivých procesov v našom systéme. Najprv popíšeme proces autentifikácie a zavolania koncového bodu klientom a potom popíšeme volanie obslužného koncového bodu administrátorom
+V tejto časti si priblížime akým spôsobom navrhujeme flow jednotlivých procesov v našom systéme. Najprv popíšeme proces autentifikácie a zavolania koncového bodu klientom a potom popíšeme volanie obslužného koncového bodu administrátorom
 \subsubsection{Používateľské API}
 Na diagrame \ref{api_operation} vidíme vo vrchnej časti proces prihasenia používateľa a v dolnej časti vykonanie dopytu na procesný server.
 
@@ -347,16 +347,16 @@ Na diagrame \ref{api_operation} vidíme vo vrchnej časti proces prihasenia pou�
 	\label{api_operation}
 \end{figure}
 
-Počas procesu prihlásenia používateľ najprv odošle dopyt na prihlásenie našemu \acrshort{api}.  Gateway ho presmeruje na autorizačná služba, ten overí jeho prihlasovacie údaje, ak sú správne vráti klientovi autorizačný token. Autentifikácia v takejto forme prebieha len pred prvým dopytom. K ďalším dopytom už klient priloží tento autorizačný token. 
+Počas procesu prihlásenia používateľ najprv odošle dopyt na prihlásenie nášmu \acrshort{api}.  Gateway ho presmeruje na autorizačná služba, ten overí jeho prihlasovacie údaje, ak sú správne vráti klientovi autorizačný token. Autentifikácia v takejto forme prebieha len pred prvým dopytom. K ďalším dopytom už klient priloží tento autorizačný token. 
 
-Proces dopytu na procesný server je zložitejší. Najprv klient pošle dopyt na náš systém, Gateway ho nasmeruje na Relay service. Ak klient odoslal dopyt na korektnú adresu Relay service musí potvrdiť identitu klienta. Identitu klienta overuje pomocou priloženého autorizačného tokenu ktorý klient musí poskytnuť. Relay service zistí identitu klienta tak, že pošle interný dopyt na  Auth service a podľa tokenu si vypýta profil používateľa s jeho rolami.  Pokiaľ má klient rolu potrebnú na spustenie konkrétnej akcie na prechode, ak je to potrebné Relay service vykoná validáciu dát  v dotaze odošle dopyt na procesný server.  Odpoveď z procesného servera sa následne propaguje spať cez gateway service ku klientovi.
+Proces dopytu na procesný server je zložitejší. Najprv klient pošle dopyt na náš systém, Gateway ho nasmeruje na Relay service. Ak klient odoslal dopyt na korektnú adresu Relay service musí potvrdiť identitu klienta. Identitu klienta overuje pomocou priloženého autorizačného tokenu ktorý klient musí poskytnúť. Relay service zistí identitu klienta tak, že pošle interný dopyt na  Auth service a podľa tokenu si vypýta profil používateľa s jeho rolami.  Pokiaľ má klient rolu potrebnú na spustenie konkrétnej akcie na prechode, ak je to potrebné Relay service vykoná validáciu dát  v dotaze odošle dopyt na procesný server.  Odpoveď z procesného servera sa následne propaguje spať cez gateway service ku klientovi.
  
-Keďže nebudeme mať prístup k nasadenému procesnej službe bude volanie tohto serveru vykonané iba ako volanie prázdnej funkcie. Od tejto funkcie očakávame, že v prípade, ak prebehla akcia na prechode v poriadku vráti buď príslušné dáta alebo prázdnu odpoveď.  Ak sa klient pokúsi spustiť prechod, ktorý v konkrétnej inštancií procesu nieje spustiteľný alebo ak daná inštancia procesu neexistuje, očakávame, že volanie vráti príslušnú chybu. 
+Keďže nebudeme mať prístup k nasadenému procesnej službe bude volanie tohto serveru vykonané iba ako volanie prázdnej funkcie. Od tejto funkcie očakávame, že v prípade, ak prebehla akcia na prechode v poriadku vráti buď príslušné dáta alebo prázdnu odpoveď.  Ak sa klient pokúsi spustiť prechod, ktorý v konkrétnej inštancií procesu nie je spustiteľný alebo ak daná inštancia procesu neexistuje, očakávame, že volanie vráti príslušnú chybu. 
 
 \subsubsection{Obslužné API}
 Proces autentifikácie pri obslužnom volaní bude prebiehať rovnakým spôsobom ako pri  používateľskom volaní. Administrátor dostane autentifikačný token, pomocou ktorého pri všetkých ďalších volaniach preukazuje svoju identitu.
 
-Administrátor zadá požiadavku na zmenu rozhrania, bude presmerovaný na generator service. Ten rozanalyzuje nový procesný model, následne a odošle dopyt na auth service na registráciu nových používateľov. Paralelne vygeneruje nový kód pre relay service a spúšťa jeho kompiláciu a tetovanie. Po úspešnom ukončení oboch procesov odošle dopyt na vypnutie staréj inštancie Relay service a spúšťa novú inštanciu.
+Administrátor zadá požiadavku na zmenu rozhrania, bude presmerovaný na generator service. Ten rozanalyzuje nový procesný model, následne a odošle dopyt na auth service na registráciu nových používateľov. Paralelne vygeneruje nový kód pre relay service a spúšťa jeho kompiláciu a tetovanie. Po úspešnom ukončení oboch procesov odošle dopyt na vypnutie starej inštancie Relay service a spúšťa novú inštanciu.
 
 Na diagrame \ref{change_operation} môžeme vidieť tento proces zmeny aplikačného rozhrania.
 
@@ -374,12 +374,12 @@ Nasledujúce časti práce venujeme implementácií jednotlivých služieb, ktor
 Na záver kapitoly predstavíme  platformu na ktorú sme implementované riešenie nasadzovali a popíšeme kroky nevyhnutné na sadanie nášho systému.  
 
 \subsection{Použité technológie}
-V tejto časti predstavíme technológie ktoré sme vybrali na realizovanie implementácie nášho systému. Pri výbere technológií sme dbali najmä na ich relevanciu na poli Cloudových riešení, snažili sme sa však vybrať aj novšie, zajujímavé technológie ktoré v tomto odvetví ešte len začínajú. 
+V tejto časti predstavíme technológie ktoré sme vybrali na realizovanie implementácie nášho systému. Pri výbere technológií sme dbali najmä na ich relevanciu na poli Cloudových riešení, snažili sme sa však vybrať aj novšie, zaujímavé technológie ktoré v tomto odvetví ešte len začínajú. 
 
 \subsubsection{Kotlin}
 Kotlin je relatívne nový programovací jazyk, projekt Kotlin bol po prvý krát zverejnený v roku 2011 spoločnosťou JetBrains(Andrey Breslav). Bol vyvinutý ako moderný staticky typovaný jazyk, ktorý podporuje rýchlu kompiláciu do javy. V roku 2017 ohlásil Google podporu pre Kotlin v operačnom systéme Android. V rovnakom roku ohlásil Pivotal Software oficiálnu podporu pre Kotlin vo verzii 5.0 ich frameworku Spring.
 
-Kotlin sa dá buď transpilovať do jazyka Java, alebo JavaScript, alebo sa dá kompilovať priamo do spustiteľného binárneho súboru pe všetky bežné operačné systémy (Linux, Windows, Android, iOS).
+Kotlin sa dá buď transpilovať do jazyka Java, alebo JavaScript, alebo sa dá kompilovať priamo do spustiteľného binárneho súboru pre všetky bežné operačné systémy (Linux, Windows, Android, iOS).
 
 Jazyk bol navrhnutý tak, aby bol čo najviac čitateľný, čo najviac sa vyhol potrebe písať zbytočný, alebo duplicitný kód a aby sa čo najviac vyhol chybám pri behu systému, a odchytal chyby už pri kompilácií. Na nasledujúcich príkladoch si ukážeme akými spôsobmi dosiahli tvorcovia tohto jazyku tieto ciele. 
 
@@ -394,23 +394,23 @@ Ak korektne ošetríme nulový prípad kompilátor zmení ty premenenej na nenul
 // vráti null alebo String
 fun maybeGetString():String?
 
-// typ String? - môže obsahovať null, nieje nutné typ explicitne definovať je inferovaný z výstupného typu finkcie
+// typ String? - môže obsahovať null, nie je nutné typ explicitne definovať je inferovaný z výstupného typu funkcie
 val variable = maybeGetString()
 
-// nastane chyba pri kompilácií, lebo nieje ošetrený prípad, kedy je valiable null
+// nastane chyba pri kompilácií, lebo nie je ošetrený prípad, kedy je variable null
 print(variable.length)
 
 if(isNullOrEmpty(variable){
 	variable = "placeholder"
 }
 
-// nenastane chyba pri kompilácií, lebo bol ošetrný nulový priípad
-// typ String - už nemôže byť null, iba string
+// nenastane chyba pri kompilácií, lebo bol ošetrený nulový prípad
+// typ String - už nemôže byť null, iba String
 print(variable.length)
 \end{lstlisting}
 
 
-Ďalšie zlepšenie jazyka ktoré je veľmi užitočné pri práci s frameworkom Spring sú dátové triedy. Ak by sme v Jave chceli vytvoriť jednoduchú triedu, ktorá len drží dáta, musíme zadeklarovať triedu, jej konštruktor, dátové polia, a funkcie na nastavovanie a čítanie polí. v jazyku Kolin vieme zadeklarovať dátovú triedu pomocou jednoriadkového príkazu. Na ukážke kódu \ref{alg:kt_dataclass} vidíme príklad dátovej triedy Person s povinnými prvými dvomi poľami firstName a lastName a nepovinnými poľami age a height. Pole firstName je konštantné, preto sa nebude dať meniť nie je nutné vynechať implementáciu nastavovacej funkcie ako v Jave. Polia age a height sú nepovinné.  
+Ďalšie zlepšenie jazyka ktoré je veľmi užitočné pri práci s frameworkom Spring sú dátové triedy. Ak by sme v Jave chceli vytvoriť jednoduchú triedu, ktorá len drží dáta, musíme zadeklarovať triedu, jej konštruktor, dátové polia, a funkcie na nastavovanie a čítanie polí. v jazyku Kotlin vieme zadeklarovať dátovú triedu pomocou jednoriadkového príkazu. Na ukážke kódu \ref{alg:kt_dataclass} vidíme príklad dátovej triedy Person s povinnými prvými dvomi poľami firstName a lastName a nepovinnými poľami age a height. Pole firstName je konštantné, preto sa nebude dať meniť nie je nutné vynechať implementáciu nastavovacej funkcie ako v Jave. Polia age a height sú nepovinné.  
  
 V jazyku Kotlin je implementovaný aj princíp pomenovaných argumentov. To znamená, že konštruktor našej dátovej triedy Person môžeme zavolať s ľubovoľnou kombináciou nepovinných argumentov. 
 
@@ -426,7 +426,7 @@ V jazyku Kotlin je implementovaný aj princíp pomenovaných argumentov. To znam
 
 
 
-My sme zvolili jazyk Kotlin pre náš projekt hlavne kvôli vylepšeniam v systéme typovania a zmenšenému boilerplatu. Ďalej nám využitie tohto jazyka umožnila bezproblémová integrácia s frameworkom Stping a ostatnými knižnicami v jazyku Java.	
+My sme zvolili jazyk Kotlin pre náš projekt hlavne kvôli vylepšeniam v systéme typovania a zmenšenému boilerplatu. Ďalej nám využitie tohto jazyka umožnila bezproblémová integrácia s frameworkom Spring a ostatnými knižnicami v jazyku Java.	
 
 \subsubsection{IntelliJ IDEA}
 
@@ -434,24 +434,24 @@ My sme zvolili jazyk Kotlin pre náš projekt hlavne kvôli vylepšeniam v syst�
 \subsubsection{Gradle}
 Gradle je voľne šíriteľný nástroj na automatizáciu zostavovania softvéru. Je stavaný na to aby bol schopný zostaviť takmer ľubovoľný program.  V našom projekte Gradle použijeme na manažment závislostí, kompiláciu kódu a spustenie samotného skompilovaného programu. 
 
-Gradle urýchľuje proces zostavovania aplikácií použitím pokročilej techniku memoizácie pri každom kroku zostavovania. Pri zostavovaní teda spúšťa len procesy ktorým sa zmenili vstupné dáta  a teda očakávame iný výstup. Pri nezmenených dátach nieje nutné bežať tieto procesy znova. Gradle dokonca umožňuje vybudovanie vyrovnávacej pamäte ktorá je následne zdieľaná medzi viacerými zariadeniami.
+Gradle urýchľuje proces zostavovania aplikácií použitím pokročilej techniku memoizácie pri každom kroku zostavovania. Pri zostavovaní teda spúšťa len procesy ktorým sa zmenili vstupné dáta  a teda očakávame iný výstup. Pri nezmenených dátach nie je nutné bežať tieto procesy znova. Gradle dokonca umožňuje vybudovanie vyrovnávacej pamäte ktorá je následne zdieľaná medzi viacerými zariadeniami.
 
-Gradle beží v JVM a na jeho spustenie postrebujeme mať k nainštalovaný Java Development Kit. Gradle však nieje obmedzený iba na zostaveovanie Java apliácií, medzi jayky ktoré je schopný zostavovať patri aj C++, Python, a mnoho ďalších.
+Gradle beží v JVM a na jeho spustenie potrebujeme mať k nainštalovaný Java Development Kit. Gradle však nie je obmedzený iba na zostavovanie Java aplikácií, medzi jazyky ktoré je schopný zostavovať patri aj C++, Python, a mnoho ďalších.
 
-Konfigurácia nástroja Gradle prebieha pomocou konfiguračného súboru napísaného v jazyku Groovy. Keďže Gradle pomocou pluginov vždy implementuje všetky konenčné nastavnia a je nutné nastaviť iba veci, ktoré niesú podľa bežných konvencí, tieto konfiguračné  súbory sa v našom prípade ukázali ako veľmi krátke a prehľadné. 
+Konfigurácia nástroja Gradle prebieha pomocou konfiguračného súboru napísaného v jazyku Groove. Keďže Gradle pomocou pluginov vždy implementuje všetky konvenčné nastavenia a je nutné nastaviť iba veci, ktoré nie sú podľa bežných konvencii, tieto konfiguračné  súbory sa v našom prípade ukázali ako veľmi krátke a prehľadné. 
 
 \subsubsection{Spring framework}
 Spring framework je open source projekt, udržiavaný  Pivotal Software, Inc. Je to Java framework a ekosystém pridružených modulov, pomocou ktorého sa dá implementovať takmer akýkoľvek biznisový zámer.  
 
 Základom Spring frameworku je Spring IoC Container ktorý obsahuje základné prostredie Spring frameworku. Do tohto kontajnera sa následne dajú pridať ľubovoľné moduly z rozsiahleho ekosystému Spring, ktorý obsahuje Spring moduly ale aj integrácie so softvérom tretích strán.
 
-Jadro Spring je založený na návrhovom vzore Inversion of Control, (inak aj Dependency Injection). Spring implementácia tohto modelu spočiva v použití tvz Beanov. Beany sú jednoduché singleton objekty ktoré obsahujú biznis logiku aplikácie. Pridaním anotácií týmto jednoduchým objektom im definujeme závislosti. Tieto v spolupráci s XML konfiguráciou a ak je to treba war súborom tretej strany spustia, napr. webový server, ktorý následne importuje inštancuje náš Bean a využíva z neho biznis logiku ktorú sme implementovali. 
+Jadro Spring je založený na návrhovom vzore Inversion of Control, (inak aj Dependency Injection). Spring implementácia tohto modelu spočíva v použití tzv. Beanov. Beany sú jednoduché singleton objekty ktoré obsahujú biznis logiku aplikácie. Pridaním anotácií týmto jednoduchým objektom im definujeme závislosti. Tieto v spolupráci s XML konfiguráciou a ak je to treba war súborom tretej strany spustia, napr. webový server, ktorý následne importuje inštancuje náš Bean a využíva z neho biznis logiku ktorú sme implementovali. 
 Tento prístup sa snaží uľahčiť prácu programátorom tým, že eliminuje potrebu implementácie platformy a umožňuje im sa viac sústrediť na biznis logiku aplikácie.  
 
 Spring framework implementuje aj vlastný systém na realizovanie aspektovo orientovaného programovania.
 
 \subsubsection{Spring Boot}
-Spring Boot je jeden z projektov ekosystému Spring, ktorý sa snaží uľahčiť zakladanie projektov a konfiguráciu Spring projektov. Tento cieľ dosahuje uplatnením uprednostňovaním konvencie pred konfiguráciou. Toznamená, že developeri Sprignu pripravili dopredu nakonfigurované projekty, ktoré riešia bežné prípady použitia Spring Frameworku. 
+Spring Boot je jeden z projektov ekosystému Spring, ktorý sa snaží uľahčiť zakladanie projektov a konfiguráciu Spring projektov. Tento cieľ dosahuje uplatnením uprednostňovaním konvencie pred konfiguráciou. To znamená, že developeri Springu pripravili dopredu nakonfigurované projekty, ktoré riešia bežné prípady použitia Spring Frameworku. 
 
 Medzi tieto projekty, tzv. startery patrí napr. Spring Boot Web Starter ktorý zabezpečuje funkcionalitu webového servera, Spring Boot Security Starter ktorý pridáva funkcionalitu autentifikácie a autorizácie, Spring Boot Data JPA Starter ktorý pridáva integráciu s perzistentnými úložiskami dát. Tieto startery obsahujú integráciu s vybranými nástrojmi, ktoré prednastavili developeri Springu podľa toho ako to oni považovali za najlepšie. V niektorých prípadoch obsahujú integrované servlety tretích strán, napríklad už spomínaný Web Starter obsahuje webový servlet Apache Tomcat. 
 
@@ -460,13 +460,13 @@ V rámci ekosystému Spring Boot existuje aj nástroj Spring Initializr \cite{in
 \subsubsection{Spring cloud}
 Pri implementácií cloudových aplikácií sa developeri často stretávajú s podobnými problémami ako napríklad ako distribuovať konfiguráciu v rámci aplikácie, ako riešiť smerovanie medzi viacerými kontajnermi, ako riešiť distribuované relácie používateľov. Ekosystém Spring Cloud stavia na princípoch Spring Boot, a poskytuje nástroje na rýchly vývoj stabilných a výkonných cloudových systémov. 
 
-Spring Cloud obsahuje mnohé projekty, ktoré implementujú rôznu rozšírenú funkcionalitu, na zabezpečenie bezpečnosti, výkonu, vysokej škálovateľnsoti a spoľahlivosti.s
+Spring Cloud obsahuje mnohé projekty, ktoré implementujú rôznu rozšírenú funkcionalitu, na zabezpečenie bezpečnosti, výkonu, vysokej škálovateľnosti a spoľahlivosti.
 My z nich budeme využívať nasledovné:
 
 \begin{itemize}
-\item Spring Cloud Config - Centralizovaný systém na distribúciu externej konfigurácie v cloudovom prostredí. Umožňuje prístup ku konfigurácií uloženej v cetrálmin git repozitári priamo z prostredia Spring Frameworku.
-\item Spring Cloud Netflix - Poskytuje intregáciu s Netflix OSS komponentami ako Eureka(service discovery), Hystrix(circuit breaker), Zuul(Router, load balancer), Archarius(cloud config) a ďalšími. Z tohto projektu budeme využívať iba projekt Eureka ako service discovery.
-\item Spring Cloud Security - Poskytuje podporu pre OAuth2 a komplexné riešenie autentifikácie a autorízácie v distrubuovanom Cloudovom prostredí.
+\item Spring Cloud Config - Centralizovaný systém na distribúciu externej konfigurácie v cloudovom prostredí. Umožňuje prístup ku konfigurácií uloženej v centrálnom git repozitári priamo z prostredia Spring Frameworku.
+\item Spring Cloud Netflix - Poskytuje integráciu s Netflix OSS komponentami ako Eureka(service discovery), Hystrix(circuit breaker), Zuul(Router, load balancer), Archarius(cloud config) a ďalšími. Z tohto projektu budeme využívať iba projekt Eureka ako service discovery.
+\item Spring Cloud Security - Poskytuje podporu pre OAuth2 a komplexné riešenie autentifikácie a autorizácie v distribuovanom Cloudovom prostredí.
 \item Spring Cloud Gateway - Nástroj na smerovanie a load balalncing postavený na princípoch reaktívneho programovania.
 \end{itemize}
 
@@ -474,7 +474,7 @@ My z nich budeme využívať nasledovné:
 
 
 \subsubsection{Git}
-Git je najpoužívanejší nástroj na kontrolu revízií na svete. Bol vytvorený Linusom Torvaldsom v roku 2005 na kontrolu revízií pri vývoji jadra Linuxu. A rovnako ako Linux bol zverejnený na voľné používanie. V našom projekte sme použili git na kontrolu revízií samotného kódu našej aplikácie. Zároveň sme využili Java knižnicu JGit \cite{jgit}. Bola vyvinula a je ďalej udržiavaná spoločnosťou Eclipse Foundation, Inc. Táto knižnica nieje len wrapper na natívneho git klienta, je to plnohodnotná implementácia Git klienta v jazyku Java, toto nám zabezpečuje plnú funkcionalitu Git klienta bez nutnosti inštalovať Git samostatne. 
+Git je najpoužívanejší nástroj na kontrolu revízií na svete. Bol vytvorený Linusom Torvaldsom v roku 2005 na kontrolu revízií pri vývoji jadra Linuxu. A rovnako ako Linux bol zverejnený na voľné používanie. V našom projekte sme použili git na kontrolu revízií samotného kódu našej aplikácie. Zároveň sme využili Java knižnicu JGit \cite{jgit}. Bola vyvinula a je ďalej udržiavaná spoločnosťou Eclipse Foundation, Inc. Táto knižnica nie je len wrapper na natívneho git klienta, je to plnohodnotná implementácia Git klienta v jazyku Java, toto nám zabezpečuje plnú funkcionalitu Git klienta bez nutnosti inštalovať Git samostatne. 
 
 \subsubsection{Insomnia}
 Insomnia \cite{insomnia} je voľne šíriteľný softvér vyvíjaný spoločnosťou Floating Keyboard Software Inc. Je určený na testovanie REST a GraphQL služieb. Je to alternatíva ku známemu programu Postman. Je postavený na platforme Electron s použitím knižnice React. Insomnia nám dovolí vytvoriť a uložiť viacero testovacích dopytov, ktoré môžeme neskôr spustiť a overiť ich správne fungovanie. Insomnia taktiež podporuje autentifikačný protokol OAuth2. Okrem štandardných HTTP volaní podporuje aj čoraz viac populárny protokol GraphQL
@@ -483,9 +483,9 @@ Insomnia \cite{insomnia} je voľne šíriteľný softvér vyvíjaný spoločnos�
 
 \subsection{Štruktúra projektu}
 %todo rename
-Naše aplikačné rozhranie sme implementovali ako cloudové riešenie s piatimi rôznymi kontajnermi: Gateway, Generator, Auth, Service Discovery a Relay. Implementáciu jednotlivých kontajnerov opíšeme v ďalčích kapitolách.
+Naše aplikačné rozhranie sme implementovali ako cloudové riešenie s piatimi rôznymi kontajnermi: Gateway, Generator, Auth, Service Discovery a Relay. Implementáciu jednotlivých kontajnerov opíšeme v ďalších kapitolách.
 
-Všetky projekty sme vytvárali pomocou Spring Inilitalizr. Na obrázku \ref{initializr} môžeme vidieť ukážku konfigurácie Spring initializr pre prvú službu Generator service.  Ako typ projektu sme zvolili Gradle, ako programovací jazyk sme zvolili Kotlin, verziu Spring Boot sme nechali predvolenú, vždy je prednastavená aktuálne najnovšia stabilná verzia, v čase, keď sme zakladali projekt to bola 2.1.1. Dalej sme zadali meno balíka nášho projektu a artefakt, ktorý sa použije aj ako názov priečinka a meno projektu. Na koniec sme pridali základné moduly, ktoré sme použili v jednotlivých projektoch.
+Všetky projekty sme vytvárali pomocou Spring Initializr. Na obrázku \ref{initializr} môžeme vidieť ukážku konfigurácie Spring initializr pre prvú službu Generator service.  Ako typ projektu sme zvolili Gradle, ako programovací jazyk sme zvolili Kotlin, verziu Spring Boot sme nechali predvolenú, vždy je prednastavená aktuálne najnovšia stabilná verzia, v čase, keď sme zakladali projekt to bola 2.1.1. Ďalej sme zadali meno balíka nášho projektu a artefakt, ktorý sa použije aj ako názov priečinka a meno projektu. Na koniec sme pridali základné moduly, ktoré sme použili v jednotlivých projektoch.
 
  \begin{figure}[!htbp]
 	\centering
@@ -494,7 +494,7 @@ Všetky projekty sme vytvárali pomocou Spring Inilitalizr. Na obrázku \ref{ini
 	\label{initializr}
 \end{figure}
 
-Zdrojovy kód týchto kontajnerov sme rozdelili do dvoch Git repozitárov. Relay service sme pre zjednodušenie automatického nasadzovania umiestnili do vlastného repozitára\cite{dp_relay}. Ostatné služby sú uložené v spoločnom repozitári \cite{dp_repo}. 
+Zdrojový kód týchto kontajnerov sme rozdelili do dvoch Git repozitárov. Relay service sme pre zjednodušenie automatického nasadzovania umiestnili do vlastného repozitára\cite{dp_relay}. Ostatné služby sú uložené v spoločnom repozitári \cite{dp_repo}. 
 
 
 
@@ -545,14 +545,14 @@ Okrem požiadavky na pridanie siete môže administrátor spustiť aj požiadavk
 \subsubsection{Čítanie súborov Petriflow a súborov s používateľmi}
 Na čítanie \acrshort{xml} súborov používame štandardnú knižnicu JAXB \cite{jaxb}. Táto knižnica podľa \acrshort{xsd} súborov vygeneruje triedy, so rovnakou štruktúrou ako majú entity v \acrshort{xml}.
 
-Vygenerovali sme teda dva balíky, jeden balík s triedami v jazyku Java z definície Petrfilow a jeden s triedami z definície nášho súboru s používateľmi.
+Vygenerovali sme teda dva balíky, jeden balík s triedami v jazyku Java z definície Petriflow a jeden s triedami z definície nášho súboru s používateľmi.
 
-Následne pri čítaní súborov použijeme triedu Unmarshaller balíka JAXB, ktorý prečíta textový súbor \acrshort{xml} a vráti Java objekty s dátami zo súborov. Keďže jazyk kotlin, v ktorom pracujeme je plne kompatibilný s jazykom Java, s týmito objektami môžeme ďalej pracovať ako so štandardnými kotlin dátovými objektami.
+Následne pri čítaní súborov použijeme triedu Unmarshaller balíka JAXB, ktorý prečíta textový súbor \acrshort{xml} a vráti Java objekty s dátami zo súborov. Keďže jazyk Kotlin, v ktorom pracujeme je plne kompatibilný s jazykom Java, s týmito objektami môžeme ďalej pracovať ako so štandardnými Kotlin dátovými objektami.
 
 \subsubsection{Registrácia používateľov}
 Keď už máme dáta s používateľmi a modelom, zaregistrujeme používateľov do našej autentifikačnej služby.
 
-Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Szlužbe poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore.
+Registrácia používateľov sa realizuje pomocou HTTP volania na Authentication service. Službe poskytneme prihlasovacie meno a heslo používateľa. Aby sme predišli konfliktom v menách používateľov medzi jednotlivými sieťami, pred prihlasovacie mená pridáme ID siete a tým pádom sú všetci používatelia jednej siete v samostatnom menovom priestore.
 
 \subsubsection{Príprava repozitára}
 Na spustenie Spring Boot kontajnera treba okrem kódu so samotnými koncovými bodmi aj základnú konfiguráciu. Pre zjednodušenie procesu generovania kódu stiahneme predpripravenú konfiguráciu zo separátneho git repozitára \cite{dp_relay}. V tomto repozitári je predpripravený Spring Boot projekt s podporou pre Kotlin do ktorého budeme vkladať naše súbory s vygenerovanými triedami. Na stiahnutie projektu používame knižnicu JGit \cite{jgit}.
@@ -560,13 +560,13 @@ Na spustenie Spring Boot kontajnera treba okrem kódu so samotnými koncovými b
 Funkcia na prípravu repozitára najprv skontroluje či v dočasnom priečinku už repozitár neexistuje, ak existuje zavolá jgit ekvivalent funkcie "git reset origin/master" čím zmení lokálne súbory na aktuálnu verziu z repozitára. Súbory obsiahnuté v .gitignore sa ponechajú bez zmeny, a tým pádom akékoľvek cache súbory z predošlej kompilácie ostatnú nedotknuté čo urýchli kompiláciu kódu. Ak git reset z nejakého dôvodu zlyhá, funkcia vymaže akékoľvek pozostatky súborov v dočasnom priečinku a repozitár znovu naklonuje.
 
 \subsubsection{Generovanie kódu}
-Keď už je projekt stiahnutý a pripravený môžeme začať s generovaním kódu koncových bodov. Na generovanie kódu  využívame knižnicu kotlipoet \cite{kotlipoet}. Táto knižnica nám poskytuje nástroje na generovanie kódu v jazyku Kotlin. Tieto nástroje pozostávajú z builder funkcií, pomocou ktorých vieme vyskladať komplexný, syntakticky správny kód.
+Keď už je projekt stiahnutý a pripravený môžeme začať s generovaním kódu koncových bodov. Na generovanie kódu  využívame knižnicu Kotlinpoet \cite{kotlinpoet}. Táto knižnica nám poskytuje nástroje na generovanie kódu v jazyku Kotlin. Tieto nástroje pozostávajú z builder funkcií, pomocou ktorých vieme vyskladať komplexný, syntakticky správny kód.
 
 Najprv pre každý procesný model vygenerujeme vlastnú triedu. Túto triedu vygenerujeme s nasledovnými anotáciami:
 
 \begin{itemize}
 \item \texttt{@Controller} Zabezpečuje spustenie funkcionality HTTP controllera
-\item \texttt{@EnableResourceServer} Zabezpečuje funkclionalitu autentifikácie pre danú triedu
+\item \texttt{@EnableResourceServer} Zabezpečuje funkcionalitu  autentifikácie pre danú triedu
 \item \texttt{@RequestMapping} Pridá pred predponu s ID siete pred URL koncových bodov danej triedy
 \end{itemize}
 
@@ -646,7 +646,7 @@ fun data35(
 
 \subsubsection{Kompilácia a spustenie relay}
 
-Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód zkompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy Relay service a spúšťame príkaz "gradle bootrun" ktorý spustí skompilovaný Relay service. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií Relay service. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.
+Po uložení vygenerovaných tried do správneho priečinka môžeme spustiť príkaz "gradle build". Tento proces skontroluje syntax a typy v našom vygenerovanom Kotlin kóde, následne transpiluje Kotlin kód do javy a tento kód skompiluje. Ak prebehla kompilácia bez chyby vypneme staré procesy Relay service a spúšťame príkaz "gradle bootrun" ktorý spustí skompilovaný Relay service. Tento príkaz spustíme viac krát aby sme vytvorili viac inštancií Relay service. Pokiaľ počas kompilácie nastala chyba vrátime výpis tejto chyby.
 
 \subsection{Relay Service}
 
@@ -655,7 +655,7 @@ Vygenerovať túto službu je cieľom našej prace. Po vygenerovaní koncových 
 Pred tým ako vygenerujme koncové body špecifické pre daný procesný model, je relay service iba prázdny Spring Boot kontajner so základnou konfiguráciou. Pre poskytnutie základnej funkcionality webového koncového bodu obsahuje kontajner balíček Spring Web Starter \cite{webstarter}, tento balíček poskytuje funkcionalitu, ktorá umožňuje pomocou anotácií mapovať funkcie tried na rôzne \acrshort{url}, špecifikovať, HTTP metódu, dátové polia vstupu a formát výstupu. Tieto mapovania následne oživí pomocou priloženého webového servera Apache Tomcat \cite{tomcat}
 
 
-Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne prezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotácie patrí \texttt{@ApiOperation}, ktorú sme použili na pridanie informácií o vygenerovaných funckiách a \texttt{@ApiParam} ktorú sme použili na pridanie informácií o parametroch týchto funkcií.
+Na poskytnutie dokumentácie vo formáte OpenAPI 3.0 \cite{openapi} využívame balík Swagger. Tento balík dokáže čítať anotácie balíčka Spring Web Starter, a na ich základe vygeneruje základnú dokumentáciu vo formáte JSON, ktorú následne prezentuje klientom. Okrem základnej dokumentácie, ktorá popisuje prístupné adresy a HTTP metódy ktorými sú dostupné obsahuje balíček aj dodatočné anotácie pomocou ktorých vieme konkrétnejšie opísať danú volanú funkciu. Medzi tieto anotácie patrí \texttt{@ApiOperation}, ktorú sme použili na pridanie informácií o vygenerovaných funkciách a \texttt{@ApiParam} ktorú sme použili na pridanie informácií o parametroch týchto funkcií.
 
 Na vizualizáciu tejto dokumentácie sme použili balík Swagger UI, ktorý na adrese "/swagger-ui.html" poskytuje používateľské rozhranie v ktorom možno vidieť jednotlivé triedy a koncové body vygenerované naším systémom. Na obrázku \ref{swagger_ui} vidíme vizualizovanú dokumentáciu pre jednu sieť s názvom Example, ktorá obsahuje jeden prechod T1 ku ktorému je vygenerovaných päť koncových bodov. Zároveň vidíme predvolené koncové body na registráciu procesov do systému.
 
@@ -671,7 +671,7 @@ V Swagger UI dokumentácií sa dajú otvoriť jednotlivé koncové body a prezri
 \begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=16cm]{img/swagger_ui_endpoint.png}
-	\caption{Ukážka vizualizácie dokumentácie kokrétneho koncového bodu}
+	\caption{Ukážka vizualizácie dokumentácie konkrétneho koncového bodu}
 	\label{swagger_ui_endpoint}
 \end{figure}
 
@@ -695,13 +695,13 @@ Pre jednoduchosť implementácie sme na ukladanie profilov používateľov a tok
 %TODO auth by classes, by functions
 
 \subsection{Service Discovery}
-Service discovery je služba ktorá sleduje stav ostatných služieb a vie zabezpečiť koordináciu komunikácie medzi jednotlivými kontajnermi v cloudovom riešení. V našom systéme implementujeme service discovery ako Spring Boot kontajner s balíčkom Netflix Eureka \cite{eureka}. Nastavenie tohto balička si vyžaduje len importovať závislosť, použiť anot \texttt{@EnableEurekaServer} a nastaviť port servera, v našom prípade je to štandardný port 7777 a hostname Eurka servra.
+Service discovery je služba ktorá sleduje stav ostatných služieb a vie zabezpečiť koordináciu komunikácie medzi jednotlivými kontajnermi v cloudovom riešení. V našom systéme implementujeme service discovery ako Spring Boot kontajner s balíčkom Netflix Eureka \cite{eureka}. Nastavenie tohto balička si vyžaduje len importovať závislosť, použiť anotáciu \texttt{@EnableEurekaServer} a nastaviť port servera, v našom prípade je to štandardný port 7777 a hostname Eureka servera.
 
 Na to aby sa ostatné kontajnery zahlásili do service discovery sme importovali v nich balíček Netflix Eureka Client, použili anotáciu \texttt{@EnableDiscoveryClient} a nastavili port, na ktorom sa nachádza služba service discovery. Na to aby sme vedeli rozlíšiť typ služby, ktorý sa pripája na service discovery je ešte potrebné zadať do konfigurácie meno služby.
 
-Na ukážke kódu \ref{alg:eureka_config} vidíme príklad konfigurácie eureka servra a klienta.
+Na ukážke kódu \ref{alg:eureka_config} vidíme príklad konfigurácie eureka servera a klienta.
 
-\begin{lstlisting}[float, caption={Konfigurácia Eureka servra a klienta},label={alg:eureka_config},language=yaml]
+\begin{lstlisting}[float, caption={Konfigurácia Eureka servera a klienta},label={alg:eureka_config},language=yaml]
 # Eureka server
 server:
   port: 7777
@@ -730,7 +730,7 @@ Po správnej inicializácií servera a klientov je na porte 7777 dostupná strá
 \end{figure}
 
 \subsection{Gateway Service}
-Gateway service je rovnako ako ostatné služby implementovaný ako Spring Boot aplikácia s pridaným balíkom Spring Cloud Gateway \cite{cloud_gateway}, ktorý zabezpečuje funkcionalitu routingu a load balancera.
+Gateway service je rovnako ako ostatné služby implementovaný ako Spring Boot aplikácia s pridaným balíkom Spring Cloud Gateway \cite{cloud_gateway}, ktorý zabezpečuje funkcionalitu smerovania a load balancera.
 Na spustenie základnej funkcionality routingu v tomto prípade netreba použiť žiadnu anotáciu, stačí len zadefinovať trasy a k nim prislúchajúce filtre. Na ukážke kódu \ref{alg:gateway_config} vidíme konfiguráciu nášho Gateway service. Na začiatku je definovaný port na ktorom počúva server, tento port je jediný port, ktorý bude prístupný vonkajšiemu svetu.
 
 \begin{lstlisting}[float, caption={Konfigurácia Gateway service},label={alg:gateway_config},language=yaml]
@@ -812,13 +812,13 @@ Komunikáciu z \acrshort{api} na procesný server nevieme v tomto bode navrhnú�
 
 Komunikácia v rámci našej domény prebieha pomocou interných protokolov cloudového riešenia v našom prípade HTTP.  Pri testovaní a vývoji je naše riešenie nasadené celé v rámci jedného virtuálneho servera preto nepovažujeme za potrebné zabezpečovať túto komunikáciu. Ak by však produkčné prostredie bolo nasadené na viacerých virtuálnych alebo fyzických serveroch odporúčame použitie šifrovania spojenia. Na zabezpečenie šifrovanej komunikácie môžeme použiť šifrovanie jednotlivých spojení pomocou SSH, alebo využitie hotového riešenia na komunikáciu v rámci cloudových kontajnerov.
 
-V rámci našej aplikácie sa nachádzajú dve domény, administrátorská a používateľská. V administrátorskej doméne sa nachádza služba generator. Ak by útočník získal kontrolu nad touto službou bol by schopný obmedziť funkčnosť nášho používateľského klientského rozhrania, zamedziť prístup používateľom k aplikačnému rozhraniu alebo naopak povoliť neoprávnenej osobe prístup k rozhraniu. Ak by útočník vypol túto službu, neobmedzila by  sa schopnosť \acrshort{api} odpovedať na používateľské dopyty obmedzila  by sa len schopnosť meniť rozhranie. Náš systém bude implementovaný tak, aby administrátor mal prístup k rozhraniu z internetu. Prístup ku Generator service je len pomocou dopredu definovaných autentifikovaných HTTP volaní. Pre zvýšenie bezpečnosti v produkčnom prostredí odporúčame povolenie prístupu na Generator service len z vnútra našej domény, napr pomocou VPN/SSH.
+V rámci našej aplikácie sa nachádzajú dve domény, administrátorská a používateľská. V administrátorskej doméne sa nachádza služba generator. Ak by útočník získal kontrolu nad touto službou bol by schopný obmedziť funkčnosť nášho používateľského klientskeho rozhrania, zamedziť prístup používateľom k aplikačnému rozhraniu alebo naopak povoliť neoprávnenej osobe prístup k rozhraniu. Ak by útočník vypol túto službu, neobmedzila by  sa schopnosť \acrshort{api} odpovedať na používateľské dopyty obmedzila  by sa len schopnosť meniť rozhranie. Náš systém bude implementovaný tak, aby administrátor mal prístup k rozhraniu z internetu. Prístup ku Generator service je len pomocou dopredu definovaných autentifikovaných HTTP volaní. Pre zvýšenie bezpečnosti v produkčnom prostredí odporúčame povolenie prístupu na Generator service len z vnútra našej domény, napr. pomocou VPN/SSH.
 
-V používateľskej doméne sa nachádza Relay servce. Ak by nad touto službou získal útočník kontrolu, mohol by neoprávnene spúšťať prechody a získavať dáta z prechodov na procesnom serveri. Keďže Relay service je vždy spustený vo viacerých inštanciách na obmedzenie funkčnosti prostredia by musel útočník vypnúť všetky inštancie Relay service. Ak by útočník Všetky volania na Relay service sú autentifikované pomocou \acrshort{oauth}.  Aby sme ochránili procesný server proti SQL injection útokom navrhujeme v produkčnom prostredí presne špecifikovať formát vstupu pre jednotlivé typy polí a  implementovať čistenie vstupov pomocou štandartných nástrojov.
+V používateľskej doméne sa nachádza Relay service. Ak by nad touto službou získal útočník kontrolu, mohol by neoprávnene spúšťať prechody a získavať dáta z prechodov na procesnom serveri. Keďže Relay service je vždy spustený vo viacerých inštanciách na obmedzenie funkčnosti prostredia by musel útočník vypnúť všetky inštancie Relay service. Ak by útočník Všetky volania na Relay service sú autentifikované pomocou \acrshort{oauth}.  Aby sme ochránili procesný server proti SQL injection útokom navrhujeme v produkčnom prostredí presne špecifikovať formát vstupu pre jednotlivé typy polí a  implementovať čistenie vstupov pomocou štandardných nástrojov.
 
-Gateway service sám o sebe nespracováva žiadne používateľské dpyty iba ich smeruje ďalej do systému. Toto obmedzuje výber útokov možný na túto službu. Voči Gateway service môže útočník použiť útok DDOS, V produkčnom prostredí sa takémuto útoku môžeme brániť použitím rate limitera. Ak by útočík získal kontrolu nad touto službou mohol by aplikačné rozhranie znefunkčniť alebo mu nížiť priepustnosť.
+Gateway service sám o sebe nespracováva žiadne používateľské dopyty iba ich smeruje ďalej do systému. Toto obmedzuje výber útokov možný na túto službu. Voči Gateway service môže útočník použiť útok DDOS, V produkčnom prostredí sa takémuto útoku môžeme brániť použitím rate limitera. Ak by útočník získal kontrolu nad touto službou mohol by aplikačné rozhranie znefunkčniť alebo mu nížiť priepustnosť.
 
-Service discovery komunikuje iba na pomocou svojho protokolu s ostatnými kontajermi v siei, takze opäť je výber útokov obmedzený. Keďže túto používame na používame sledovanie počtu a stavu inštancií Relay service na účely load balalncingu, mohol by útočník reportovať iný počet alebo inú lokáciu inštancií Relay service a tým obmedziť priepustnosť alebo znefunkčniť rozhranie.
+Service discovery komunikuje iba na pomocou svojho protokolu s ostatnými kontajnermi v sieti, takže opäť je výber útokov obmedzený. Keďže túto používame na používame sledovanie počtu a stavu inštancií Relay service na účely load balalncingu, mohol by útočník reportovať iný počet alebo inú lokáciu inštancií Relay service a tým obmedziť priepustnosť alebo znefunkčniť rozhranie.
 
 Auth service zasahuje do oboch našich bezpečnostných domén. Prihlasovacie údaje a roly sú však oddelené rôznym menným priestorom, to nám zaručuje, že pri registrácií nových rolí sa používatelia nemôžu dostať k prostriedkom, ktoré patria do administrátorskej domény. Samotnú
 autentifikáciu v našej aplikácií rieši Auth service pomocou štandardnej implementácie \acrshort{oauth}. Tento protokol zabezpečuje dostačujúci stupeň bezpečnosti pri autentifikácií. Útok pomocou napadnutia registrácie používateľov sme už spomenuli vyššie pri Generator service. Ak by útočník získal kontrolu nad Auth service vedel by obmedziť prístup oprávneným používateľom, alebo neoprávnene získať prístup ku koncovým bodom Relay service.
@@ -849,7 +849,7 @@ Pri autorizačnom serveri sme testovali, či základným systémovým používat
 Pri gateway service sme testovali správne nastavenie smerovania, a či server naozaj smeruje dotazy na správny server. Ďalej sme testovali funkcionalitu load balancera. Tú sme testovali tak, že sme spustili viaceré inštancie Relay service, s miernymi zmenami v kóde a load balancer naše dopyty smeroval striedavo na rôzne inštancie Relay service.
 
 \subsubsection{Generator service}
-Pri generator service sme testovali či sa vygeneroval spustiteľný kód. V prípade, že kód ktorý sa vygeneroval nebol syntakticky správny vrátil koncový bod generátora chybovú odpoveď. Jedna z chýb ktoré sme pri takomto testovaní objavili je chyba knižnice kotlinpoet, kedy sa pri generovaní zalomí dlhší text bez ošetrenia úvodzoviek a teda sa vygeneruje nevalidný kód.
+Pri generator service sme testovali či sa vygeneroval spustiteľný kód. V prípade, že kód ktorý sa vygeneroval nebol syntakticky správny vrátil koncový bod generátora chybovú odpoveď. Jedna z chýb ktoré sme pri takomto testovaní objavili je chyba knižnice Kotlinpoet, kedy sa pri generovaní zalomí dlhší text bez ošetrenia úvodzoviek a teda sa vygeneruje nevalidný kód.
 
 Ak sa korektne vygeneroval kód a spustila sa nová inštancia Relay service testovali sme, či vygenerovaný kód validácie funguje korektne.
 
