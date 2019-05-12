@@ -893,4 +893,68 @@ Pri tejto službe sme testovali funkčnosť validačných funkcií. Testovali sm
 
 \subsection{Automatizované testy}
 
-%TODO auto test relay service
+Ekosystém Spring nám poskytuje bohaté možnosti automatického testovanie našich aplikácií pomocou balíčkov z projektu Spring Boot. V rámci automatizovaného testovania nášho riešenia sme implementovali unit testy s použitím balíčka Spring Boot Test Starter, ktorý v obsahuje integráciu knižnice JUnit do Spring Boot aplikácií. Táto knižnica slúži na automatizované testovanie častí aplikácie. 
+
+Služby Gateway, Auth a Eureka sú štandardné Spring Cloud kontajnery do ktorých sme implementovali iba konfiguráciu a všetkú funkcionalitu zabezpečuje Spring v pozadí. Keďže tieto kontajnery neobsahujú žiadnu biznis logiku našej aplikácie, dokonca ani žiadny funkčný kód okrem základného spustenia Spring kontajnera, niesme schopní v tomto prípade implementovať žiadne automatizované unit testy. Pri Automatizovanom testovaní sa dalej budme sústrediť iba na zvyšné kontajnery.
+
+
+\subsubsection{Generator service}
+Aby sme testami pokryli čo najväčšiu časť funkcionality tejto služby implementovali sme test, ktorý spustí funkciu generovania kódu. Tento test spustí funkciu generovania kódu, ktorá za argument berie názov siete a zoznam prechodov a vracia celý vygenerovaný kód. Následne vygenerovaný kód porovná s uloženým poslendným výstupom pre daný vstup. Tento spôsob testovania sa inšpiruje snapshoot testingom, ktorý sa používa pri testovaní generovania používateľského rozhrania. 
+
+Výhoda tohto testu je, že v prípade že zmeníme spôsob generovania kódu alebo aktualizujeme nejakú knžnicu, ktorá sa pri generovaní využíva, vieme povedať či sa zmení vygenerovaný kód. Ak pokročílým nastrojom porovnáme výstup posledného behu funkcie s uloženým snapshotom, vieme zisitť aj akým spôsobom sa zmenilo generovani kódu. 
+Pri cieľavedomých menách kódu takto vieme zistiť, či naša zmena ovplyvnila len tú časť vygenerovaného kódu ktorú sme plánovali zmeniť.
+Pri aktualizácií knižníc sa vieme uistiť, že správanie knižnice ostalo rovnaké.
+
+V produkčnej aplikácií by sme pridali testy registračných koncových bodov tejto služby, ktoré by testovali autorizácu a funkcionalitu koncových bodov a rozšírili by sme testy generátora tak, aby sa netestovala len hlavná funkcia, ale aj vedľajšie funkcie aby sa dalo podrobnejšie zistiť kde nastala chyba.
+
+\subsubsection{Relay service}
+Väčšina funkcionality tejto služby pochádza z generovaného kódu. V Generator service tento kód kontrolujeme len oproti bývalej verzii, netestujeme, či neobsahuje kompilačné, alebo logické chyby. 
+
+Ak vygenerovaný kód obsahuje kompilačné chyby, tento fakt sa odhalí pri zostavovaní a spúšťaní služby Generator servicom. 
+
+Logické chyby vo vygenerovanom kóde sme sa rozhodli testovať vygenerovanými testami. Ku každej triede ktorú vygenerujeme z procesného modelu vygenerujeme aj testovaciu triedu. Táto testovacia trieda obsahuje  pre každú vygenerovanú funkciu niekoľko jednoduchých integračných testov.  
+Tieto testy sa automaticky spúšťajú pred automatickým nasadením Relay servisu. 
+
+Na ukážke kódu \ref{alg:kt_test} môžeme vidieť príklad takýchto automaticky vygenerovaných testov. V prvej testovacej funkcii využívame anotáciu $@WithMockUser$ a testujeme, či pri odoslaní dopytu so slým používateľom vráti koncový bod správnu chybovú hlášku.
+
+V druhej testovacej funkcii testujeme, či funguje validácia prítomnosti povinného dátového poľa v koncovom bode. Takýto test vygenerujeme iba vtedy, ak je v Konkrétny koncový bod vyžaduje povinné parametre. Pre každý povinný parameter vygenerujeme funkciu, kedy tento parameter chýba. 
+
+V tretej testovacej funkcii testujeme, či pri zadaní všetkých parametrov, použití správneho používateľa náš systém vráti správnu odpoveď.
+
+\begin{lstlisting}[ caption={Ukážka vygenrovaných testov},label={alg:kt_test},language=Kotlin]
+    @Test
+    @WithMockUser("wrongtestUser")
+    fun finisht1wrongtestUser() {
+        mvc!!.perform(RestDocumentationRequestBuilders
+                .post("/resource/admin/list/"))
+                .andExpect(status().isForbidden)
+
+    }
+
+    @Test
+    @WithMockUser("testUser")
+    fun finisht1missingArgument1() {
+        class PostData(
+                val text_field: String? = null,
+                val enumeration: String? = null
+        )
+        mvc!!.perform(RestDocumentationRequestBuilders
+                .post("/0/t1/finish", PostData(enumeration = "opt_1")))
+                .andExpect(status().isBadRequest)
+
+    }
+
+    @Test
+    @WithMockUser("testUser")
+    fun finisht1correct() {
+        class PostData(
+                val text_field: String? = null,
+                val enumeration: String? = null
+        )
+        mvc!!.perform(RestDocumentationRequestBuilders
+                .post("/0/t1/finish", PostData(text_field = "text", enumeration = "opt_1")))
+                .andExpect(status().isBadRequest)
+
+    }
+\end{lstlisting}
+
