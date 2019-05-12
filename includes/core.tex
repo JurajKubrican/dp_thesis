@@ -87,13 +87,28 @@ Takéto siete modelujú
 So stúpajúcou komplexitou udalostných systémov rastú aj nároky na formalizmus, pomocou ktorého sa systém snažíme modelovať. 
 Od uverejnenia Petriho sietí v roku 1968 vzniklo mnoho rozšírení, ktoré pridávajú novú funkcionalitu do modelovacieho formalizmu alebo uľahčujú modelovanie abstrakciou. 
 
-Formalizmus Petriflow stavia na Petriho sieťach rozšírených o pokročilé hrany a rozširuje ich o roly, dáta a akcie. Petriflow taktiež využíva siete vyššieho stupňa použitím podsiete úlohy.
+Cieľom formalizmu Petriflow je modelovať bežné biznis procesy dostatočne podrobne na to aby na základe týchto modelov bolo možné , k stavia na Petriho sieťach rozšírených o pokročilé hrany a statické miesta a rozširuje ich o roly, dáta a akcie. Petriflow taktiež využíva siete vyššieho stupňa použitím podsiete úlohy.
+
+
 
 \subsubsection{Statické miesta}
-%TODO
+Statické miesta sú miesta, ktoré sú zdiľané pre viacero inštancií procesu.  To nazmená, že ak v jednej inštancii procesu pridáme do miesta token, vo všetkých inštanciách procesu sa do tohto miesta pridá jeden token. Rovnako ak vyčerpáme Tokeny z miesta v jednej inštancií vyčerpáme ich pre všetky inštancie procesu. 
+
+Pomocou statických miest modelujeme situácie, kedy máme v systéme obmedzené zdroje, ktoroé potrebujeme zdieľať medzi viacerými procesmi. 
+
+Takúto situáciu môžeme predstaviť na príklade rátania množstva operácií vo viacjadrovom procesore počítača. Majme procesor so štyrmi jadrami, a model procesu na obrázku \ref{pn_static_place}. Tento proces môžeme spustiť ľubovoľný počet krát, avšak vždy sa bude počítať len v štyroch inštanciách procesu. Po štyroch spustení prechodu zadanie výpočtu vyčerpáme tokeny z miesta Voľné CPU a ostatné inštancie musia čakať kým v jednom z bežiacich procesov nespustíme prechod čítanie výsledku a nedoplníme token do statického miesta. 
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=8cm]{img/pn_static_place.png}
+\caption{Príklad modelu procesu, ktorý využíva zdieľané prostiredky}
+\label{pn_static_place}
+\end{figure}
+
 
 \subsubsection{Hrany}
 Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hrany inhibitor, read a reset. Tieto hrany môžu byť orientované iba od miesta k prechodu, aby bola možná ich rozšírená funkcionalita.
+
 \paragraph{Inhibitor} hrana invertuje  podmienku spustenia prechodu tak, že umožní spustenie prechodu iba ak sa v mieste nachádza ostro menší počet tokenov ako je násobnosť hrany. Pri spustení priľahlého prechodu sa nekonzumujú žiadne tokeny z miesta. Na diagrame  \ref{pn_arc_types} v prvom riadku môžeme vidieť príklad tohto správania. prechod vľavo nie je spustiteľný no prechod vpravo spustiteľný je. 
 
 \paragraph{Read} hrana má rovnakú podmienku spustenia ako základná hrana, no neupravuje počet tokenov v mieste. Na diagrame  \ref{pn_arc_types} v druhom riadku môžeme vidieť read hranu pred a po spustení priľahlého prechodu. 
@@ -106,6 +121,7 @@ Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hran
 \caption{Ukážka rôznych hrán v Petriflow}
 \label{pn_arc_types}
 \end{figure}
+
 
 \subsubsection{Úlohy}
 Koncept podsietí vznikol z potreby abstrahovať často opakujúce sa vzory pri modelovaní procesov. Formalizmus Petriflow rozširuje Petriho siete o úlohy. Úlohy pri modelovaní procesu používame ako prechody, no ich spúšťanie pri simulácií nie je atomická operácia, ako pri klasických Petriho sieťach. Pri spustení úlohy sa skonzumujú tokeny v hlavnej sieti a pridajú sa do začiatočného miesta workflow siete na obrázku  \ref{pn_task}. Tokeny v hlavnej sieti sa vyprodukujú až pri dokončení workflow podsiete. V tejto podsieti môžeme vykonávať nasledovné akcie: 
@@ -288,7 +304,7 @@ Okrem automaticky generovaný ch ciest potrebujeme ešte zadefinovať cesty ktor
 
 Na tabuľke \ref{urls_table} môžeme vidieť  Príklad URL Pre verejné a pre obslužné administrátorské \acrshort{api}.
 
-\begin{table}[]
+\begin{table}
 \begin{tabular}{|l|ll|}
 \hline
 \textbf{Používateľské API}     &                                            &                                      \\ \hline
@@ -428,7 +444,11 @@ V jazyku Kotlin je implementovaný aj princíp pomenovaných argumentov. To znam
 
 My sme zvolili jazyk Kotlin pre náš projekt hlavne kvôli vylepšeniam v systéme typovania a zmenšenému boilerplatu. Ďalej nám využitie tohto jazyka umožnila bezproblémová integrácia s frameworkom Spring a ostatnými knižnicami v jazyku Java.	
 
-\subsubsection{IntelliJ IDEA}
+\subsubsection{Intellij IDEA}
+Intellij IDEA je komerčné integrované vývojové prostredie vyvýjané spolčnosťou JetBrains s.r.o. Prostredie je určné na vývoj aplikácií v jazykoch Java, Scala, Groovy a Kotlin, je však plne rozšíriteľné a podporuje prakticky všetky programvacie jazyky medzi ktoré patrí aj JavaScript, PHP, C, C++ a mnohé ďalšie. Okrem toho poskytuje integráciu so všetkými rozšírenými zostatovacími nástrojmi, ako napríklad Maven, Gradle, Ant. Idea taktie podporuje integráciu s kontajenrizačnými službami ako je Docker a Kubernetes. Prostredie Itellij IDEA poskytuje plnú podporu najnovších verzií jazyku Kotlin a poskytuje mnohé nástroje na vývoj v tomto jazyku.
+
+Spoločnosť JetBrains poskytuje prostredie pre študentov a členov akademickej obce zadarmo na použitie na edukačné a nekomerčné využitie. 
+
 
 
 \subsubsection{Gradle}
@@ -462,7 +482,6 @@ Pri implementácií cloudových aplikácií sa developeri často stretávajú s 
 
 Spring Cloud obsahuje mnohé projekty, ktoré implementujú rôznu rozšírenú funkcionalitu, na zabezpečenie bezpečnosti, výkonu, vysokej škálovateľnosti a spoľahlivosti.
 My z nich budeme využívať nasledovné:
-
 \begin{itemize}
 \item Spring Cloud Config - Centralizovaný systém na distribúciu externej konfigurácie v cloudovom prostredí. Umožňuje prístup ku konfigurácií uloženej v centrálnom git repozitári priamo z prostredia Spring Frameworku.
 \item Spring Cloud Netflix - Poskytuje integráciu s Netflix OSS komponentami ako Eureka(service discovery), Hystrix(circuit breaker), Zuul(Router, load balancer), Archarius(cloud config) a ďalšími. Z tohto projektu budeme využívať iba projekt Eureka ako service discovery.
