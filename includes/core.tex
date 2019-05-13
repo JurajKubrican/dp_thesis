@@ -26,7 +26,7 @@ Grafická reprezentácia Petriho sietí poskytuje intuitívny modelovací nástr
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=6cm]{img/basic_net.png}
+\includegraphics[width=12cm]{img/basic_net.png}
 \caption{Príklad paralelného procesu}
 \label{basic_net}
 \end{figure}
@@ -92,15 +92,16 @@ Cieľom formalizmu Petriflow je modelovať bežné biznis procesy dostatočne po
 
 
 \subsubsection{Statické miesta}
-Statické miesta sú miesta, ktoré sú zdiľané pre viacero inštancií procesu.  To nazmená, že ak v jednej inštancii procesu pridáme do miesta token, vo všetkých inštanciách procesu sa do tohto miesta pridá jeden token. Rovnako ak vyčerpáme Tokeny z miesta v jednej inštancií vyčerpáme ich pre všetky inštancie procesu. 
+Statické miesta sú miesta, ktoré sú zdieľané pre viacero inštancií procesu.  To znamená, že ak v jednej inštancii procesu pridáme do miesta token, vo všetkých inštanciách procesu sa do tohto miesta pridá jeden token. Rovnako ak vyčerpáme Tokeny z miesta v jednej inštancií vyčerpáme ich pre všetky inštancie procesu. 
 
-Pomocou statických miest modelujeme situácie, kedy máme v systéme obmedzené zdroje, ktoroé potrebujeme zdieľať medzi viacerými procesmi. 
+Pomocou statických miest modelujeme situácie, kedy máme v systéme obmedzené zdroje, ktoré potrebujeme zdieľať medzi viacerými procesmi. 
 
 Takúto situáciu môžeme predstaviť na príklade rátania množstva operácií vo viacjadrovom procesore počítača. Majme procesor so štyrmi jadrami, a model procesu na obrázku \ref{pn_static_place}. Tento proces môžeme spustiť ľubovoľný počet krát, avšak vždy sa bude počítať len v štyroch inštanciách procesu. Po štyroch spustení prechodu zadanie výpočtu vyčerpáme tokeny z miesta Voľné CPU a ostatné inštancie musia čakať kým v jednom z bežiacich procesov nespustíme prechod čítanie výsledku a nedoplníme token do statického miesta. 
 
+
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=8cm]{img/pn_static_place.png}
+\includegraphics[width=14cm]{img/pn_static_place.png}
 \caption{Príklad modelu procesu, ktorý využíva zdieľané prostiredky}
 \label{pn_static_place}
 \end{figure}
@@ -117,7 +118,7 @@ Okrem základných hrán sa v Petriflow navyše využívajú aj pokročilé hran
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=6cm]{img/pn_arc_types.png}
+\includegraphics[width=8cm]{img/pn_arc_types.png}
 \caption{Ukážka rôznych hrán v Petriflow}
 \label{pn_arc_types}
 \end{figure}
@@ -136,7 +137,7 @@ Koncept podsietí vznikol z potreby abstrahovať často opakujúce sa vzory pri 
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=6cm]{img/pn_task.png}
+\includegraphics[width=8cm]{img/pn_task.png}
 \caption{Úloha}
 \label{pn_task}
 \end{figure}
@@ -358,7 +359,7 @@ Na diagrame \ref{api_operation} vidíme vo vrchnej časti proces prihasenia pou�
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=10cm]{img/api_operation.png}
+	\includegraphics[width=14cm]{img/api_operation.png}
 	\caption{Operácia rozhrania}
 	\label{api_operation}
 \end{figure}
@@ -378,7 +379,7 @@ Na diagrame \ref{change_operation} môžeme vidieť tento proces zmeny aplikačn
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=10cm]{img/api_operation_change.png}
+	\includegraphics[width=14cm]{img/api_operation_change.png}
 	\caption{Proces zmeny rozhrania}
 	\label{change_operation}
 \end{figure}
@@ -445,10 +446,9 @@ V jazyku Kotlin je implementovaný aj princíp pomenovaných argumentov. To znam
 My sme zvolili jazyk Kotlin pre náš projekt hlavne kvôli vylepšeniam v systéme typovania a zmenšenému boilerplatu. Ďalej nám využitie tohto jazyka umožnila bezproblémová integrácia s frameworkom Spring a ostatnými knižnicami v jazyku Java.	
 
 \subsubsection{Intellij IDEA}
-Intellij IDEA je komerčné integrované vývojové prostredie vyvýjané spolčnosťou JetBrains s.r.o. Prostredie je určné na vývoj aplikácií v jazykoch Java, Scala, Groovy a Kotlin, je však plne rozšíriteľné a podporuje prakticky všetky programvacie jazyky medzi ktoré patrí aj JavaScript, PHP, C, C++ a mnohé ďalšie. Okrem toho poskytuje integráciu so všetkými rozšírenými zostatovacími nástrojmi, ako napríklad Maven, Gradle, Ant. Idea taktie podporuje integráciu s kontajenrizačnými službami ako je Docker a Kubernetes. Prostredie Itellij IDEA poskytuje plnú podporu najnovších verzií jazyku Kotlin a poskytuje mnohé nástroje na vývoj v tomto jazyku.
+Intellij IDEA je komerčné integrované vývojové prostredie vyvíjané spoločnosťou JetBrains s.r.o. Prostredie je určené na vývoj aplikácií v jazykoch Java, Scala, Groovy a Kotlin, je však plne rozšíriteľné a podporuje prakticky všetky programovacie jazyky medzi ktoré patrí aj JavaScript, PHP, C, C++ a mnohé ďalšie. Okrem toho poskytuje integráciu so všetkými rozšírenými zostavovacími nástrojmi, ako napríklad Maven, Gradle, Ant. Idea taktiež podporuje integráciu s kontajnerizačnými službami ako je Docker a Kubernetes. Prostredie Itellij IDEA poskytuje plnú podporu najnovších verzií jazyku Kotlin a poskytuje mnohé nástroje na vývoj v tomto jazyku.
 
 Spoločnosť JetBrains poskytuje prostredie pre študentov a členov akademickej obce zadarmo na použitie na edukačné a nekomerčné využitie. 
-
 
 
 \subsubsection{Gradle}
@@ -752,6 +752,11 @@ Po správnej inicializácií servera a klientov je na porte 7777 dostupná strá
 Gateway service je rovnako ako ostatné služby implementovaný ako Spring Boot aplikácia s pridaným balíkom Spring Cloud Gateway \cite{cloud_gateway}, ktorý zabezpečuje funkcionalitu smerovania a load balancera.
 Na spustenie základnej funkcionality routingu v tomto prípade netreba použiť žiadnu anotáciu, stačí len zadefinovať trasy a k nim prislúchajúce filtre. Na ukážke kódu \ref{alg:gateway_config} vidíme konfiguráciu nášho Gateway service. Na začiatku je definovaný port na ktorom počúva server, tento port je jediný port, ktorý bude prístupný vonkajšiemu svetu.
 
+Prvá \acrshort{url} ktorú máme v konfigurácií zadefinovanú je "/". Táto \acrshort{url} obsahuje funkcie obsluhu nášho rozhrania táto URL je smerovaná na generator service na porte 8081.
+Nasledujúce dve trasy smerujú na Auth service na porte 8088. Prvá obsluhuje dopyty na autentifikáciu cez \acrshort{oauth}, druhá smeruje dopyt na získanie informácií o aktuálnom používateľovi.
+
+Posledná trasa smeruje všetky ostatné dopyty na Relay service. Ako môžeme vidieť URI cieľovej služby nie je s protokolom HTTP a portom na ktorom je služba a ale s protokolom lb a menom služby. Takáto notácia nám umožňuje využiť load balancer balíka Spring Cloud Gateway. Na to aby sme mohli využívať tento protokol musíme ešte nakonfigurovať spojenie so službou service discovery. Ak povolíme možnosť discovery locator, náš Gateway service si vypýta od service discovery informácie o lokácií služieb v našom cloudovom riešení a následne sme schopní adresovať ich pomocou mena, namiesto URI, a môžeme využívať možnosti load balancera. Load balancer sa dá nastaviť aj aby so statickým zoznamom URI jednotlivých inštancii služieb, riešenie cez service discovery locator sa však ukázalo ako praktickejšie, keďže vie dynamicky reagovať na počet spustených inštancií.
+
 \begin{lstlisting}[float, caption={Konfigurácia Gateway service},label={alg:gateway_config},language=yaml]
 server:
   port: 8080
@@ -787,11 +792,6 @@ spring:
             - "Path=/**"
 \end{lstlisting}
 
-Prvá \acrshort{url} ktorú máme v konfigurácií zadefinovanú je "/". Táto \acrshort{url} obsahuje funkcie obsluhu nášho rozhrania táto URL je smerovaná na generator service na porte 8081.
-Nasledujúce dve trasy smerujú na Auth service na porte 8088. Prvá obsluhuje dopyty na autentifikáciu cez \acrshort{oauth}, druhá smeruje dopyt na získanie informácií o aktuálnom používateľovi.
-
-Posledná trasa smeruje všetky ostatné dopyty na Relay service. Ako môžeme vidieť URI cieľovej služby nie je s protokolom HTTP a portom na ktorom je služba a ale s protokolom lb a menom služby. Takáto notácia nám umožňuje využiť load balancer balíka Spring Cloud Gateway. Na to aby sme mohli využívať tento protokol musíme ešte nakonfigurovať spojenie so službou service discovery. Ak povolíme možnosť discovery locator, náš Gateway service si vypýta od service discovery informácie o lokácií služieb v našom cloudovom riešení a následne sme schopní adresovať ich pomocou mena, namiesto URI, a môžeme využívať možnosti load balancera. Load balancer sa dá nastaviť aj aby so statickým zoznamom URI jednotlivých inštancii služieb, riešenie cez service discovery locator sa však ukázalo ako praktickejšie, keďže vie dynamicky reagovať na počet spustených inštancií.
-
 Na operáciu Gateway service nepotrebujeme žiadnu ďalšiu konfiguráciu. Všetky dopyty sú správne smerované službám, pre ktoré sú určené.
 
 \subsection{Platforma}
@@ -818,7 +818,7 @@ Bezpečnosť je jednou zo základných faktorov ktoré zvážiť pri implementá
 
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=12cm]{img/threat_analysis.png}
+	\includegraphics[width=13cm]{img/threat_analysis.png}
 	\caption{Diagram Architektúry s bezpečnostnými doménami}
 	\label{threat_analysis}
 \end{figure}
@@ -895,17 +895,18 @@ Pri tejto službe sme testovali funkčnosť validačných funkcií. Testovali sm
 
 Ekosystém Spring nám poskytuje bohaté možnosti automatického testovanie našich aplikácií pomocou balíčkov z projektu Spring Boot. V rámci automatizovaného testovania nášho riešenia sme implementovali unit testy s použitím balíčka Spring Boot Test Starter, ktorý v obsahuje integráciu knižnice JUnit do Spring Boot aplikácií. Táto knižnica slúži na automatizované testovanie častí aplikácie. 
 
-Služby Gateway, Auth a Eureka sú štandardné Spring Cloud kontajnery do ktorých sme implementovali iba konfiguráciu a všetkú funkcionalitu zabezpečuje Spring v pozadí. Keďže tieto kontajnery neobsahujú žiadnu biznis logiku našej aplikácie, dokonca ani žiadny funkčný kód okrem základného spustenia Spring kontajnera, niesme schopní v tomto prípade implementovať žiadne automatizované unit testy. Pri Automatizovanom testovaní sa dalej budme sústrediť iba na zvyšné kontajnery.
+Služby Gateway, Auth a Eureka sú štandardné Spring Cloud kontajnery do ktorých sme implementovali iba konfiguráciu a všetku funkcionalitu zabezpečuje Spring v pozadí. Keďže tieto kontajnery neobsahujú žiadnu biznis logiku našej aplikácie, dokonca ani žiadny funkčný kód okrem základného spustenia Spring kontajnera, nie sme schopní v tomto prípade implementovať žiadne automatizované unit testy. Pri Automatizovanom testovaní sa ďalej budeme sústrediť iba na zvyšné kontajnery.
 
 
 \subsubsection{Generator service}
-Aby sme testami pokryli čo najväčšiu časť funkcionality tejto služby implementovali sme test, ktorý spustí funkciu generovania kódu. Tento test spustí funkciu generovania kódu, ktorá za argument berie názov siete a zoznam prechodov a vracia celý vygenerovaný kód. Následne vygenerovaný kód porovná s uloženým poslendným výstupom pre daný vstup. Tento spôsob testovania sa inšpiruje snapshoot testingom, ktorý sa používa pri testovaní generovania používateľského rozhrania. 
+Aby sme testami pokryli čo najväčšiu časť funkcionality tejto služby implementovali sme test, ktorý spustí funkciu generovania kódu. Tento test spustí funkciu generovania kódu, ktorá za argument berie názov siete a zoznam prechodov a vracia celý vygenerovaný kód. Následne vygenerovaný kód porovná s uloženým posledným výstupom pre daný vstup. Tento spôsob testovania sa inšpiruje snapshot testingom, ktorý sa používa pri testovaní generovania používateľského rozhrania. 
 
-Výhoda tohto testu je, že v prípade že zmeníme spôsob generovania kódu alebo aktualizujeme nejakú knžnicu, ktorá sa pri generovaní využíva, vieme povedať či sa zmení vygenerovaný kód. Ak pokročílým nastrojom porovnáme výstup posledného behu funkcie s uloženým snapshotom, vieme zisitť aj akým spôsobom sa zmenilo generovani kódu. 
+Výhoda tohto testu je, že v prípade že zmeníme spôsob generovania kódu alebo aktualizujeme nejakú knižnicu, ktorá sa pri generovaní využíva, vieme povedať či sa zmení vygenerovaný kód. Ak pokročilým nástrojom porovnáme výstup posledného behu funkcie s uloženým snapshotom, vieme zistiť aj akým spôsobom sa zmenilo generovaní kódu. 
 Pri cieľavedomých menách kódu takto vieme zistiť, či naša zmena ovplyvnila len tú časť vygenerovaného kódu ktorú sme plánovali zmeniť.
 Pri aktualizácií knižníc sa vieme uistiť, že správanie knižnice ostalo rovnaké.
 
-V produkčnej aplikácií by sme pridali testy registračných koncových bodov tejto služby, ktoré by testovali autorizácu a funkcionalitu koncových bodov a rozšírili by sme testy generátora tak, aby sa netestovala len hlavná funkcia, ale aj vedľajšie funkcie aby sa dalo podrobnejšie zistiť kde nastala chyba.
+V produkčnej aplikácií by sme pridali testy registračných koncových bodov tejto služby, ktoré by testovali autorizáciu a funkcionalitu koncových bodov a rozšírili by sme testy generátora tak, aby sa netestovala len hlavná funkcia, ale aj vedľajšie funkcie aby sa dalo podrobnejšie zistiť kde nastala chyba.
+
 
 \subsubsection{Relay service}
 Väčšina funkcionality tejto služby pochádza z generovaného kódu. V Generator service tento kód kontrolujeme len oproti bývalej verzii, netestujeme, či neobsahuje kompilačné, alebo logické chyby. 
@@ -915,13 +916,13 @@ Ak vygenerovaný kód obsahuje kompilačné chyby, tento fakt sa odhalí pri zos
 Logické chyby vo vygenerovanom kóde sme sa rozhodli testovať vygenerovanými testami. Ku každej triede ktorú vygenerujeme z procesného modelu vygenerujeme aj testovaciu triedu. Táto testovacia trieda obsahuje  pre každú vygenerovanú funkciu niekoľko jednoduchých integračných testov.  
 Tieto testy sa automaticky spúšťajú pred automatickým nasadením Relay servisu. 
 
-Na ukážke kódu \ref{alg:kt_test} môžeme vidieť príklad takýchto automaticky vygenerovaných testov. V prvej testovacej funkcii využívame anotáciu $@WithMockUser$ a testujeme, či pri odoslaní dopytu so slým používateľom vráti koncový bod správnu chybovú hlášku.
+Na ukážke kódu \ref{alg:kt_test} môžeme vidieť príklad takýchto automaticky vygenerovaných testov. V prvej testovacej funkcii využívame anotáciu $@WithMockUser$ a testujeme, či pri odoslaní dopytu so zlým používateľom vráti koncový bod správnu chybovú hlášku.
 
 V druhej testovacej funkcii testujeme, či funguje validácia prítomnosti povinného dátového poľa v koncovom bode. Takýto test vygenerujeme iba vtedy, ak je v Konkrétny koncový bod vyžaduje povinné parametre. Pre každý povinný parameter vygenerujeme funkciu, kedy tento parameter chýba. 
 
 V tretej testovacej funkcii testujeme, či pri zadaní všetkých parametrov, použití správneho používateľa náš systém vráti správnu odpoveď.
 
-\begin{lstlisting}[ caption={Ukážka vygenrovaných testov},label={alg:kt_test},language=Kotlin]
+\begin{lstlisting}[ caption={Ukážka vygenerovaných testov},label={alg:kt_test},language=Kotlin]
     @Test
     @WithMockUser("wrongtestUser")
     fun finisht1wrongtestUser() {

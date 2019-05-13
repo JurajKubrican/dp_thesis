@@ -51,7 +51,7 @@
 \ExecuteOptions{dp}
 \LoadClass[\myset]{\parentclass}
 
-\usepackage[slovak, english]{babel}
+\usepackage[slovak]{babel}
 
 \usepackage[utf8]{inputenc}
 
