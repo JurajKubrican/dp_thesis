@@ -1,10 +1,11 @@
-Petriho siete sa využívajú na modelovanie paralelných a udalostných systémov. Biznisové procesy, ktoré bežne prebiehajú v súčasných firmách sú jedným prípadom takýchto systémov. Pomocou rôznych rozšírení Petriho sietí sme schopný tak podrobne namodelovať biznis proces, že na základe modelu sme schopný vygenerovať funkčné systémy, ktoré dokážu tieto biznis procesy obsluhovať.  
+V pracovnom živote sa často stretávame so systémami, ktoré zabezpečujú beh biznis procesov. Na bežné biznis procesy sú vytvorené bežné riešenia, ktoré vedia obslúžiť väčšinu dopytu, tieto systémy väčšinou poskytujú istú mieru nastaviteľnosti. Problém nastáva, keď je proces neštandardný, alebo si vyžaduje nejakú zmenu, ktorú štandardné riešenie nepodporuje. V tomto prípade je riešením buď skombinovať a snažiť sa integrovať viacero systémov ktoré pokryjú celú žiadanú funkcionalitu, alebo implementovať úpravu existujúceho riešenia, alebo implementovať vlastné riešenie. 
 
-Modelovací jazyk Petriflow stavia na niektorých známych rozšíreniach Petriho sietí a pridáva vlastnú funkcionalitu a formálny zápis, ktorý nám poskytuje dostatočný základ na to aby sme vedeli generovať komplexné procesne orientované systémy. 
+Alternatívnym prístupom k biznis systémom je generovať takéto systémy z procesného modelu, ktorý vytvoríme na základe daného procesu.
+Petriho siete poskytujú silný základ na modelovanie takýchto biznis procesov, lebo sú schopné modelovať paralelné udalostné systémy.
+Petriho siete sú dobrým nástrojom na vytvorenie matematického modelu daného procesu a následnú analýzu procesu. Na to, aby sme boli schopní generovať kus softvéru, ktorý dokáže dané procesy obsluhovať obyčajné Petriho siete nestačia.
+Pomocou rôznych rozšírení Petriho sietí sme však schopní tak podrobne namodelovať biznis proces, že na základe modelu sme schopní vygenerovať funkčné systémy, ktoré dokážu tieto biznis procesy obsluhovať.  
 
-V našej práci sa budeme venovať návrhu a implementácií jednej časti takéhoto systému. Časť ktorú budeme navrhovať je aplikačné rozhranie pre procesný server. ktoré umožní používateľom interagovať s procesným systémom. 
+Modelovací jazyk Petriflow stavia na niektorých známych rozšíreniach Petriho sietí a pridáva vlastnú funkcionalitu a formálny zápis, ktorý nám poskytuje dostatočný základ na to, aby sme vedeli generovať komplexné procesne orientované systémy. 
 
-Systém ktorý budme navrhovať má byť robustný, škálovateľný a má poskytnúť základnú vrstvu ochrany medzi procesným serverom a internetom. Preto 
+V našej práci sa budeme venovať návrhu a implementácií jednej časti takéhoto systému. Časť, ktorú budeme navrhovať je aplikačné rozhranie pre procesný server, ktoré umožní používateľom interagovať s procesným systémom spúšťaním akcií a získavaním informácií zo systému.
 
-
-V našej práci sa budeme hlavne venovať práci s prechodmi, rolami a  dátovými poľami. 

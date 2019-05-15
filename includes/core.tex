@@ -1,7 +1,8 @@
 % !TeX spellcheck = sk_SK
 
 \section{Analýza problému}
-V prvej kapitole si bližšie predstavíme problematiku procesov, formalizmus Petriflow s ktorým tieto procesy vieme modelovať, a priblížime si prostredie procesne orientovaných systémov a pre
+V prvej kapitole si v krátkosti predstavíme Petriho siete, ich fungovanie a niektoré z  ich základných vlastností. Ďalej si priblížime rozšírené Petriho siete a modelovací jazyk Petriflow, ktorý na týchto rozšíreniach stavia. Na koniec tejto kapitoly analyzujeme problém generovania aplikačného rozhrania z modelu v Petriflow.
+
 
 \subsection{Petriho siete}
 Carl Adam Petri vymyslel koncept Petriho sietí v auguste 1939 keď mal iba 13 rokov. Vtedy ich používal ako mnemotechnickú pomôcku na memorovanie priebehu chemických reakcií. Svoju matematickú teóriu modelovania procesov v kontexte informatiky predstavil v roku 1962 vo svojej dizertačnej práci - Komunikácia s Automatmi na technickej univerzite v Darmstadte v Nemecku. Grafickú reprezentáciu so štvorcami, kruhmi a šípkami, ktorú poznáme v súčasnosti predstavil až o tri roky neskôr, čím zožal veľký úspech v informatickej komunite. \cite{petri50years} 
@@ -11,7 +12,7 @@ Od uverejnenia Petriho dizertačnej práce v roku 1962 si jeho siete našli šir
 Petriho sieť je definovaná ako štvorica
 
 \[N = (P, T, F, W )\]
-Pričom platí že
+Pričom platí, že
 \begin{itemize}
 \item P je konečná množina miest v sieti
 \item T je množina prechodov taká,
@@ -21,8 +22,8 @@ Pričom platí že
 %\item $m0: P \rightarrow n, n \subseteq \mathbb N$, $m0$ prideľuje miestam počiatočné značkovanie 
 \end{itemize}
 
-Vo svojej grafickej reprezentácií Petriho siete modelujú udalostné systémy pomocou bipartitného grafu ktorý sa skladá z miest(kruh) a prechodov (štvorec) ktoré sú pospájané orientovanými hranami(šípkami) s označením násobnosti. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkami v miestach).
-Grafická reprezentácia Petriho sietí poskytuje intuitívny modelovací nástroj na modelovania jednoduchých no aj komplexných paralelných procesov. Na diagrame \ref{basic_net} vidíme príklad Petriho siete ktorá modeluje jednoduchý paralelný proces. 
+Vo svojej grafickej reprezentácií Petriho siete modelujú udalostné systémy pomocou bipartitného grafu, ktorý sa skladá z miest(kruh) a prechodov (štvorec), ktoré sú pospájané orientovanými hranami(šípkami) s označením násobnosti. Rôzne stavy procesu značíme značkami alebo inak tokenmi (bodkami v miestach).
+Grafická reprezentácia Petriho sietí poskytuje intuitívny modelovací nástroj na modelovanie jednoduchých, no aj komplexných paralelných procesov. Na diagrame \ref{basic_net} vidíme príklad Petriho siete, ktorá modeluje jednoduchý paralelný proces. 
 
 \begin{figure}[!htbp]
 \centering
@@ -34,18 +35,18 @@ Grafická reprezentácia Petriho sietí poskytuje intuitívny modelovací nástr
 
 \subsubsection{Spúšťanie prechodov}
 Petriho siete okrem možnosti modelovať štruktúru procesov ponúkajú aj možnosť simulovať priebeh namodelovaných procesov.
-Na to aby sme mohli simulovať priebeh procesu potrebujeme do siete pridať počiatočný stav sete pridaním počiatočného značkovania  
+Na to, aby sme mohli simulovať priebeh procesu potrebujeme do siete pridať počiatočný stav sete pridaním počiatočného značkovania  
 
 \[N = (P, T, F, W, m_0 ), m0: P \rightarrow n, n \subseteq \mathbb N\]
 
-$m0$ priraďuje miestam v modely nezáporný počet tokenov. Na to aby bol prechod spustiteľný musí byť splnená nasledovná podmienka:
+$m0$ priraďuje miestam v modeli nezáporný počet tokenov. Na to, aby bol prechod spustiteľný, musí byť splnená nasledovná podmienka:
 \[ \forall p \in \cdot t: m(p) \leq W((p,t)), t \in T\]
 
 Pre všetky miesta $p$, z ktorých vedie hrana do prechodu $t$, musí platiť, že počet značiek v danom mieste je väčší ako násobnosť danej hrany $ m(p) \leq W((p,t)) $. Pre všetky prechody v sieti, pre ktoré je táto podmienka splnená platí, že sú spustiteľné. Pokiaľ do prechodu nevedie žiadna hrana, prechod bude vždy spustiteľný.
-Na ukážke \ref {pn_example_run} môžeme vidieť príklad simulácie Petriho siete. V prvom prípade je spustiteľný iba prechod T1, lebo do neho nesmeruje žiadna hrana. Do prechodu T2 smerujú dve hrany, prvá z miesta P2 s násobnosťou 1, druhá z miesta P1 s násobnosťou 2. Práve podmienka druhej hrany nie je splnená, lebo mesto P1 obsahuje len jeden token. V druhom prípade je aj táto podmienka splnená.
+Na ukážke \ref {pn_example_run} môžeme vidieť príklad simulácie Petriho siete. V prvom prípade je spustiteľný iba prechod T1, lebo do neho nesmeruje žiadna hrana. Do prechodu T2 smerujú dve hrany, prvá z miesta P2 s násobnosťou 1, druhá z miesta P1 s násobnosťou 2. Práve podmienka druhej hrany nie je splnená, lebo miesto P1 obsahuje len jeden token. V druhom prípade je aj táto podmienka splnená.
  
-Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzumuje taký počet tokenov ,aká je násobnosť hrany. Zároveň sa do miest do ktorých vedú hrany z prechodu $t$ pridá toľko tokenov, aká je násobnosť danej hrany. Na ukážke \ref{pn_example_run} môžeme vidieť príklad troch stavov Petriho siete. Prvý stav obsahuje počiatočné značkovania. 
-Spustením prechodu T1 vyprodukujeme v meste P1 jeden token navyše, to nám umožňuje spustiť prechod T2. 
+Pri spustení prechodu $t$ sa z miest, z ktorých do prechodu vedú hrany skonzumuje taký počet tokenov ,aká je násobnosť hrany. Zároveň sa do miest, do ktorých vedú hrany z prechodu $t$ pridá toľko tokenov, aká je násobnosť danej hrany. Na ukážke \ref{pn_example_run} môžeme vidieť príklad troch stavov Petriho siete. Prvý stav obsahuje počiatočné značkovania. 
+Spustením prechodu T1 vyprodukujeme v mieste P1 jeden token navyše, to nám umožňuje spustiť prechod T2. 
 
 Po spustení prechodu T2 sa skonzumujú dva tokeny z miesta P1, lebo násobnosť hrany  z P1 to T2 je 2. V mieste P2 sa skonzumuje jeden token, no zároveň sa jeden token vyprodukuje, lebo hrany s rovnakou násobnosťou jedna smerujú medzi P2 a T2 oboma smermi. V mieste P3 sa vyprodukuje jeden token.
 \begin{figure}[!htbp]
@@ -59,9 +60,9 @@ Po spustení prechodu T2 sa skonzumujú dva tokeny z miesta P1, lebo násobnosť
 Dosiahnuteľnosť je vlastnosť značkovania $m$ v sieti so značkovaním $m_0$. Ak v sieti so značkovaním $m_0$ existuje postupnosť spustení prechodov taká, že v sieti vieme dosiahnuť značkovanie $m$ hovoríme, že značkovanie $m$ je v sieti dosiahnuteľné zo značkovania $m_0$
 
 \subsubsection{Živosť}
-Je vlastnosť prechodov v Petriho sietí, s počiatočným značkovaním $m_0$ ktorá hovorí o tom, či a koľko krát je daný prechod spustiteľný zo značkovaní dosiahnuteľných zo značkovania $m_0$  Poznáme štyri stupne živosti prechodov:
+Živosť je vlastnosť prechodov v Petriho sieti, s počiatočným značkovaním $m_0$, ktorá hovorí o tom, či a koľko krát je daný prechod spustiteľný zo značkovaní dosiahnuteľných zo značkovania $m_0$  Poznáme štyri stupne živosti prechodov:
 \begin{itemize}
-\item $L_0$ - neexistuje značkovanie $m$ dosiahnuteľné z $m_0$ z ktorého je prechod spustiteľný
+\item $L_0$ - neexistuje značkovanie $m$ dosiahnuteľné z $m_0$, z ktorého je prechod spustiteľný
 \item $L_1$ - existuje značkovanie $m$ dosiahnuteľné z $m_0$ také že prechod je spustiteľný aspoň jeden krát
 \item $L_2$ - pre každé $k \in \mathbb N$  existuje značkovanie $m$ dosiahnuteľné z $m_0$ také, že prechod je možné spustiť $k$ krát
 \item $L_3$ - existuje značkovanie $m$ dosiahnuteľné z $m_0$  také, že prechod môžeme spustiť nekonečne veľa krát
@@ -173,7 +174,7 @@ jedno dátové pole, toto dátové pole je typu enumeration s troma možnými ho
 Ďalej obsahuje model jeden prechod. Tento prechod obsahuje referenciu na rolu "role" a informáciu, že táto rola oprávňuje na vykonanie a delegovanie danej úlohy. Ďalej obsahuje prechod referenciu na dátové pole a informáciu, že je pole sa pri vykonávaní úlohy môže editovať a je povinné.
 Na koniec príklad obsahuje jedno statické miesto a jednu reset hranu . V mieste by mohla byť definovaná akcia, no keďže v tejto práci sa akciám ďalej nebudeme venovať z príkladu sme ich vynechali.
 
-\begin{lstlisting}[ float,caption={Ukážka jednoduchého modelu Petriflow}, label={alg:Petriflow}, language=XML]
+\begin{lstlisting}[ caption={Ukážka jednoduchého modelu Petriflow}, label={alg:Petriflow}, language=XML]
 <?xml version="1.0" encoding="UTF-8"?>
 <document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="https://modeler.netgrif.com/Petriflow_schema.xsd">
@@ -233,7 +234,6 @@ Kvôli udržaniu konzistencie dát a vyhnutiu sa problémom s race conditions te
 
 Aktuálna verzia Petriflow poskytuje relatívne granulárne informácie o autorizácií na vykonávanie akcií pomocou rolí, neobsahuje však zoznam používateľov, ich prístupových údajov a ich rolí. Na implementáciu funkčného aplikačného rozhrania, ktoré má zabezpečiť autorizáciu bude nutné dodať tieto informácie iným spôsobom.
 
-%TODO obrazok viacero PN -> viac endpointov API - point very cloudy
 
 \section{Špecifikácia}
 
@@ -259,6 +259,7 @@ Softvér, ktorý sme sa rozhodli implementovať bude slúžiť ako rozhranie med
 \item Rozhranie bude škálovateľné
 \item Rozhranie bude zabezpečené štandardnými bezpečnostnými prvkami
 \item Rozhranie bude bežať na serveri poskytnutom Fakultou Elektrotechniky a Informatiky na Slovenskej Technickej Univerzite v Bratislave.
+\item Rozhranie bude automaticky testované 
 \end{enumerate}
 
 \section{Návrh}
