@@ -1,21 +1,21 @@
 V tejto kapitole zrekapitulujeme a zhodnotíme hlavné body z jednotlivých kapitol práce  a nakoniec prácu zhrnieme. 
 
 \subsection{Generovanie aplikačného rozhrania z Petriflow modelu}
-Pri analýze rozšírených Petriho sietí a modelovacieho jazyka Petriflow sme zistili, že vďaka rozšíreniu Petriho sietí o roly a dáta sme schopný z procesného modelu vygenerovať štruktúru aplikačného rozhrania s koncovými bodmi prislúchajúcimi akciám ktoré je možné v systéme vykonať.
+Pri analýze rozšírených Petriho sietí a modelovacieho jazyka Petriflow sme zistili, že vďaka rozšíreniu Petriho sietí o roly a dáta sme schopní z procesného modelu vygenerovať štruktúru aplikačného rozhrania s koncovými bodmi prislúchajúcimi akciám, ktoré je možné v systéme vykonať.
 
 Na spustenie plne funkčného aplikačného rozhrania však musíme okrem modelu do systému dodať aj zoznam používateľov s ich prihlasovacími údajmi a rolami.
 
 \subsection{Architektúra}
-Aby sme dosiahli robustnosť škálovateľnosť a testovateľnosť aplikácie zvolili sme architektúru mikroservisov. Použitie tejto architektúry sa v našom prípade ukázalo ako správna voľba. V kombinácií s frameworkom Stpring Cloud sme boli schopný využiť hotové riešenia, ktoré už majú vyriešenú väčšinu klasických problémov spojených s implementáciou projektov s touto architektúrou. Tento fakt nám umožnil sa viac sústrediť na implementáciu biznis logiky našej aplikácie.
+Aby sme dosiahli robustnosť, škálovateľnosť a testovateľnosť aplikácie, zvolili sme architektúru mikroservisov. Použitie tejto architektúry sa v našom prípade ukázalo ako správna voľba. V kombinácií s frameworkom Stpring Cloud sme boli schopní využiť hotové riešenia, ktoré už majú vyriešenú väčšinu klasických problémov spojených s implementáciou projektov s touto architektúrou. Tento fakt nám umožnil sa viac sústrediť na implementáciu biznis logiky našej aplikácie.
 
-Pri implementácií sme však narazili aj na niektoré nevýhody tejto architektúry. Fakt, že sa systém skladá z viacerých oddelených častí síce izoluje funkcionalitu, čo nám umožňuje rýchlo identifikovať chyby a ľahko drobné chyby opraviť. Ak je však potrebné vykonať väčšiu zmenu biznis logiky v systéme môže sa stať že bude treba upraviť viacero kontajnerov a komplexita vykonania väčších zmien v takom to systéme je omnoho väčšia ako pri malých monolitických aplikáciách.
+Pri implementácií sme však narazili aj na niektoré nevýhody tejto architektúry. Fakt, že sa systém skladá z viacerých oddelených častí síce izoluje funkcionalitu, čo nám umožňuje rýchlo identifikovať chyby a ľahko drobné chyby opraviť. Ak je však potrebné vykonať väčšiu zmenu biznis logiky v systéme, môže sa stať, že bude treba upraviť viacero kontajnerov a komplexita vykonania väčších zmien v takomto systéme je omnoho väčšia ako pri malých monolitických aplikáciách.
 
 \subsection{Implementácia}
-Pri implementácií nášho riešenia sme zvolili riešenie pomocou frameworku Spring v kombinácií s programovacím jazykom Kotlin. Oba tieto projekty sa snažia odstrániť zbytočný boilerplate a konfiguráciu z projektov s cieľom aby sa programátori mohli viac sústrediť na biznis logiku aplikácie. Tento zámer sa projektom do veľkej miery darí. 
+Pri implementácií nášho riešenia sme zvolili riešenie pomocou frameworku Spring v kombinácií s programovacím jazykom Kotlin. Oba tieto projekty sa snažia odstrániť zbytočný boilerplate a konfiguráciu z projektov s cieľom, aby sa programátori mohli viac sústrediť na biznis logiku aplikácie. Tento zámer sa projektom do veľkej miery darí. 
 
- Kód našej aplikácie je vďaka Kotlinu relatívne krátky, čitateľný  a nemali sme žiadne problémy s runtime chybami kvôli typovým chybám. Avšak väčšina online dokumentácie na prácu s frameworkom Spring je v Jave a tento fakt mierne pridal ku krivke učenia ktorú sme museli prekonať, keďže sme s týmito technológiami doteraz nepracovali. 
+ Kód našej aplikácie je vďaka Kotlinu relatívne krátky, čitateľný  a nemali sme žiadne problémy s runtime chybami kvôli typovým chybám. Avšak väčšina online dokumentácie na prácu s frameworkom Spring je v Jave a tento fakt mierne pridal ku krivke učenia, ktorú sme museli prekonať, keďže sme s týmito technológiami doteraz nepracovali. 
 
-Spring framework nám umožnil rýchlo nasadiť komplexný systém viacerých serverov, ktoré medzi sebou komunikujú mnohými rôznymi protokolmi bez toho aby sme ich museli jednotlivo nastavovať. Abstrakcia tejto komplexity pomocou automagickej konfigurácie je silný nástroj na rapídny vývoj aplikácií, umožňuje však vývoj komplexných aplikácií bez hlbšej znalosti problematiky, čo so sebou prináša skryté riziká.
+Spring framework nám umožnil rýchlo nasadiť komplexný systém viacerých serverov, ktoré medzi sebou komunikujú mnohými rôznymi protokolmi bez toho, aby sme ich museli jednotlivo nastavovať. Abstrakcia tejto komplexity pomocou automagickej konfigurácie je silný nástroj na rapídny vývoj aplikácií. Umožňuje však vývoj komplexných aplikácií bez hlbšej znalosti problematiky, čo so sebou prináša skryté riziká.
 
 
 \subsection{Zhrnutie}
